@@ -5,10 +5,11 @@ const pokeflonSchema = new mongoose.Schema(
 		name: {
 			type: String,
 			required: true,
-			maxlength: 50,
+			maxlength: 25,
 		},
 		sound: {
 			type: String,
+			required: true,
 			maxlength: 255,
 		},
 		height: {
@@ -25,15 +26,20 @@ const pokeflonSchema = new mongoose.Schema(
 		},
 		img_src: {
 			type: String,
+			required: true,
 			maxlength: 255,
 		},
 		is_deleted: {
 			type: Boolean,
 			default: false, // par défaut, un pokeflon n'est pas supprimé
 		},
+		deleted_at: {
+			type: Date,
+			default: null, // Si non supprimé, pas de date associée
+		},
 		visibility: {
 			type: Boolean,
-			default: true, // par défaut, un pokeflon est visible
+			default: false, // par défaut, un pokeflon n'est pas visible
 		},
 		created_by: {
 			type: mongoose.Schema.Types.ObjectId,
