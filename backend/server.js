@@ -42,3 +42,4 @@ app.listen(PORT, () => {
 // 3. création MongoDB account
 // 4. création .env
 // 5. création config/db.js
+// 6. création Models/Pokeflon.model.js & Cie
