@@ -43,3 +43,5 @@ app.listen(PORT, () => {
 // 4. création .env
 // 5. création config/db.js
 // 6. création Models/Pokeflon.model.js & Cie
+// test GET / POST / PUT / DELETE pokeflons dans Postman = ok
+// 7. config dossier Routes et y placer all méthodes ds /Pokeflon.route.js
