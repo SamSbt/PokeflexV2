@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 import bcrypt from "bcrypt";
 import AppUser from "../models/AppUser.model.js";
 
-export const getAppUser = async (req, res) => {
+export const getAppUsers = async (req, res) => {
 	try {
 		const appusers = await AppUser.find({}); // empty {} here : fetch ALL appusers
 		res.status(200).json({ success: true, data: appusers });
@@ -138,7 +138,6 @@ export const putAppUser = async (req, res) => {
 			{
 				$set: {
 					...appusers,
-					updatedAt: new Date(),
 				},
 			},
 			{

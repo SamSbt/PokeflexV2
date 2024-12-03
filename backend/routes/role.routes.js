@@ -2,14 +2,14 @@ import express from "express";
 import {
 	deleteRole,
 	getOneRole,
-	getRole,
+	getRoles,
 	postRole,
 	putRole,
 } from "../controllers/Role.controller.js";
 
 const router = express.Router();
 
-router.get("/", getRole);
+router.get("/", getRoles);
 router.get("/:id", getOneRole);
 router.post("/", postRole);
 router.put("/:id", putRole);
