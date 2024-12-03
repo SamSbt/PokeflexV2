@@ -38,7 +38,7 @@ export const getOneRole = async (req, res) => {
 };
 
 export const postRole = async (req, res) => {
-	const roles = req.body; //user will send this data
+	const roles = req.body; // données envoyées par l'utilisateur
 
 	console.log("Received role data:", roles);
 	// création new role
@@ -47,8 +47,11 @@ export const postRole = async (req, res) => {
 	try {
 		console.log("Saving new role to database...");
 		await newRole.save();
-		console.log("Role saved successfully:", newRole);
-		res.status(201).json({ success: true, data: newRole });
+		res.status(201).json({
+			success: true,
+			message: `Role created successfully: ${newRole.role_name}`,
+			data: newRole,
+		});
 	} catch (error) {
 		console.error("Error in Create role:", error.message);
 		return res.status(500).json({ success: false, message: "Server Error" });
@@ -88,7 +91,7 @@ export const putRole = async (req, res) => {
 
 		res.status(200).json({
 			success: true,
-			message: "Role successfully updated",
+			message: "Role successfully updated.",
 			data: updatedRole,
 		});
 	} catch (error) {

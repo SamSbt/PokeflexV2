@@ -40,7 +40,7 @@ export const getOnePokeflon = async (req, res) => {
 };
 
 export const postPokeflon = async (req, res) => {
-	const pokeflons = req.body; //user will send this data
+	const pokeflons = req.body; // données envoyées par l'utilisateur
 
 	console.log("Received Pokeflon data:", pokeflons);
 
@@ -63,12 +63,13 @@ export const postPokeflon = async (req, res) => {
 	pokeflons.height = parseFloat(pokeflons.height).toFixed(2); // Limite à 2 décimales et reconvertit en nombre
 	pokeflons.weight = parseFloat(pokeflons.weight).toFixed(2);
 	// validation URL image
-	const urlRegex = /^(https?:\/\/)?([\w\d-]+)\.([a-z]{2,})/i;
-	if (pokeflons.img_src && !urlRegex.test(pokeflons.img_src)) {
-		return res
-			.status(400)
-			.json({ success: false, message: "Image URL is not valid." });
-	}
+	// TODO : véérif si URL + img perso de l'ordi à insérer
+	// const urlRegex = /^(https?:\/\/)?([\w\d-]+)\.([a-z]{2,})/i;
+	// if (pokeflons.img_src && !urlRegex.test(pokeflons.img_src)) {
+	// 	return res
+	// 		.status(400)
+	// 		.json({ success: false, message: "Image URL is not valid." });
+	// }
 
 	// TODO : validation des références aux utilisateurs (created_by et appuser)
 	// const createdByExists = mongoose.Types.ObjectId.isValid(pokeflons.created_by);
@@ -85,8 +86,11 @@ export const postPokeflon = async (req, res) => {
 	try {
 		console.log("Saving new Pokeflon to database...");
 		await newPokeflon.save();
-		console.log("Pokeflon saved successfully:", newPokeflon);
-		res.status(201).json({ success: true, data: newPokeflon });
+		res.status(201).json({
+			success: true,
+			message: `Pokeflon created successfully: ${newPokeflon.name}`,
+			data: newPokeflon,
+		});
 	} catch (error) {
 		console.error("Error in Create Pokeflon:", error.message);
 		return res.status(500).json({ success: false, message: "Server Error" });
@@ -130,7 +134,7 @@ export const putPokeflon = async (req, res) => {
 			.status(200)
 			.json({
 				success: true,
-				message: "Pokeflon successfully updated",
+				message: "Pokeflon successfully updated.",
 				data: updatedPokeflon,
 			});
 	} catch (error) {
@@ -158,7 +162,7 @@ export const deletePokeflon = async (req, res) => {
 				.json({ success: false, message: "Pokeflon not found" });
 		}
 
-		// on marque pkfl comme suppr, et on marque la date
+		// on marque pokeflon comme suppr, et on marque la date
 		pokeflons.is_deleted = true;
 		pokeflons.deleted_at = new Date();
 		// on save les modifs
