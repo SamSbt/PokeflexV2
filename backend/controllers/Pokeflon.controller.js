@@ -51,17 +51,22 @@ export const postPokeflon = async (req, res) => {
 		!pokeflons.height ||
 		!pokeflons.weight ||
 		!pokeflons.summary ||
-		!pokeflons.img_src
+		!pokeflons.img_src ||
+		!pokeflons.types ||
+		pokeflons.types.length === 0
 	) {
 		return res
 			.status(400)
-			.json({ success: false, message: "Please provide all required fields" });
+			.json({
+				success: false,
+				message: "Please provide all required fields, including types.",
+			});
 	}
 
 	// TODO : validations à garder ici ET en front ?
 	// conversion 'height' et 'weight' en nbs avec 2 décimales
-	pokeflons.height = parseFloat(pokeflons.height).toFixed(2); // Limite à 2 décimales et reconvertit en nombre
-	pokeflons.weight = parseFloat(pokeflons.weight).toFixed(2);
+	//pokeflons.height = parseFloat(pokeflons.height).toFixed(2); // Limite à 2 décimales et reconvertit en nombre
+	//pokeflons.weight = parseFloat(pokeflons.weight).toFixed(2);
 	// validation URL image
 	// TODO : véérif si URL + img perso de l'ordi à insérer
 	// const urlRegex = /^(https?:\/\/)?([\w\d-]+)\.([a-z]{2,})/i;
@@ -86,6 +91,27 @@ export const postPokeflon = async (req, res) => {
 	try {
 		console.log("Saving new Pokeflon to database...");
 		await newPokeflon.save();
+
+		// Récupération des types sélectionnés
+		const types = await Type.find({ _id: { $in: pokeflons.types } });
+
+		// Vérification que tous les types existent dans la base
+		if (types.length !== pokeflons.types.length) {
+			return res.status(400).json({
+				success: false,
+				message: "One or more selected types do not exist.",
+			});
+		}
+
+		// Création des relations dans la table associative `type_pokeflon`
+		for (const type of types) {
+			const newTypePokeflon = new TypePokeflon({
+				id_type: type._id,
+				id_pokeflon: newPokeflon._id,
+			});
+			await newTypePokeflon.save();
+		}
+
 		res.status(201).json({
 			success: true,
 			message: `Pokeflon created successfully: ${newPokeflon.name}`,

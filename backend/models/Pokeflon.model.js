@@ -6,7 +6,7 @@ const pokeflonSchema = new mongoose.Schema(
 			type: String,
 			required: true,
 			minlength: [2, "Pokeflon name must be at least 2 characters long"],
-			maxlength: [25, "Pokeflon cannot exceed 25 characters"],
+			maxlength: [25, "Pokeflon name cannot exceed 25 characters"],
 		},
 		sound: {
 			type: String,
@@ -55,16 +55,6 @@ const pokeflonSchema = new mongoose.Schema(
 				ref: "Notification",
 			},
 		],
-		// référence à l'utilisateur qui a créé ce pokeflon
-		appuser: {
-			type: mongoose.Schema.Types.ObjectId,
-			ref: "AppUser",
-		}, 
-		// référence au(x) type(s) qu'à le pokeflon
-			type: {
-				type: mongoose.Schema.Types.ObjectId,
-				ref: "Type_Pokeflon",
-		},
 	},
 	{
 		timestamps: true, // ajoute automatiquement createdAt et updatedAt
