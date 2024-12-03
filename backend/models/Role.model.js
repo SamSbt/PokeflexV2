@@ -9,6 +9,10 @@ const roleSchema = new mongoose.Schema(
 			minlength: [3, "Role name must be at least 3 characters"],
 			maxlength: [50, "Role name cannot exceed 50 characters"],
 		},
+		is_deleted: {
+			type: Boolean,
+			default: false, // soft delete
+		},
 	},
 	{
 		timestamps: true, // ajoute automatiquement createdAt et updatedAt

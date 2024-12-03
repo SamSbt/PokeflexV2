@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 import Role from "../models/Role.model.js";
 
-export const getRole = async (req, res) => {
+export const getRoles = async (req, res) => {
 	try {
 		const roles = await Role.find({}); // empty {} here : fetch ALL roles
 		res.status(200).json({ success: true, data: roles });
@@ -73,7 +73,6 @@ export const putRole = async (req, res) => {
 			{
 				$set: {
 					...roles,
-					updatedAt: new Date(), // force maj de updated_at
 				},
 			},
 			{
@@ -108,7 +107,7 @@ export const deleteRole = async (req, res) => {
 	}
 
 	try {
-		const roles = await Role.findByIdAndDelete(id);
+		const roles = await Role.findById(id);
 
 		// si le role n'existe pas
 		if (!roles) {
@@ -116,6 +115,10 @@ export const deleteRole = async (req, res) => {
 				.status(404)
 				.json({ success: false, message: "Role not found" });
 		}
+
+		//soft delete
+		roles.is_deleted = true;
+		await roles.save();
 
 		res
 			.status(200)

@@ -12,6 +12,7 @@ import pokeflonRoutes from "./routes/pokeflon.routes.js";
 import roleRoutes from "./routes/role.routes.js";
 import appuserRoutes from "./routes/appuser.routes.js";
 import userRoutes from "./routes/userRoutes.js";
+import typeRoutes from "./routes/type.routes.js";
 
 dotenv.config();
 
@@ -27,6 +28,7 @@ app.use("/api/pokeflon", pokeflonRoutes);
 app.use("/api/role", roleRoutes);
 app.use("/api/appuser", appuserRoutes);
 app.use("/api", userRoutes);
+app.use("/api/type", typeRoutes);
 
 app.listen(PORT, () => {
 	connectDB();
@@ -54,3 +56,4 @@ app.listen(PORT, () => {
 // 8. idem 7. pour Role & AppUser + bcrypt pr password : npm install bcrypt
 // 9. install JWT npm install jsonwebtoken pour auth middleware + 
 // création userController et userRoutes pr changer rôles depuis back end
+// 10. type controller & routes ok + tables associatives

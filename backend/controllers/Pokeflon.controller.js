@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 import Pokeflon from "../models/Pokeflon.model.js";
 
-export const getPokeflon = async (req, res) => {
+export const getPokeflons = async (req, res) => {
 	try {
 		const pokeflons = await Pokeflon.find({}); // empty {} here : fetch ALL pokeflons
 		res.status(200).json({ success: true, data: pokeflons });
@@ -140,7 +140,6 @@ export const putPokeflon = async (req, res) => {
 			{
 				$set: {
 					...pokeflons,
-					updatedAt: new Date(), // force maj de updated_at
 				},
 			},
 			{
