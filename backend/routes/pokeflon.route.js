@@ -1,5 +1,5 @@
 import express from "express";
-import { deletedPokeflon, getPokeflon, postPokeflon, putPokeflon } from "../controllers/Pokeflon.controller.js";
+import { deletePokeflon, getOnePokeflon, getPokeflon, postPokeflon, putPokeflon } from "../controllers/Pokeflon.controller.js";
 
 const router = express.Router();
 
@@ -9,8 +9,9 @@ const router = express.Router();
 // });
 
 router.get("/", getPokeflon);
+router.get("/:id", getOnePokeflon);
 router.post("/", postPokeflon);
 router.put("/:id", putPokeflon);
-router.delete("/:id", deletedPokeflon);
+router.delete("/:id", deletePokeflon);
 
 export default router;

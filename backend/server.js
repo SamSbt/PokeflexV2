@@ -9,6 +9,7 @@ import dotenv from "dotenv";
 import { connectDB } from "./config/db.js";
 
 import pokeflonRoutes from "./routes/pokeflon.route.js";
+//import roleRoutes from "./routes/role.route.js";
 
 dotenv.config();
 
@@ -21,6 +22,7 @@ app.use(express.json());
 //console.log(process.env.MONGO_URI);
 
 app.use("/api/pokeflon", pokeflonRoutes);
+//app.use("/api/role", roleRoutes);
 
 app.listen(PORT, () => {
 	connectDB();
@@ -43,5 +45,5 @@ app.listen(PORT, () => {
 // 4. création .env
 // 5. création config/db.js
 // 6. création Models/Pokeflon.model.js & Cie
-// test GET / POST / PUT / DELETE pokeflons dans Postman = ok
+// test GET / GETbyID / POST / PUT / DELETE pokeflons dans Postman = ok
 // 7. config dossier Routes et y placer all méthodes ds /Pokeflon.route.js

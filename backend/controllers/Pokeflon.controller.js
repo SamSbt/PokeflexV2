@@ -11,6 +11,34 @@ export const getPokeflon = async (req, res) => {
 	}
 };
 
+export const getOnePokeflon = async (req, res) => {
+	const { id } = req.params;
+
+	// vérif validité ID
+	if (!mongoose.Types.ObjectId.isValid(id)) {
+		return res
+			.status(404)
+			.json({ success: false, message: "Invalid Pokeflon Id" });
+	}
+
+	try {
+		// recherche Pokéflon par ID
+		const pokeflons = await Pokeflon.findById(id);
+
+		// si le Pokéflon n'existe pas
+		if (!pokeflons) {
+			return res
+				.status(404)
+				.json({ success: false, message: "Pokeflon not found" });
+		}
+
+		res.status(200).json({ success: true, data: pokeflons });
+	} catch (error) {
+		console.log("Error in fetching Pokeflon by ID:", error.message);
+		res.status(500).json({ success: false, message: "Server Error" });
+	}
+};
+
 export const postPokeflon = async (req, res) => {
 	const pokeflons = req.body; //user will send this data
 
@@ -30,19 +58,10 @@ export const postPokeflon = async (req, res) => {
 			.json({ success: false, message: "Please provide all required fields" });
 	}
 
-	// vérif 'height' et 'weight' = nombres
-	if (
-		(pokeflons.height && typeof pokeflons.height !== "number") ||
-		(pokeflons.weight && typeof pokeflons.weight !== "number")
-	) {
-		return res
-			.status(400)
-			.json({ success: false, message: "Height and weight must be numbers." });
-	}
+	// TODO : validations à garder ici ET en front ?
 	// conversion 'height' et 'weight' en nbs avec 2 décimales
 	pokeflons.height = parseFloat(pokeflons.height).toFixed(2); // Limite à 2 décimales et reconvertit en nombre
 	pokeflons.weight = parseFloat(pokeflons.weight).toFixed(2);
-
 	// validation URL image
 	const urlRegex = /^(https?:\/\/)?([\w\d-]+)\.([a-z]{2,})/i;
 	if (pokeflons.img_src && !urlRegex.test(pokeflons.img_src)) {
@@ -91,12 +110,12 @@ export const putPokeflon = async (req, res) => {
 			{
 				$set: {
 					...pokeflons,
-					updatedAt: new Date(), // Force la mise à jour de updatedAt
+					updatedAt: new Date(), // force maj de updated_at
 				},
 			},
 			{
-				new: true, // Retourne l'objet mis à jour
-				runValidators: true, // Valide les changements selon les règles du modèle
+				new: true, // return l'objet mis à jour
+				runValidators: true, // valide changements selon règles du model
 			}
 		);
 
@@ -107,13 +126,20 @@ export const putPokeflon = async (req, res) => {
 				.json({ success: false, message: "Pokeflon not found" });
 		}
 
-		res.status(200).json({ success: true, data: updatedPokeflon });
+		res
+			.status(200)
+			.json({
+				success: true,
+				message: "Pokeflon successfully updated",
+				data: updatedPokeflon,
+			});
 	} catch (error) {
+		console.error("Error in updating Pokeflon:", error.message);
 		return res.status(500).json({ success: false, message: "Server Error" });
 	}
 };
 
-export const deletedPokeflon = async (req, res) => {
+export const deletePokeflon = async (req, res) => {
 	const { id } = req.params;
 
 	if (!mongoose.Types.ObjectId.isValid(id)) {

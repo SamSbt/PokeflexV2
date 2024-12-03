@@ -5,12 +5,14 @@ const pokeflonSchema = new mongoose.Schema(
 		name: {
 			type: String,
 			required: true,
-			maxlength: 25,
+			minlength: [2, "Name must be at least 2 characters long"],
+			maxlength: [25, "Name cannot exceed 25 characters"],
 		},
 		sound: {
 			type: String,
 			required: true,
-			maxlength: 255,
+			minlength: [2, "Name must be at least 2 characters long"],
+			maxlength: [25, "Name cannot exceed 25 characters"],
 		},
 		height: {
 			type: Number,
@@ -23,11 +25,12 @@ const pokeflonSchema = new mongoose.Schema(
 		summary: {
 			type: String,
 			required: true,
+			minlength: [5, "Name must be at least 5 characters long"],
 		},
 		img_src: {
 			type: String,
 			required: true,
-			maxlength: 255,
+			maxlength: [255, "Image source cannot exceed 255 characters"],
 		},
 		is_deleted: {
 			type: Boolean,
