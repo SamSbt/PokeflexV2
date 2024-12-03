@@ -5,14 +5,14 @@ const pokeflonSchema = new mongoose.Schema(
 		name: {
 			type: String,
 			required: true,
-			minlength: [2, "Name must be at least 2 characters long"],
-			maxlength: [25, "Name cannot exceed 25 characters"],
+			minlength: [2, "Pokeflon name must be at least 2 characters long"],
+			maxlength: [25, "Pokeflon cannot exceed 25 characters"],
 		},
 		sound: {
 			type: String,
 			required: true,
-			minlength: [2, "Name must be at least 2 characters long"],
-			maxlength: [25, "Name cannot exceed 25 characters"],
+			minlength: [2, "Pokeflon sound must be at least 2 characters long"],
+			maxlength: [25, "Pokeflon sound cannot exceed 25 characters"],
 		},
 		height: {
 			type: Number,
@@ -25,7 +25,7 @@ const pokeflonSchema = new mongoose.Schema(
 		summary: {
 			type: String,
 			required: true,
-			minlength: [5, "Name must be at least 5 characters long"],
+			minlength: [5, "Pokeflon summary must be at least 5 characters long"],
 		},
 		img_src: {
 			type: String,
@@ -34,7 +34,7 @@ const pokeflonSchema = new mongoose.Schema(
 		},
 		is_deleted: {
 			type: Boolean,
-			default: false, // par défaut, un pokeflon n'est pas supprimé
+			default: false, // par défaut, un pokeflon n'est pas hard delete
 		},
 		deleted_at: {
 			type: Date,
@@ -59,6 +59,11 @@ const pokeflonSchema = new mongoose.Schema(
 		appuser: {
 			type: mongoose.Schema.Types.ObjectId,
 			ref: "AppUser",
+		}, 
+		// référence au(x) type(s) qu'à le pokeflon
+			type: {
+				type: mongoose.Schema.Types.ObjectId,
+				ref: "Type_Pokeflon",
 		},
 	},
 	{
