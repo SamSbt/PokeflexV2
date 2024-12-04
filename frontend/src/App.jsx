@@ -1,16 +1,17 @@
 import Routing from "./Routes";
 import { Container } from "react-bootstrap";
 import AppNavbar from "./components/app-navbar/AppNavbar";
+import AppHeader from "./components/app-header/AppHeader";
 
 
 
 function App() {
 	return (
 		<>
-			<Container fluid className="g-0">
+			<Container fluid> 
 				<div className="wrapper">
 					<AppNavbar />
-					{/* <AppHeader /> */}
+					<AppHeader />
 					<main>
 						<Routing />
 					</main>
