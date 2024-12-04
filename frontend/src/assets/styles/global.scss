@@ -1,3 +1,10 @@
+:root {
+	.container, .container-fluid, .row {
+  --bs-gutter-x: 0; // Espacement horizontal
+  --bs-gutter-y: 0; // Espacement vertical
+	}
+}
+
 *,
 *::before,
 *::after {
@@ -56,3 +63,5 @@ main {
 ::-webkit-scrollbar-thumb {
 	background: #747272;
 }
+
+

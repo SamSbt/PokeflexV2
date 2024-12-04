@@ -1,0 +1,11 @@
+header h2 {
+	font-size: clamp(1.1rem, 2vw + 0.8rem, 2rem);
+}
+
+.header {
+	@media (max-width: 576px) {
+		.pokeflex-image {
+			max-width: 30%;
+		}
+	}
+}
