@@ -34,32 +34,33 @@ const AppNavbar = () => {
 			<Navbar.Collapse id="basic-navbar-nav">
 				<Nav className="me-auto">
 					<Nav.Link
-						className={`me-2 ${location.pathname === "/" ? "active" : ""}`}
 						as={Link}
 						to="/"
+						className={`me-2 ${location.pathname === "/" ? "active" : ""}`}
 					>
 						Accueil
 					</Nav.Link>
 					<Nav.Link
-						className={`me-2 ${location.pathname === "/type" ? "active" : ""}`}
 						as={Link}
 						to="/types"
+						className={`me-2 ${location.pathname === "/type" ? "active" : ""}`}
 					>
 						Types
 					</Nav.Link>
 					<Nav.Link
+						as={Link}
+						to="/create"
 						className={`me-2 ${
 							location.pathname === "/create" ? "active" : ""
 						}`}
-						as={Link}
-						to="/create"
 					>
 						Création
 					</Nav.Link>
 				</Nav>
 
-				{/* btn caché une fois sur la LoginPage et la RegisterPage*/}
-				{location.pathname !== "/login" &&
+				{/* btn caché si connecté(store), ou sur la LoginPage et la RegisterPage*/}
+				{!isLoggedIn &&
+					location.pathname !== "/login" &&
 					location.pathname !== "/register" && (
 						<Nav>
 							<Link to="/login">
