@@ -58,7 +58,6 @@ const AppNavbar = () => {
 					</Nav.Link>
 				</Nav>
 
-
 				{/* btn caché si connecté(store), ou sur la LoginPage et la RegisterPage*/}
 				{!isLoggedIn &&
 					location.pathname !== "/login" &&
