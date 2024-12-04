@@ -1,0 +1,12 @@
+footer p {
+	font-size: clamp(0.5rem, 1.5vw + 0.4rem, 0.8rem);
+}
+
+footer {
+	.position-btn {
+		@media (max-width: 576px) {
+			justify-content: center !important;
+			margin-bottom: 10px;
+		}
+	}
+}
