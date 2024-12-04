@@ -1,0 +1,40 @@
+// variable du btn rouge
+$btn-red: #dc0a2d;
+
+.btn {
+	width: 120px;
+	height: 40px;
+	font-size: 0.85rem !important;
+
+	&.btn-black {
+		background-color: #000;
+
+		&:hover {
+			background-color: #2e2e2e;
+		}
+		&:focus {
+			background-color: #2e2e2e !important;
+		}
+		&:disabled {
+			background-color: #000;
+		}
+	}
+
+	&.btn-red {
+		background-color: $btn-red;
+
+		&:hover {
+			background-color: #b30024;
+		}
+		&:focus {
+			background-color: #b30024 !important;
+		}
+		&:disabled {
+			background-color: #b30024;
+		}
+	}
+}
+
+.btn-fav {
+	width: fit-content;
+}
