@@ -1,0 +1,88 @@
+// style des boutons tag
+.btnStyle {
+	.btn {
+		width: 5rem;
+		position: relative;
+		@media (max-width: 363px) {
+			width: calc(3rem + 2vw);
+			height: calc(1.5rem + 2vw);
+			font-size: calc(0.7rem + 0.3vw) !important;
+		}
+		@media (min-width: 364px) and (max-width: 576px) {
+			width: calc(3.5rem + 2vw);
+			height: calc(1.8rem + 2vw);
+			font-size: calc(0.8rem + 0.2vw) !important;
+		}
+	}
+
+	&.btn-active {
+		&::after {
+			content: "";
+			position: absolute;
+			top: -6px;
+			left: -6px;
+			right: -6px;
+			bottom: -6px;
+			border: 2px solid white;
+			border-radius: 10px;
+			z-index: -1;
+		}
+	}
+}
+
+.marginSize {
+	margin: 0 10px;
+	@media (min-width: 768px) {
+		margin: 0 30px;
+	}
+	@media (min-width: 992px) {
+		margin: 0 100px;
+	}
+	@media (min-width: 1200px) {
+		margin: 0 155px;
+	}
+	@media (min-width: 1400px) {
+		margin: 0 185px;
+	}
+}
+
+// couleurs des tags
+$types: (
+	1: #a55239,
+	// combat
+	2: #7b63e7,
+	// dragon
+	3: #399cff,
+	// eau
+	4: #ffc631,
+	// électrik
+	5: #f75231,
+	// feu
+	6: #5acee7,
+	// glace
+	7: #adbd21,
+	// insect
+	8: #ada594,
+	// normal
+	9: #7bce52,
+	// plante
+	10: #b55aa5,
+	// poison
+	11: #ff73a5,
+	// psy
+	12: #bda55a,
+	// roche
+	13: #d6b55a,
+	// sol
+	14: #6363b5,
+	// spectre
+	15: #9cadf7 // vol,,,,,
+);
+
+// ajout des styles dynamiques pour chaque type :
+@each $id, $color in $types {
+	.type-#{$id} {
+		background-color: $color !important;
+		border-color: $color !important;
+	}
+}
