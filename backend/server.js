@@ -13,6 +13,7 @@ import roleRoutes from "./routes/role.routes.js";
 import appuserRoutes from "./routes/appuser.routes.js";
 import userRoutes from "./routes/userRoutes.js";
 import typeRoutes from "./routes/type.routes.js";
+import contactRoutes from "./routes/contact.routes.js";
 
 dotenv.config();
 
@@ -29,6 +30,8 @@ app.use("/api/role", roleRoutes);
 app.use("/api/appuser", appuserRoutes);
 app.use("/api", userRoutes);
 app.use("/api/type", typeRoutes);
+app.use("/api/contact", contactRoutes);
+
 
 app.listen(PORT, () => {
 	connectDB();

@@ -189,7 +189,7 @@ export const deleteAppUser = async (req, res) => {
 				.json({ success: false, message: "AppUser not found" });
 		}
 
-		// on marque appuser comme suppr, et on marque la date
+		// soft delete - on marque appuser comme suppr, et on marque la date
 		appusers.is_deleted = true;
 		appusers.deleted_at = new Date();
 		// on save les modifs
