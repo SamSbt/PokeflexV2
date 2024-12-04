@@ -25,3 +25,5 @@ createRoot(document.getElementById("root")).render(
 // 6. pour séparer la récupérations des données du code, npm i zustand - dossier store/
 // et éviter les useState/useEffect qui complexifient, moins performant
 // 7. npm install sass
+// 8. création components et intégration ds HomePage + Routes.js
+// + store.js pour isLoggedIn btn "incription" visible ou non
