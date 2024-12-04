@@ -1,0 +1,91 @@
+// placeholder
+textarea::placeholder,
+input::placeholder,
+select {
+	font-family: "Poppins", sans-serif;
+	font-weight: 300;
+	font-size: 0.75rem;
+	color: #fff;
+}
+
+// style select du form
+select.form-control,
+input.form-control,
+textarea.form-control {
+	font-family: "Poppins", sans-serif;
+	font-weight: 300;
+	font-size: 0.8rem;
+	appearance: button;
+}
+// couleur de la bordure au focus dans input
+input:focus,
+textarea:focus {
+	border-color: #dc0a2d !important;
+	box-shadow: 0 0 0 0.2rem rgba(220, 10, 45, 0.25) !important;
+}
+
+//taille des input creation form
+.size-row-create {
+	width: 900px;
+	@media (max-width: 910px) {
+		.input-width {
+			width: 90%;
+		}
+		.input-mid-width {
+			width: 90%;
+		}
+		.input-small-width {
+			width: 80%;
+		}
+		.textarea-width {
+			width: 90%;
+		}
+	}
+	@media (max-width: 768px) {
+		width: 500px;
+	}
+}
+.input-width {
+	width: 340px;
+}
+.input-small-width {
+	width: 210px;
+}
+.input-mid-width {
+	width: 230px;
+}
+.textarea-width {
+	width: 480px;
+}
+
+// Login & Register form
+.sizeFormLoginRegister {
+	width: 350px;
+}
+// profile user form
+.size-row-userProfile {
+	width: 550px;
+	@media (max-width: 576px) {
+		width: 320px;
+	}
+}
+.sizeFormUserProfile {
+	width: 500px;
+	@media (max-width: 576px) {
+		width: 290px;
+		p {
+			margin-bottom: 0;
+		}
+	}
+}
+
+// style sur du texte simple
+.small-text {
+	font-size: 0.8rem;
+}
+.smaller-text {
+	font-size: 0.7rem;
+}
+.underline {
+	text-decoration: underline;
+}

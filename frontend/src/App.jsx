@@ -1,37 +1,24 @@
-// import { Routes, Route } from "react-router-dom";
+import Routing from "./Routes";
+import { Container } from "react-bootstrap";
+import AppNavbar from "./components/app-navbar/AppNavbar";
+
 
 
 function App() {
 	return (
 		<>
-			<h1> mon site</h1>
+			<Container fluid className="g-0">
+				<div className="wrapper">
+					<AppNavbar />
+					{/* <AppHeader /> */}
+					<main>
+						<Routing />
+					</main>
+					{/* <AppFooter /> */}
+				</div>
+			</Container>
 		</>
 	);
 }
 
 export default App;
-
-
-
-
-
-
-// import HomePage from "./pages/HomePage";
-// import CreatePage from "./pages/CreatePage";
-// import MyNavbar from "./components/MyNavbar";
-
-// function App() {
-// 	return (
-// 		<>
-// 			<div className="min-vh-100">
-// 				<MyNavbar />
-// 				<Routes>
-// 					<Route path="/" element={<HomePage />} />
-// 					<Route path="/create" element={<CreatePage />} />
-// 				</Routes>
-// 			</div>
-// 		</>
-// 	);
-// }
-
-// export default App;

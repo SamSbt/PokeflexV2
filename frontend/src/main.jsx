@@ -1,9 +1,10 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { BrowserRouter } from "react-router-dom";
-
 import App from './App.jsx'
 
+import "../src/assets/styles/global.scss";
+import "../src/assets/styles/app.scss";
 import "bootstrap/dist/css/bootstrap.min.css";
 
 createRoot(document.getElementById("root")).render(
@@ -24,3 +25,4 @@ createRoot(document.getElementById("root")).render(
 // 5. npm install react-icons
 // 6. pour séparer la récupérations des données du code, npm i zustand - dossier store/
 // et éviter les useState/useEffect qui complexifient, moins performant
+// 7. npm install sass

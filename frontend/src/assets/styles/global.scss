@@ -1,0 +1,58 @@
+*,
+*::before,
+*::after {
+	box-sizing: border-box;
+	margin: 0;
+	padding: 0;
+	text-decoration: none;
+	list-style: none;
+}
+
+body {
+	background-color: #000;
+	color: #fff;
+	// font style REGULAR
+	font-family: "Poppins", sans-serif;
+	font-weight: 400;
+	font-style: normal;
+	font-size: 0.9rem;
+}
+
+.wrapper {
+	display: flex;
+	flex-direction: column;
+	min-height: 100vh;
+}
+main {
+	flex: 1;
+}
+
+// font logo
+.special-elite-regular {
+	font-family: "Special Elite", system-ui;
+	font-weight: 400;
+	font-style: normal;
+}
+// font body LIGHT
+.poppins-light {
+	font-family: "Poppins", sans-serif;
+	font-weight: 300;
+	font-style: normal;
+}
+// font body BOLD
+.poppins-bold {
+	font-family: "Poppins", sans-serif;
+	font-weight: 700;
+	font-style: normal;
+}
+
+/* scrollbar */
+::-webkit-scrollbar {
+	width: 8px;
+}
+::-webkit-scrollbar-track {
+	background: #212529;
+}
+::-webkit-scrollbar-thumb {
+	background: #747272;
+}
