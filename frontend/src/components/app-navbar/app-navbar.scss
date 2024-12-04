@@ -1,0 +1,53 @@
+//souligner le lien actif
+.nav-link.active {
+	text-decoration: underline;
+}
+
+// Form size input
+.form-search {
+	.form-control {
+		width: 200px;
+		background-color: #000;
+		border-color: #fff;
+	}
+}
+.navbar .btn-red {
+	@media (max-width: 992px) {
+		margin-bottom: 10px;
+	}
+}
+
+@media (max-width: 380px) {
+	.form-search {
+		flex-direction: column;
+	}
+	.form-search .btn-black {
+		margin-top: 10px;
+	}
+}
+
+// animation logo
+.logoAnimation {
+	img:hover {
+		animation: shaking 0.4s infinite;
+		visibility: visible;
+		cursor: pointer;
+	}
+}
+@keyframes shaking {
+	0% {
+		transform: translate(0, 0) rotate(0deg);
+	}
+	25% {
+		transform: translate(5px, 5px) rotate(5deg);
+	}
+	50% {
+		transform: translate(0, 0) rotate(0eg);
+	}
+	75% {
+		transform: translate(-5px, 5px) rotate(-5deg);
+	}
+	100% {
+		transform: translate(0, 0) rotate(0deg);
+	}
+}
