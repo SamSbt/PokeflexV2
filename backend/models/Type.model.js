@@ -12,6 +12,7 @@ const typeSchema = new mongoose.Schema(
 			required: true,
 			minlength: [2, "Type name must be at least 2 characters long"],
 			maxlength: [25, "type name cannot exceed 25 characters"],
+			unique: true
 		},
 		is_deleted: {
 			type: Boolean,

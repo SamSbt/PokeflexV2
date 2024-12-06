@@ -67,3 +67,6 @@ app.listen(PORT, () => {
 // 9. install JWT npm install jsonwebtoken pour auth middleware +
 // création userController et userRoutes pr changer rôles depuis back end
 // 10. type controller & routes ok + tables associatives
+// 11. installation npm install mongoose-unique-validator@latest
+// need downgrader version mongoose to v7 (for now 8.8.3): npm install mongoose@7.x.x
+// 12. 

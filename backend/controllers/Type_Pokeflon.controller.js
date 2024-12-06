@@ -5,8 +5,8 @@ const getPokeflonsWithTypes = async (req, res) => {
 	try {
 		const pokeflons = await Pokeflon.find()
 			.populate({
-				path: "types", // Assurez-vous que vous avez un champ "types" dans votre modèle Pokeflon
-				select: "type_name", // Sélectionne seulement le nom du type pour l'affichage
+				path: "types", 
+				select: "type_name", 
 			})
 			.exec();
 

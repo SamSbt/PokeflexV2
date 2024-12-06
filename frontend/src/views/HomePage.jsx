@@ -33,15 +33,19 @@ const HomePage = () => {
 							lg={3}
 							xl={3}
 							xxl={2}
-							key={pokeflon.id}
+							key={pokeflon._id}
 							className="d-flex justify-content-center"
 						>
 							<CustomCard
-								to={`/${pokeflon.id}`}
+								to={`/${pokeflon._id}`}
 								name={pokeflon.name}
-								id={pokeflon.id}
-								imageSrc={pokeflon.imageSrc}
-								types={pokeflon.types.join(", ")}
+								sound={pokeflon.sound}
+								img_src={pokeflon.img_src}
+								types={
+									pokeflon.types && pokeflon.types.length > 0
+										? pokeflon.types.join(", ")
+										: "undefined, or null"
+								}
 							/>
 						</Col>
 					))}
