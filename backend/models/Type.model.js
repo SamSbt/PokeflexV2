@@ -1,5 +1,10 @@
 import mongoose from "mongoose";
 
+import uniqueValidator from "mongoose-unique-validator";
+
+// id noneed car généré auto par mongoose
+// "Schema" permet de créer un schéma de données pour bdd MongoDB
+// unique => impossibilité de create avec mm name
 const typeSchema = new mongoose.Schema(
 	{
 		type_name: {
@@ -17,6 +22,7 @@ const typeSchema = new mongoose.Schema(
 		timestamps: true, // ajoute automatiquement createdAt et updatedAt
 	}
 );
+typeSchema.plugin(uniqueValidator);
 
 const Type = mongoose.model("Type", typeSchema);
 
