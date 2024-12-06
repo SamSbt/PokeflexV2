@@ -22,8 +22,13 @@ export const getOnePokeflon = async (req, res) => {
 	}
 
 	try {
-		// recherche Pokéflon par ID
-		const pokeflons = await Pokeflon.findById(id);
+		// recherche du Pokéflon par ID et peuplement des types
+		const pokeflons = await Pokeflon.findById(id)
+			.populate({
+				path: "types", // Charge les types associés à ce Pokéflon
+				select: "type_name", // On sélectionne uniquement le nom des types pour l'affichage
+			})
+			.exec();
 
 		// si le Pokéflon n'existe pas
 		if (!pokeflons) {
