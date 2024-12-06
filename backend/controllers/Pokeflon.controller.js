@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import Pokeflon from "../models/Pokeflon.model.js";
+import TypePokeflon from "../models/Type_Pokeflon.model.js";
 
 export const getPokeflons = async (req, res) => {
 	try {
@@ -90,17 +91,24 @@ export const postPokeflon = async (req, res) => {
 	// 			.json({ success: false, message: "Invalid user references." });
 	// 	}
 
-	// création new pokeflon
-	const newPokeflon = new Pokeflon(pokeflons);
+	// création new pokeflon sans type first
+	const newPokeflon = new Pokeflon({
+		name: pokeflons.name,
+		sound: pokeflons.sound,
+		height: pokeflons.height,
+		weight: pokeflons.weight,
+		summary: pokeflons.summary,
+		img_src: pokeflons.img_src,
+	});
 
 	try {
 		console.log("Saving new Pokeflon to database...");
 		await newPokeflon.save();
 
-		// Récupération des types sélectionnés
-		const types = await Type.find({ _id: { $in: pokeflons.types } });
+		// Récupérer les types sélectionnés par l'utilisateur
+		const types = await TypePokeflon.find({ _id: { $in: pokeflons.types } });
 
-		// Vérification que tous les types existent dans la base
+		// Vérification si tous les types existent dans la base de données
 		if (types.length !== pokeflons.types.length) {
 			return res.status(400).json({
 				success: false,
@@ -108,14 +116,16 @@ export const postPokeflon = async (req, res) => {
 			});
 		}
 
-		// Création des relations dans la table associative `type_pokeflon`
-		for (const type of types) {
-			const newTypePokeflon = new TypePokeflon({
-				id_type: type._id,
+		// Créer les relations dans la table associative `TypePokeflon`
+		const typeRelations = pokeflons.types.map((typeId) => {
+			return new TypePokeflon({
+				id_type: typeId,
 				id_pokeflon: newPokeflon._id,
 			});
-			await newTypePokeflon.save();
-		}
+		});
+
+		// Sauvegarder les relations
+		await TypePokeflon.insertMany(typeRelations);
 
 		res.status(201).json({
 			success: true,

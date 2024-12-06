@@ -52,52 +52,40 @@ export const postAppUser = async (req, res) => {
 			.json({ success: false, message: "Please provide all required fields" });
 	}
 
-	// vérif si l'email existe déjà - ds model, la vérif n'est pas à l'instant T de connexion
-	try {
-		const existingAppUser = await AppUser.findOne({ email: appusers.email });
-		if (existingAppUser) {
-			return res.status(400).json({
-				success: false,
-				message:
-					"This email is already taken, please use a different email address.",
-			});
-		}
-
-		// Recherche de l'ObjectId du rôle 'dresseur' dans la collection Role
-		const defaultRole = await Role.findOne({ name: "Dresseur" });
-		if (!defaultRole) {
-			return res.status(500).json({
-				success: false,
-				message:
-					"Default role 'dresseur' not found. Please configure roles in the database.",
-			});
-		}
-
-		// hachage du mot de passe avant save, + gestion d'erreurs
-		let hashedPassword;
-		try {
-			const salt = await bcrypt.genSalt(10);
-			hashedPassword = await bcrypt.hash(appusers.password, salt);
-		} catch (bcryptError) {
-			console.error("Error hashing password:", bcryptError.message);
-			return res.status(500).json({
-				success: false,
-				message: "Error hashing password. Please try again.",
-			});
-		}
-
-		// remplacer password par sa version hachée
-		appusers.password = hashedPassword;
-
-		// création new appuser avec rôle par défaut
-		const newAppUser = new AppUser({
-			...appusers,
-			password: hashedPassword,
-			role: defaultRole._id,
+	// recherche de l'ObjectId du rôle 'dresseur' dans la collection Role
+	const defaultRole = await Role.findOne({ name: "Dresseur" });
+	if (!defaultRole) {
+		return res.status(500).json({
+			success: false,
+			message:
+				"Default role 'dresseur' not found. Please configure roles in the database.",
 		});
+	}
 
-		//
+	// hachage du mot de passe avant save, + gestion d'erreurs
+	let hashedPassword;
+	try {
+		const salt = await bcrypt.genSalt(10);
+		hashedPassword = await bcrypt.hash(appusers.password, salt);
+	} catch (bcryptError) {
+		console.error("Error hashing password:", bcryptError.message);
+		return res.status(500).json({
+			success: false,
+			message: "Error hashing password. Please try again.",
+		});
+	}
 
+	// remplacement password par sa version hachée
+	appusers.password = hashedPassword;
+
+	// création new appuser avec rôle par défaut
+	const newAppUser = new AppUser({
+		...appusers,
+		password: hashedPassword,
+		role: defaultRole._id,
+	});
+
+	try {
 		console.log("Saving new AppUser to database...");
 		await newAppUser.save();
 		res.status(201).json({
@@ -107,6 +95,34 @@ export const postAppUser = async (req, res) => {
 		});
 	} catch (error) {
 		console.error("Error in Create AppUser:", error.message);
+
+		// vérif spécifique des erreurs de duplication
+		if (error.name === "ValidationError" && error.errors) {
+			// vérif de l'email ou du username dupliqué
+			const duplicateField = Object.keys(error.errors).find((key) =>
+				error.errors[key].message.includes("Path `email`")
+			);
+			if (duplicateField) {
+				return res.status(400).json({
+					success: false,
+					message:
+						"This email is already taken, please use a different email address.",
+				});
+			}
+
+			// vérif du username dupliqué
+			const duplicateUsernameField = Object.keys(error.errors).find((key) =>
+				error.errors[key].message.includes("Path `username`")
+			);
+			if (duplicateUsernameField) {
+				return res.status(400).json({
+					success: false,
+					message:
+						"This username is already taken, please choose a different username.",
+				});
+			}
+		}
+
 		return res.status(500).json({ success: false, message: "Server Error" });
 	}
 };

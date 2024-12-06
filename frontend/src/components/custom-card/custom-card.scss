@@ -1,12 +1,16 @@
 .cardStyle {
 	white-space: normal !important;
 	letter-spacing: normal !important;
-	min-height: 310px;
+	min-height: 190px;
 	min-width: 200px !important;
 	
 	img {
-		width: 80px;
+		width: 180px;
+		height: 150px;
 		align-items: center;
 		border: none !important;
+		overflow: hidden;
+		object-fit: cover;
 	}
 }
+

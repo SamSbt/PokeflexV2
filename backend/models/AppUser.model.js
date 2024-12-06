@@ -1,5 +1,8 @@
 import mongoose from "mongoose";
 
+import uniqueValidator from "mongoose-unique-validator";
+
+
 const appUserSchema = new mongoose.Schema(
 	{
 		username: {
@@ -7,6 +10,7 @@ const appUserSchema = new mongoose.Schema(
 			required: true,
 			minlength: [2, "Username must be at least 2 characters long"],
 			maxlength: [25, "Username cannot exceed 25 characters"],
+			unique: true,
 		},
 		email: {
 			type: String,
@@ -33,9 +37,9 @@ const appUserSchema = new mongoose.Schema(
 			},
 		},
 		role: {
-			type: mongoose.Schema.Types.ObjectId, 
-			ref: "Role", 
-			required: true, 
+			type: mongoose.Schema.Types.ObjectId,
+			ref: "Role",
+			required: true,
 		},
 		is_valid: {
 			type: Boolean,
@@ -58,6 +62,7 @@ const appUserSchema = new mongoose.Schema(
 		timestamps: true, // ajoute automatiquement createdAt et updatedAt
 	}
 );
+appUserSchema.plugin(uniqueValidator);
 
 const AppUser = mongoose.model("AppUser", appUserSchema);
 
