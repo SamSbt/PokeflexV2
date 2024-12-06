@@ -27,3 +27,4 @@ createRoot(document.getElementById("root")).render(
 // 7. npm install sass
 // 8. création components et intégration ds HomePage + Routes.js
 // + store.js pour isLoggedIn btn "incription" visible ou non
+// 9. npm install prop-types pour détecter les erreurs dans les props pendant le développement
