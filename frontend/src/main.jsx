@@ -28,3 +28,4 @@ createRoot(document.getElementById("root")).render(
 // 8. création components et intégration ds HomePage + Routes.js
 // + store.js pour isLoggedIn btn "incription" visible ou non
 // 9. npm install prop-types pour détecter les erreurs dans les props pendant le développement
+// 10. error CORS : npm install cors

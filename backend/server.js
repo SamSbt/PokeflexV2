@@ -5,6 +5,7 @@
 // const express = require('express');
 // utilisation de ES modules (ds package.json : "type": "module",)
 import express from "express";
+import cors from "cors";
 import dotenv from "dotenv";
 import { connectDB } from "./config/db.js";
 
@@ -25,13 +26,19 @@ app.use(express.json());
 
 //console.log(process.env.MONGO_URI);
 
+// CORS - permet les requêtes depuis front-end (localhost:5173)
+app.use(
+	cors({
+		origin: "http://localhost:5173",
+	})
+);
+
 app.use("/api/pokeflon", pokeflonRoutes);
 app.use("/api/role", roleRoutes);
 app.use("/api/appuser", appuserRoutes);
 app.use("/api", userRoutes);
 app.use("/api/type", typeRoutes);
 app.use("/api/contact", contactRoutes);
-
 
 app.listen(PORT, () => {
 	connectDB();
@@ -57,6 +64,6 @@ app.listen(PORT, () => {
 // test GET / GETbyID / POST / PUT / DELETE pokeflons dans Postman = ok
 // 7. config dossier Routes et y placer all méthodes ds /Pokeflon.controller.js
 // 8. idem 7. pour Role & AppUser + bcrypt pr password : npm install bcrypt
-// 9. install JWT npm install jsonwebtoken pour auth middleware + 
+// 9. install JWT npm install jsonwebtoken pour auth middleware +
 // création userController et userRoutes pr changer rôles depuis back end
 // 10. type controller & routes ok + tables associatives
