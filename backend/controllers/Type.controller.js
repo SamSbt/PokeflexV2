@@ -3,7 +3,7 @@ import Type from "../models/Type.model.js";
 
 export const getTypes = async (req, res) => {
 	try {
-		const types = await Type.find({}); // empty {} here : fetch ALL types
+		const types = await Type.find({ is_deleted: false }); // si empty {} : fetch ALL types
 		res.status(200).json({ success: true, data: types });
 	} catch (error) {
 		console.log("Error in fetching types:", error.message);

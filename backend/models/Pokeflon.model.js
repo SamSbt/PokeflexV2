@@ -52,15 +52,16 @@ const pokeflonSchema = new mongoose.Schema(
 			{
 				type: mongoose.Schema.Types.ObjectId,
 				ref: "Type",
+				required: true,
 			},
 		],
 		// références aux notifications
-		notifications: [
-			{
-				type: mongoose.Schema.Types.ObjectId,
-				ref: "Notification",
-			},
-		],
+		// notifications: [
+		// 	{
+		// 		type: mongoose.Schema.Types.ObjectId,
+		// 		ref: "Notification",
+		// 	},
+		// ],
 	},
 	{
 		timestamps: true, // ajoute automatiquement createdAt et updatedAt
