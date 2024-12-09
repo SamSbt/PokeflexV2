@@ -1,6 +1,5 @@
 import mongoose from "mongoose";
 import Pokeflon from "../models/Pokeflon.model.js";
-import TypePokeflon from "../models/Type_Pokeflon.model.js";
 
 export const getPokeflons = async (req, res) => {
 	try {
@@ -46,27 +45,26 @@ export const getOnePokeflon = async (req, res) => {
 };
 
 export const postPokeflon = async (req, res) => {
-	const pokeflons = req.body; // données envoyées par l'utilisateur
+	const pokeflons = req.body; // Données envoyées par l'utilisateur
 
 	console.log("Received Pokeflon data:", pokeflons);
 
-	// vérif des required
+	// Vérification des champs requis
 	if (
 		!pokeflons.name ||
 		!pokeflons.sound ||
 		!pokeflons.height ||
 		!pokeflons.weight ||
 		!pokeflons.summary ||
-		!pokeflons.img_src ||
-		!pokeflons.types ||
-		pokeflons.types.length === 0
+		// !pokeflons.img_src ||
+		!pokeflons.type1 ||
+		!pokeflons.type2
 	) {
-		return res
-			.status(400)
-			.json({
-				success: false,
-				message: "Please provide all required fields, including types.",
-			});
+		console.log("ça passe ??");
+		return res.status(400).json({
+			success: false,
+			message: "Please provide all required fields, including types.",
+		});
 	}
 
 	// TODO : validations à garder ici ET en front ?
@@ -74,13 +72,15 @@ export const postPokeflon = async (req, res) => {
 	//pokeflons.height = parseFloat(pokeflons.height).toFixed(2); // Limite à 2 décimales et reconvertit en nombre
 	//pokeflons.weight = parseFloat(pokeflons.weight).toFixed(2);
 	// validation URL image
-	// TODO : véérif si URL + img perso de l'ordi à insérer
+	// TODO : vérif si URL + img perso de l'ordi à insérer
 	// const urlRegex = /^(https?:\/\/)?([\w\d-]+)\.([a-z]{2,})/i;
 	// if (pokeflons.img_src && !urlRegex.test(pokeflons.img_src)) {
 	// 	return res
 	// 		.status(400)
 	// 		.json({ success: false, message: "Image URL is not valid." });
 	// }
+
+	//TODO: empêcher d'aller en dessous de 0 pr poids etc ou lettres interdites
 
 	// TODO : validation des références aux utilisateurs (created_by et appuser)
 	// const createdByExists = mongoose.Types.ObjectId.isValid(pokeflons.created_by);
@@ -91,46 +91,36 @@ export const postPokeflon = async (req, res) => {
 	// 			.json({ success: false, message: "Invalid user references." });
 	// 	}
 
-	// création new pokeflon sans type first
+	// Si les types sont envoyés sous forme d'ID, pas besoin de les récupérer dans la base de données
+	// Assurez-vous que 'types' contient un tableau d'ObjectId
+	// const types = pokeflons.types.map((typeId) =>
+	// 	mongoose.Types.ObjectId(typeId)
+	// );
+
+	const types = [pokeflons.type1, pokeflons.type2];
+
+	console.log(types);
+
+	// Création du Pokéflon avec les types directement
 	const newPokeflon = new Pokeflon({
 		name: pokeflons.name,
 		sound: pokeflons.sound,
 		height: pokeflons.height,
 		weight: pokeflons.weight,
 		summary: pokeflons.summary,
-		img_src: pokeflons.img_src,
+		// img_src: pokeflons.img_src,
+		types: types, // Ajout des types directement ici
 	});
 
 	try {
+		// Sauvegarde du Pokéflon avec les types associés
 		console.log("Saving new Pokeflon to database...");
-		await newPokeflon.save();
-
-		// Récupérer les types sélectionnés par l'utilisateur
-		const types = await TypePokeflon.find({ _id: { $in: pokeflons.types } });
-
-		// Vérification si tous les types existent dans la base de données
-		if (types.length !== pokeflons.types.length) {
-			return res.status(400).json({
-				success: false,
-				message: "One or more selected types do not exist.",
-			});
-		}
-
-		// Créer les relations dans la table associative `TypePokeflon`
-		const typeRelations = pokeflons.types.map((typeId) => {
-			return new TypePokeflon({
-				id_type: typeId,
-				id_pokeflon: newPokeflon._id,
-			});
-		});
-
-		// Sauvegarder les relations
-		await TypePokeflon.insertMany(typeRelations);
+		const savedPokeflon = await newPokeflon.save();
 
 		res.status(201).json({
 			success: true,
-			message: `Pokeflon created successfully: ${newPokeflon.name}`,
-			data: newPokeflon,
+			message: `Pokeflon created successfully: ${savedPokeflon.name}`,
+			data: savedPokeflon,
 		});
 	} catch (error) {
 		console.error("Error in Create Pokeflon:", error.message);
@@ -170,13 +160,11 @@ export const putPokeflon = async (req, res) => {
 				.json({ success: false, message: "Pokeflon not found" });
 		}
 
-		res
-			.status(200)
-			.json({
-				success: true,
-				message: "Pokeflon successfully updated.",
-				data: updatedPokeflon,
-			});
+		res.status(200).json({
+			success: true,
+			message: "Pokeflon successfully updated.",
+			data: updatedPokeflon,
+		});
 	} catch (error) {
 		console.error("Error in updating Pokeflon:", error.message);
 		return res.status(500).json({ success: false, message: "Server Error" });

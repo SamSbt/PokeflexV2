@@ -5,7 +5,7 @@ import "./app-header.scss";
 const AppHeader = () => {
 	return (
 		<>
-			<header className="mt-4 mb-5">
+			<header className="mt-4 mb-3">
 				<Row className="header mx-auto">
 					<Row className="justify-content-center px-5">
 						<Col

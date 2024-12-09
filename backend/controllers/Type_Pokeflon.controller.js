@@ -1,5 +1,5 @@
 import Pokeflon from "../models/Pokeflon.model";
-import TypePokeflon from "../models/Type_Pokeflon.model";
+
 
 const getPokeflonsWithTypes = async (req, res) => {
 	try {

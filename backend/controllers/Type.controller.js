@@ -3,7 +3,7 @@ import Type from "../models/Type.model.js";
 
 export const getTypes = async (req, res) => {
 	try {
-		const types = await Type.find({}); // empty {} here : fetch ALL types
+		const types = await Type.find({ is_deleted: false }); // si empty {} : fetch ALL types
 		res.status(200).json({ success: true, data: types });
 	} catch (error) {
 		console.log("Error in fetching types:", error.message);
@@ -37,26 +37,26 @@ export const getOneType = async (req, res) => {
 	}
 };
 
-export const postType = async (req, res) => {
-	const types = req.body; // données envoyées par l'utilisateur
+// export const postType = async (req, res) => {
+// 	const types = req.body; // données envoyées par l'utilisateur
 
-	console.log("Received type data:", types);
-	// création new type
-	const newType = new Type(types);
+// 	console.log("Received type data:", types);
+// 	// création new type
+// 	const newType = new Type(types);
 
-	try {
-		console.log("Saving new type to database...");
-		await newType.save();
-		res.status(201).json({
-			success: true,
-			message: `Type created successfully: ${newType.type_name}`,
-			data: newType,
-		});
-	} catch (error) {
-		console.error("Error in Create type:", error.message);
-		return res.status(500).json({ success: false, message: "Server Error" });
-	}
-};
+// 	try {
+// 		console.log("Saving new type to database...");
+// 		await newType.save();
+// 		res.status(201).json({
+// 			success: true,
+// 			message: `Type created successfully: ${newType.type_name}`,
+// 			data: newType,
+// 		});
+// 	} catch (error) {
+// 		console.error("Error in Create type:", error.message);
+// 		return res.status(500).json({ success: false, message: "Server Error" });
+// 	}
+// };
 
 export const putType = async (req, res) => {
 	const { id } = req.params;

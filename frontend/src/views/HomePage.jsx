@@ -20,6 +20,8 @@ const HomePage = () => {
 		return <div>Error loading Pokéflons: {error}</div>;
 	}
 
+// TODO : affichage des types sur la carte de base ?
+
 	return (
 		<>
 			<CustomFilterButton />
@@ -41,10 +43,10 @@ const HomePage = () => {
 								name={pokeflon.name}
 								sound={pokeflon.sound}
 								img_src={pokeflon.img_src}
-								types={
-									pokeflon.types && pokeflon.types.length > 0
-										? pokeflon.types.join(", ")
-										: "undefined, or null"
+								types={pokeflon.types
+									// pokeflon.types && pokeflon.types.length > 0
+									// 	? pokeflon.types.join(", ")
+									// 	: "undefined, or null"
 								}
 							/>
 						</Col>
