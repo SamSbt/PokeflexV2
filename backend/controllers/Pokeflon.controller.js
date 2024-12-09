@@ -1,7 +1,6 @@
 import mongoose from "mongoose";
 import Pokeflon from "../models/Pokeflon.model.js";
 
-
 export const getPokeflons = async (req, res) => {
 	try {
 		const pokeflons = await Pokeflon.find({}); // empty {} here : fetch ALL pokeflons
@@ -57,10 +56,11 @@ export const postPokeflon = async (req, res) => {
 		!pokeflons.height ||
 		!pokeflons.weight ||
 		!pokeflons.summary ||
-		!pokeflons.img_src ||
-		!pokeflons.types ||
-		pokeflons.types.length === 0
+		// !pokeflons.img_src ||
+		!pokeflons.type1 ||
+		!pokeflons.type2
 	) {
+		console.log("ça passe ??");
 		return res.status(400).json({
 			success: false,
 			message: "Please provide all required fields, including types.",
@@ -72,13 +72,15 @@ export const postPokeflon = async (req, res) => {
 	//pokeflons.height = parseFloat(pokeflons.height).toFixed(2); // Limite à 2 décimales et reconvertit en nombre
 	//pokeflons.weight = parseFloat(pokeflons.weight).toFixed(2);
 	// validation URL image
-	// TODO : véérif si URL + img perso de l'ordi à insérer
+	// TODO : vérif si URL + img perso de l'ordi à insérer
 	// const urlRegex = /^(https?:\/\/)?([\w\d-]+)\.([a-z]{2,})/i;
 	// if (pokeflons.img_src && !urlRegex.test(pokeflons.img_src)) {
 	// 	return res
 	// 		.status(400)
 	// 		.json({ success: false, message: "Image URL is not valid." });
 	// }
+
+	//TODO: empêcher d'aller en dessous de 0 pr poids etc ou lettres interdites
 
 	// TODO : validation des références aux utilisateurs (created_by et appuser)
 	// const createdByExists = mongoose.Types.ObjectId.isValid(pokeflons.created_by);
@@ -89,13 +91,15 @@ export const postPokeflon = async (req, res) => {
 	// 			.json({ success: false, message: "Invalid user references." });
 	// 	}
 
-
-
 	// Si les types sont envoyés sous forme d'ID, pas besoin de les récupérer dans la base de données
 	// Assurez-vous que 'types' contient un tableau d'ObjectId
-	const types = pokeflons.types.map((typeId) =>
-		mongoose.Types.ObjectId(typeId)
-	);
+	// const types = pokeflons.types.map((typeId) =>
+	// 	mongoose.Types.ObjectId(typeId)
+	// );
+
+	const types = [pokeflons.type1, pokeflons.type2];
+
+	console.log(types);
 
 	// Création du Pokéflon avec les types directement
 	const newPokeflon = new Pokeflon({
@@ -104,7 +108,7 @@ export const postPokeflon = async (req, res) => {
 		height: pokeflons.height,
 		weight: pokeflons.weight,
 		summary: pokeflons.summary,
-		img_src: pokeflons.img_src,
+		// img_src: pokeflons.img_src,
 		types: types, // Ajout des types directement ici
 	});
 

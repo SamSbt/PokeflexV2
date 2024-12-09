@@ -3,6 +3,7 @@ import { useEffect } from "react";
 
 import { Form, Row, Col } from "react-bootstrap";
 import CustomButton from "../components/custom-button/CustomButton";
+import FileUpload from "../components/fileUpload/FileUpload";
 
 const CreatePage = () => {
 	const { formData, setFormData, resetForm, types } = useFormStore();
@@ -20,14 +21,10 @@ const CreatePage = () => {
 	const handleSubmit = async (e) => {
 		e.preventDefault();
 
-		// Validation des types avant soumission
-		if (formData.type1 === formData.type2) {
-			alert("Les deux types ne peuvent pas être les mêmes !");
-			return; // Arrêter la soumission si les types sont identiques
-		}
+		console.log("Données envoyées : ", formData);
 
 		try {
-			const response = await fetch("http://localhost:5000/api/type", {
+			const response = await fetch("http://localhost:5000/api/pokeflon", {
 				method: "POST",
 				headers: {
 					"Content-Type": "application/json",
@@ -51,22 +48,22 @@ const CreatePage = () => {
 			<section>
 				<div className="d-flex justify-content-center">
 					<Row className="rounded-2 bg-dark my-3 p-2 ps-5 size-row-create">
-						<Form method="" onSubmit={handleSubmit} noValidate>
+						<Form method="POST" onSubmit={handleSubmit} noValidate>
 							<Row>
 								<Col xs={12} md={5}>
 									<Form.Group
-										// controlId="fileUpload"
+										controlId="fileUpload"
 										className="mt-1 input-width"
 									>
 										<Form.Label>Importer une photo :</Form.Label>
-										{/* <FileUpload /> */}
+										<FileUpload />
 									</Form.Group>
 								</Col>
 
 								<Col xs={12} md={7}>
 									<Row>
 										<Col xs={12} md={6}>
-											<Form.Group className="mt-1">
+											<Form.Group className="mt-3">
 												<Form.Label>Nom :</Form.Label>
 												<Form.Control
 													type="text"
@@ -80,7 +77,7 @@ const CreatePage = () => {
 											</Form.Group>
 										</Col>
 										<Col xs={12} md={6}>
-											<Form.Group className="mt-1">
+											<Form.Group className="mt-3">
 												<Form.Label>Cri :</Form.Label>
 												<Form.Control
 													type="text"
@@ -168,13 +165,14 @@ const CreatePage = () => {
 														onChange={(e) =>
 															setFormData("type2", e.target.value)
 														}
-														disabled={formData.type1 === formData.type2} // Désactivation du type2 si type1 est le même
+														disabled={
+															!formData.type1 ||
+															formData.type1 === formData.type2
+														} // disable type2 si type1 identique
 													>
 														<option value="">Sélectionnez le type</option>
 														{types
-															.filter(
-																(type) => type.type_name !== formData.type1
-															) // Exclut le type1 de la liste de type2
+															.filter((type) => type._id !== formData.type1) // exclure type1 de la liste
 															.map((type) => (
 																<option key={type._id} value={type._id}>
 																	{type.type_name}
@@ -193,8 +191,8 @@ const CreatePage = () => {
 												<Form.Control
 													as="textarea"
 													rows={3}
-													name="description"
-													value={formData.description}
+													name="summary"
+													value={formData.summary}
 													onChange={handleChange}
 													placeholder="Entrez la description du Pokéflon"
 													className="textarea-width"

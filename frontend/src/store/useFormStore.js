@@ -8,7 +8,7 @@ const useFormStore = create((set) => ({
 		weight: "",
 		type1: "",
 		type2: "",
-		description: "",
+		summary: "",
 	},
 	types: [], // stockage des types récupérés
 	setFormData: (key, value) =>
@@ -41,7 +41,7 @@ const useFormStore = create((set) => ({
 				weight: "",
 				type1: "",
 				type2: "",
-				description: "",
+				summary: "",
 			},
 		}),
 }));

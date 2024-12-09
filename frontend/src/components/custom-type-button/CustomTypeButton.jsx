@@ -5,6 +5,8 @@ import { useState } from "react";
 
 import "./custom-type-button.scss";
 
+// TODO: bordure qui a disparu au clic ??
+
 const pokemonTypes = [
 	{ Id_types: 1, name: "Combat" },
 	{ Id_types: 2, name: "Dragon" },

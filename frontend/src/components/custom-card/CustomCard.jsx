@@ -29,12 +29,12 @@ function CustomCard({ to, name, img_src, type }) {
 	);
 }
 
-CustomCard.propTypes = {
-	to: PropTypes.string.isRequired,
-	name: PropTypes.string.isRequired,
-	//sound: PropTypes.string.isRequired,
-	img_src: PropTypes.string.isRequired,
-	types: PropTypes.string.isRequired,
-};
+// CustomCard.propTypes = {
+// 	to: PropTypes.string.isRequired,
+// 	name: PropTypes.string.isRequired,
+// 	//sound: PropTypes.string.isRequired,
+// 	// img_src: PropTypes.string.isRequired,
+// 	types: PropTypes.string.isRequired,
+// };
 
 export default CustomCard;

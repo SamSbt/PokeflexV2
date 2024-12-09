@@ -1,5 +1,4 @@
 import React from "react";
-import CustomFilterButton from "../components/custom-filter-button/CustomFilterButton";
 import { Container } from "react-bootstrap";
 import CustomTypeButton from "../components/custom-type-button/CustomTypeButton";
 

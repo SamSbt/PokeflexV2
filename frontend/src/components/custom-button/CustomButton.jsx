@@ -8,12 +8,16 @@ const CustomButton = ({
 	type = "button",
 	className = "",
 	onClick,
+	variant, 
+	size,
 	disabled = false,
 }) => {
 	return (
 		<>
 			<Button
 				className={`btn ${className} border border-light`}
+				variant={variant}
+				size={size}
 				type={type}
 				onClick={onClick}
 				disabled={disabled}

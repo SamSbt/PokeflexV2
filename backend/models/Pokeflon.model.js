@@ -30,7 +30,6 @@ const pokeflonSchema = new mongoose.Schema(
 		img_src: {
 			type: String,
 			required: true,
-			maxlength: [255, "Image source cannot exceed 255 characters"],
 		},
 		is_deleted: {
 			type: Boolean,
@@ -48,13 +47,20 @@ const pokeflonSchema = new mongoose.Schema(
 			type: mongoose.Schema.Types.ObjectId,
 			ref: "AppUser", // l'utilisateur qui a créé le Pokéflon
 		},
-		type: [
+		types: [
 			{
 				type: mongoose.Schema.Types.ObjectId,
 				ref: "Type",
 				required: true,
-			},
+			}, 
 		],
+		// type: [
+		// 	{
+		// 		type: mongoose.Schema.Types.ObjectId,
+		// 		ref: "Type",
+		// 		//
+		// 	},
+		// ],
 		// références aux notifications
 		// notifications: [
 		// 	{
