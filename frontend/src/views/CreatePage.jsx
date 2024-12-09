@@ -1,5 +1,5 @@
 import useFormStore, { fetchTypes } from "../store/useFormStore";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 import { Form, Row, Col } from "react-bootstrap";
 import CustomButton from "../components/custom-button/CustomButton";
@@ -7,6 +7,7 @@ import FileUpload from "../components/fileUpload/FileUpload";
 
 const CreatePage = () => {
 	const { formData, setFormData, resetForm, types } = useFormStore();
+	const [file, setFile] = useState(null); // ajout pour stocker l'image
 
 	useEffect(() => {
 		// Récupérer les types au montage du composant
@@ -23,18 +24,24 @@ const CreatePage = () => {
 
 		console.log("Données envoyées : ", formData);
 
+		// Utiliser FormData pour inclure l'image et les autres données
+		const formDataToSend = new FormData();
+		formDataToSend.append("file", file); // Ajoute l'image
+		for (const key in formData) {
+			formDataToSend.append(key, formData[key]); // Ajoute les autres champs
+		}
+
+
 		try {
 			const response = await fetch("http://localhost:5000/api/pokeflon", {
 				method: "POST",
-				headers: {
-					"Content-Type": "application/json",
-				},
-				body: JSON.stringify(formData),
+				body: formDataToSend,
 			});
 
 			if (response.ok) {
 				console.log("Pokéflon créé avec succès !");
 				resetForm();
+				setFile(null); // Réinitialise l'image
 			} else {
 				console.error("Erreur lors de la création :", response.statusText);
 			}
@@ -56,7 +63,9 @@ const CreatePage = () => {
 										className="mt-1 input-width"
 									>
 										<Form.Label>Importer une photo :</Form.Label>
-										<FileUpload />
+										<FileUpload
+											onFileSelected={(selectedFile) => setFile(selectedFile)} // Enregistre l'image dans l'état
+										/>
 									</Form.Group>
 								</Col>
 

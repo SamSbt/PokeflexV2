@@ -45,74 +45,59 @@ export const getOnePokeflon = async (req, res) => {
 };
 
 export const postPokeflon = async (req, res) => {
-	const pokeflons = req.body; // Données envoyées par l'utilisateur
-
-	console.log("Received Pokeflon data:", pokeflons);
-
-	// Vérification des champs requis
-	if (
-		!pokeflons.name ||
-		!pokeflons.sound ||
-		!pokeflons.height ||
-		!pokeflons.weight ||
-		!pokeflons.summary ||
-		// !pokeflons.img_src ||
-		!pokeflons.type1 ||
-		!pokeflons.type2
-	) {
-		console.log("ça passe ??");
-		return res.status(400).json({
-			success: false,
-			message: "Please provide all required fields, including types.",
-		});
-	}
-
-	// TODO : validations à garder ici ET en front ?
-	// conversion 'height' et 'weight' en nbs avec 2 décimales
-	//pokeflons.height = parseFloat(pokeflons.height).toFixed(2); // Limite à 2 décimales et reconvertit en nombre
-	//pokeflons.weight = parseFloat(pokeflons.weight).toFixed(2);
-	// validation URL image
-	// TODO : vérif si URL + img perso de l'ordi à insérer
-	// const urlRegex = /^(https?:\/\/)?([\w\d-]+)\.([a-z]{2,})/i;
-	// if (pokeflons.img_src && !urlRegex.test(pokeflons.img_src)) {
-	// 	return res
-	// 		.status(400)
-	// 		.json({ success: false, message: "Image URL is not valid." });
-	// }
-
-	//TODO: empêcher d'aller en dessous de 0 pr poids etc ou lettres interdites
-
-	// TODO : validation des références aux utilisateurs (created_by et appuser)
-	// const createdByExists = mongoose.Types.ObjectId.isValid(pokeflons.created_by);
-	// const appUserExists = mongoose.Types.ObjectId.isValid(pokeflons.appuser);
-	// 	if (!createdByExists || !appUserExists) {
-	// 		return res
-	// 			.status(400)
-	// 			.json({ success: false, message: "Invalid user references." });
-	// 	}
-
-	// Si les types sont envoyés sous forme d'ID, pas besoin de les récupérer dans la base de données
-	// Assurez-vous que 'types' contient un tableau d'ObjectId
-	// const types = pokeflons.types.map((typeId) =>
-	// 	mongoose.Types.ObjectId(typeId)
-	// );
-
-	const types = [pokeflons.type1, pokeflons.type2];
-
-	console.log(types);
-
-	// Création du Pokéflon avec les types directement
-	const newPokeflon = new Pokeflon({
-		name: pokeflons.name,
-		sound: pokeflons.sound,
-		height: pokeflons.height,
-		weight: pokeflons.weight,
-		summary: pokeflons.summary,
-		// img_src: pokeflons.img_src,
-		types: types, // Ajout des types directement ici
-	});
-
 	try {
+		const { pokeflons } = req.body; // pokeflons est l'objet contenant les données du formulaire
+		const file = req.file; // Le fichier téléchargé est dans req.file
+
+		console.log("Received Pokeflon data:", req.body.pokeflons);
+		//console.log("Received file:", req.file);
+
+		// Vérification des champs requis
+		if (
+			!pokeflons.name ||
+			!pokeflons.sound ||
+			!pokeflons.height ||
+			!pokeflons.weight ||
+			!pokeflons.summary ||
+			!pokeflons.type1 ||
+			!pokeflons.type2
+		) {
+			return res.status(400).json({
+				success: false,
+				message: "Please provide all required fields, including types.",
+			});
+		}
+
+		// TODO : validations à garder ici ET en front ?
+		// conversion 'height' et 'weight' en nbs avec 2 décimales
+		//pokeflons.height = parseFloat(pokeflons.height).toFixed(2); // Limite à 2 décimales et reconvertit en nombre
+		//pokeflons.weight = parseFloat(pokeflons.weight).toFixed(2);
+		//TODO: empêcher d'aller en dessous de 0 pr poids etc ou lettres interdites
+
+		// TODO : validation des références aux utilisateurs (created_by et appuser)
+		// const createdByExists = mongoose.Types.ObjectId.isValid(pokeflons.created_by);
+		// const appUserExists = mongoose.Types.ObjectId.isValid(pokeflons.appuser);
+		// 	if (!createdByExists || !appUserExists) {
+		// 		return res
+		// 			.status(400)
+		// 			.json({ success: false, message: "Invalid user references." });
+		// 	}
+
+		// récupération des types
+		const types = [pokeflons.type1, pokeflons.type2];
+		console.log(types);
+
+		// Création du Pokéflon avec les types directement
+		const newPokeflon = new Pokeflon({
+			name: pokeflons.name,
+			sound: pokeflons.sound,
+			height: pokeflons.height,
+			weight: pokeflons.weight,
+			summary: pokeflons.summary,
+			//img_src: file ? `/uploads/${file.filename}` : null, // Chemin du fichier
+			types: types, // Ajout des types directement ici
+		});
+
 		// Sauvegarde du Pokéflon avec les types associés
 		console.log("Saving new Pokeflon to database...");
 		const savedPokeflon = await newPokeflon.save();

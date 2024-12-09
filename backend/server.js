@@ -39,6 +39,8 @@ app.use("/api/appuser", appuserRoutes);
 app.use("/api", userRoutes);
 app.use("/api/type", typeRoutes);
 app.use("/api/contact", contactRoutes);
+app.use("/uploads", express.static("uploads"));
+
 
 app.listen(PORT, () => {
 	connectDB();
@@ -69,4 +71,4 @@ app.listen(PORT, () => {
 // 10. type controller & routes ok + tables associatives
 // 11. installation npm install mongoose-unique-validator@latest
 // need downgrader version mongoose to v7 (for now 8.8.3): npm install mongoose@7.x.x
-// 12. 
+// 12. npm install multer pr gérer les téléchargements de fichiers + middleware
