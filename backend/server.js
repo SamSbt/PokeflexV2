@@ -9,7 +9,6 @@ import cors from "cors";
 import dotenv from "dotenv";
 import path from "path";
 import { connectDB } from "./config/db.js";
-import multerRoutes from "./routes/multer.routes.js";
 
 import pokeflonRoutes from "./routes/pokeflon.routes.js";
 import roleRoutes from "./routes/role.routes.js";
