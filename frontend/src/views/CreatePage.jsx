@@ -1,5 +1,5 @@
 import useFormStore, { fetchTypes } from "../store/useFormStore";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 import { Form, Row, Col } from "react-bootstrap";
 import CustomButton from "../components/custom-button/CustomButton";
@@ -7,34 +7,51 @@ import FileUpload from "../components/fileUpload/FileUpload";
 
 const CreatePage = () => {
 	const { formData, setFormData, resetForm, types } = useFormStore();
+	const [file, setFile] = useState(null); // ajout pour stocker l'image
 
 	useEffect(() => {
 		// Récupérer les types au montage du composant
 		fetchTypes();
 	}, []);
 
-	const handleChange = (e) => {
-		const { name, value } = e.target;
+const handleChange = (e) => {
+	const { name, value } = e.target;
+	setFormData(name, value);
+};
+
+const handleNumberChange = (e) => {
+	const { name, value } = e.target;
+	// Vérifier si la valeur est un nombre valide
+	if (/^\d*\.?\d*$/.test(value)) {
 		setFormData(name, value);
-	};
+	}
+};
 
 	const handleSubmit = async (e) => {
 		e.preventDefault();
 
-		console.log("Données envoyées : ", formData);
+		//console.log("Données envoyées : ", formData);
+
+		// Utiliser FormData pour inclure l'image et les autres données
+		const formDataToSend = new FormData();
+		formDataToSend.append("file", file); // Ajoute l'image
+		formDataToSend.append("pokeflons", JSON.stringify(formData));
+		//console.log("file? :", file);
+
+		for (const key in formData) {
+			formDataToSend.append(key, formData[key]); // Ajoute les autres champs
+		}
 
 		try {
 			const response = await fetch("http://localhost:5000/api/pokeflon", {
 				method: "POST",
-				headers: {
-					"Content-Type": "application/json",
-				},
-				body: JSON.stringify(formData),
+				body: formDataToSend,
 			});
 
 			if (response.ok) {
 				console.log("Pokéflon créé avec succès !");
 				resetForm();
+				setFile(null); // Réinitialise l'image
 			} else {
 				console.error("Erreur lors de la création :", response.statusText);
 			}
@@ -48,7 +65,12 @@ const CreatePage = () => {
 			<section>
 				<div className="d-flex justify-content-center">
 					<Row className="rounded-2 bg-dark my-3 p-2 ps-5 size-row-create">
-						<Form method="POST" onSubmit={handleSubmit} noValidate>
+						<Form
+							method="POST"
+							onSubmit={handleSubmit}
+							noValidate
+							encType="multipart/form-data"
+						>
 							<Row>
 								<Col xs={12} md={5}>
 									<Form.Group
@@ -56,7 +78,9 @@ const CreatePage = () => {
 										className="mt-1 input-width"
 									>
 										<Form.Label>Importer une photo :</Form.Label>
-										<FileUpload />
+										<FileUpload
+											onFileSelected={(selectedFile) => setFile(selectedFile)} // Enregistre l'image dans l'état
+										/>
 									</Form.Group>
 								</Col>
 
@@ -96,10 +120,10 @@ const CreatePage = () => {
 											<Form.Group className="mt-3">
 												<Form.Label>Taille (en m):</Form.Label>
 												<Form.Control
-													type="number"
+													type="text"
 													name="height"
 													value={formData.height}
-													onChange={handleChange}
+													onChange={handleNumberChange}
 													placeholder="Taille du Pokéflon (ex. : 10.2)"
 													className="input-mid-width"
 												/>
@@ -109,10 +133,10 @@ const CreatePage = () => {
 											<Form.Group className="mt-3">
 												<Form.Label>Poids (en kg):</Form.Label>
 												<Form.Control
-													type="number"
+													type="text"
 													name="weight"
 													value={formData.weight}
-													onChange={handleChange}
+													onChange={handleNumberChange}
 													placeholder="Poids du Pokéflon (ex. : 51.6)"
 													className="input-mid-width"
 												/>

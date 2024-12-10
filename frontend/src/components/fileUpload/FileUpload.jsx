@@ -7,7 +7,7 @@ import "./file-upload.scss";
 
 const MAX_MB_SIZE = 1;
 
-const FileUpload = ({ controlId }) => {
+const FileUpload = ({ controlId, onFileSelected }) => {
 	const [file, setFile] = useState(null);
 	const [previewSrc, setPreviewSrc] = useState("");
 	const [errorMessage, setErrorMessage] = useState("");
@@ -46,13 +46,13 @@ const FileUpload = ({ controlId }) => {
 			setPreviewSrc(reader.result);
 		};
 		reader.readAsDataURL(selectedFile);
+
+		// call fonction pour envoyer le fichier
+		if (onFileSelected) {
+			onFileSelected(selectedFile);
+		}
 	};
 
-	const handleRemoveFile = () => {
-		setFile(null);
-		setPreviewSrc("");
-		setErrorMessage("");
-	};
 
 	const handleButtonClick = () => {
 		fileInputRef.current.click(); // Simule le clic sur l'input
@@ -75,7 +75,11 @@ const FileUpload = ({ controlId }) => {
 								text="X"
 								variant="danger"
 								size="sm"
-								onClick={handleRemoveFile}
+								onClick={() => {
+									setFile(null);
+									setPreviewSrc("");
+									setErrorMessage("");
+									onFileSelected(null);}}
 								className="mt-2"
 							>
 								&times;
@@ -88,11 +92,16 @@ const FileUpload = ({ controlId }) => {
 					)}
 					<Row className="d-flex justify-content-start smaller-text">
 						<Col xs={12}>
-						<p className="mt-3 mb-1">
-							- Formats d'image acceptés: JPG, JPEG, PNG et GIF.
-						</p></Col>
-						<Col xs={12}><p className="my-2">- Taille maximale du fichier: 1 MB.</p></Col>
-						<Col xs={12}><p>- Si l'image est trop grande, elle sera centrée.</p></Col>
+							<p className="mt-3 mb-1">
+								- Formats d'image acceptés: JPG, JPEG, PNG et GIF.
+							</p>
+						</Col>
+						<Col xs={12}>
+							<p className="my-2">- Taille maximale du fichier: 1 MB.</p>
+						</Col>
+						<Col xs={12}>
+							<p>- Si l'image est trop grande, elle sera centrée.</p>
+						</Col>
 					</Row>
 				</label>
 				<input

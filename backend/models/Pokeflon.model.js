@@ -29,7 +29,7 @@ const pokeflonSchema = new mongoose.Schema(
 		},
 		img_src: {
 			type: String,
-			required: true,
+			//required: true,
 		},
 		is_deleted: {
 			type: Boolean,
