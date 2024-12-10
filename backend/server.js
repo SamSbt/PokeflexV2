@@ -47,7 +47,6 @@ app.use("/api/appuser", appuserRoutes);
 app.use("/api", userRoutes);
 app.use("/api/type", typeRoutes);
 app.use("/api/contact", contactRoutes);
-app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 // Utilisation des routes pour l'upload
 app.use("/api", multerRoutes);

@@ -51,8 +51,13 @@ const pokeflonSchema = new mongoose.Schema(
 			{
 				type: mongoose.Schema.Types.ObjectId,
 				ref: "Type",
-				required: true,
-			}, 
+				required: true, // type1 est obligatoire
+			},
+			{
+				type: mongoose.Schema.Types.ObjectId,
+				ref: "Type",
+				required: false, // type2 est maintenant optionnel
+			},
 		],
 		// type: [
 		// 	{

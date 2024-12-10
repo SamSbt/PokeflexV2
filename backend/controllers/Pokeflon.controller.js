@@ -71,36 +71,35 @@ export const postPokeflon = async (req, res) => {
 			!pokeflons.height ||
 			!pokeflons.weight ||
 			!pokeflons.summary ||
-			!pokeflons.type1 ||
-			!pokeflons.type2
+			!pokeflons.type1
 		) {
 			return res.status(400).json({
 				success: false,
-				message: "Please provide all required fields, including types.",
+				message: "Please provide all required fields.",
 			});
 		}
 
 		// TODO : validations à garder ici ET en front ?
 		// empêcher d'aller en dessous de 0 ou lettres interdites
-if (
-	!/^\d+(\.\d+)?$/.test(pokeflons.height) ||
-	parseFloat(pokeflons.height) <= 0
-) {
-	return res.status(400).json({
-		success: false,
-		message: "Invalid height value. Only numbers are allowed.",
-	});
-}
+		if (
+			!/^\d+(\.\d+)?$/.test(pokeflons.height) ||
+			parseFloat(pokeflons.height) <= 0
+		) {
+			return res.status(400).json({
+				success: false,
+				message: "Invalid height value. Only numbers are allowed.",
+			});
+		}
 
-if (
-	!/^\d+(\.\d+)?$/.test(pokeflons.weight) ||
-	parseFloat(pokeflons.weight) <= 0
-) {
-	return res.status(400).json({
-		success: false,
-		message: "Invalid weight value. Only numbers are allowed.",
-	});
-}
+		if (
+			!/^\d+(\.\d+)?$/.test(pokeflons.weight) ||
+			parseFloat(pokeflons.weight) <= 0
+		) {
+			return res.status(400).json({
+				success: false,
+				message: "Invalid weight value. Only numbers are allowed.",
+			});
+		}
 
 		// TODO : validation des références aux utilisateurs (created_by et appuser)
 		// const createdByExists = mongoose.Types.ObjectId.isValid(pokeflons.created_by);
@@ -112,7 +111,14 @@ if (
 		// 	}
 
 		// récupération des types
-		const types = [pokeflons.type1, pokeflons.type2];
+		//const types = [pokeflons.type1, pokeflons.type2];
+		const types = [pokeflons.type1];
+
+		if (pokeflons.type2) {
+			types.push(pokeflons.type2); // Ajoute type2 seulement s'il est fourni
+		}
+
+		pokeflons.types = types; // Assigne le tableau de types à l'objet Pokéflon
 
 		// création du Pokéflon avec les types directement
 		const newPokeflon = new Pokeflon({
