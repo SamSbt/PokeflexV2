@@ -20,8 +20,8 @@ const HomePage = () => {
 		return <div>Error loading Pokéflons: {error}</div>;
 	}
 
-// TODO : affichage des types sur la carte de base ?
-// tODO: à partir de 1200, pb avec gap entre les cards ?
+	// TODO : affichage des types sur la carte de base ?
+	// TODO: à partir de 1200 et jusqu à 1400, pb avec gap entre les cards ?
 
 	return (
 		<>

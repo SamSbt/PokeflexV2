@@ -3,6 +3,10 @@ import { Card } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import "./custom-card.scss";
 
+
+// TODO: voir comment augmenter la taille de la card dans PokeflonPage
+
+
 function CustomCard({
 	to,
 	name,
