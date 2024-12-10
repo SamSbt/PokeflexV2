@@ -3,7 +3,12 @@ import Pokeflon from "../models/Pokeflon.model.js";
 
 export const getPokeflons = async (req, res) => {
 	try {
-		const pokeflons = await Pokeflon.find({}); // empty {} here : fetch ALL pokeflons
+		const pokeflons = await Pokeflon.find({}) // empty {} here : fetch ALL pokeflons
+		.populate({
+				path: "types", // Charge les types associés à ce Pokéflon
+				select: "type_name", // On sélectionne uniquement le nom des types pour l'affichage
+			})
+			.exec();	
 		res.status(200).json({ success: true, data: pokeflons });
 	} catch (error) {
 		console.log("Error in fetching Pokeflons:", error.message);

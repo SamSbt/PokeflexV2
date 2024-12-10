@@ -23,4 +23,21 @@ export const usePokeflonStore = create((set) => ({
 			set({ error: error.message, isLoading: false });
 		}
 	},
+	fetchPokeflon: async (id) => {
+		set({ isLoading: true });
+		try {
+			const response = await fetch(`http://localhost:5000/api/pokeflon/${id}`);
+			const data = await response.json();
+			if (data.success) {
+				set({ isLoading: false });
+				return data.data; // Renvoie le Pokéflon spécifique
+			} else {
+				set({ error: "Failed to fetch Pokeflon", isLoading: false });
+				return null;
+			}
+		} catch (error) {
+			set({ error: error.message, isLoading: false });
+			return null;
+		}
+	},
 }));

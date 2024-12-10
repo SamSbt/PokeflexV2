@@ -21,12 +21,13 @@ const HomePage = () => {
 	}
 
 // TODO : affichage des types sur la carte de base ?
+// tODO: à partir de 1200, pb avec gap entre les cards ?
 
 	return (
 		<>
 			<CustomFilterButton />
 			<Container>
-				<Row className="mt-5 justify-content-center">
+				<Row className="mt-5 justify-content-center gap-3">
 					{pokeflons.map((pokeflon) => (
 						<Col
 							xs={12}
@@ -39,15 +40,11 @@ const HomePage = () => {
 							className="d-flex justify-content-center"
 						>
 							<CustomCard
-								to={`/${pokeflon._id}`}
+								to={`/pokeflon/${pokeflon._id}`}
 								name={pokeflon.name}
-								sound={pokeflon.sound}
+								createdBy={pokeflon.createdBy}
 								img_src={pokeflon.img_src}
-								types={pokeflon.types
-									// pokeflon.types && pokeflon.types.length > 0
-									// 	? pokeflon.types.join(", ")
-									// 	: "undefined, or null"
-								}
+								types={pokeflon.types.map((type) => type.type_name).join(", ")}
 							/>
 						</Col>
 					))}
