@@ -17,6 +17,8 @@ import appuserRoutes from "./routes/appuser.routes.js";
 import userRoutes from "./routes/userRoutes.js";
 import typeRoutes from "./routes/type.routes.js";
 import contactRoutes from "./routes/contact.routes.js";
+import { reqLogger } from "./middlewares/Logger.js";
+import { errormiddleware } from "./middlewares/errorMiddleware.js";
 
 dotenv.config();
 
@@ -35,9 +37,10 @@ app.use(
 	})
 );
 
+app.use(reqLogger);
+
 // Définir la route pour les fichiers statiques (uploads)
-const __dirname = path.dirname(new URL(import.meta.url).pathname);
-app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+app.use("/api/uploads", express.static(path.join(process.cwd(), "uploads")));
 
 // Définir les routes pour l'API
 app.use("/api/pokeflon", pokeflonRoutes);
@@ -47,8 +50,7 @@ app.use("/api", userRoutes);
 app.use("/api/type", typeRoutes);
 app.use("/api/contact", contactRoutes);
 
-// Utilisation des routes pour l'upload
-app.use("/api", multerRoutes);
+app.use(errormiddleware);
 
 app.listen(PORT, () => {
 	connectDB();

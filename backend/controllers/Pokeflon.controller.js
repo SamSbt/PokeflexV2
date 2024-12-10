@@ -127,7 +127,7 @@ export const postPokeflon = async (req, res) => {
 			height: parseFloat(pokeflons.height).toFixed(2), //nbs avec 2 décimales
 			weight: parseFloat(pokeflons.weight).toFixed(2),
 			summary: pokeflons.summary,
-			img_src: file ? `/uploads/${file.filename}` : null,
+			img_src: file ? `uploads/${file.filename}` : null,
 			types: types,
 		});
 

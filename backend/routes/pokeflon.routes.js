@@ -7,8 +7,9 @@ import {
 	postPokeflon,
 	putPokeflon,
 } from "../controllers/Pokeflon.controller.js";
+import { upload } from "../middlewares/multerMiddleware.js";
 
-const upload = multer({ dest: "uploads/" });
+// const upload = multer({ dest: "uploads/" });
 const router = express.Router();
 
 //app.get("/", (req, res) => {

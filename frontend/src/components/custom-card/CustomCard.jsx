@@ -14,7 +14,8 @@ function CustomCard({ to, name, img_src, type }) {
 				<div className="d-flex justify-content-center m-3">
 					<Card.Img
 						variant="top"
-						src={`/uploads/${img_src}`}
+						src={`http://localhost:5000/api/${img_src}`}
+						// src={`/uploads/${img_src}`}
 						alt={`Image du Pokéflon ${name}`}
 					/>
 				</div>
