@@ -51,7 +51,8 @@ const handleNumberChange = (e) => {
 			if (response.ok) {
 				console.log("Pokéflon créé avec succès !");
 				resetForm();
-				setFile(null); // Réinitialise l'image
+				setFile(null); // réinitialise l'image
+				setPreviewSrc(""); // et la preview
 			} else {
 				console.error("Erreur lors de la création :", response.statusText);
 			}
