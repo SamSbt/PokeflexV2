@@ -1,6 +1,7 @@
 import express from "express";
-import { upload } from "../middlewares/multer.js";
+import { upload } from "../middlewares/multerMiddleware.js";
 import Pokeflon from "../models/Pokeflon.model.js";
+
 
 const router = express.Router();
 
@@ -16,7 +17,7 @@ router.post("/upload", upload.single("image"), async (req, res) => {
 		// Stocker l'URL ou chemin du fichier dans la base de données
 		const pokeflon = new Pokeflon({
 			...req.body,
-			img_src: `/uploads/${file.filename}`,
+			img_src: `/upload/${file.filename}`,
 		});
 		await pokeflon.save();
 

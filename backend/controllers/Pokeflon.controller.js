@@ -94,7 +94,7 @@ export const postPokeflon = async (req, res) => {
 			height: pokeflons.height,
 			weight: pokeflons.weight,
 			summary: pokeflons.summary,
-			//img_src: file ? `/uploads/${file.filename}` : null, // Chemin du fichier
+			img_src: file ? `/uploads/${file.filename}` : null, // Chemin du fichier
 			types: types, // Ajout des types directement ici
 		});
 

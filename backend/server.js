@@ -16,6 +16,8 @@ import userRoutes from "./routes/userRoutes.js";
 import typeRoutes from "./routes/type.routes.js";
 import contactRoutes from "./routes/contact.routes.js";
 
+import multerRoutes from "./routes/multer.routes.js";
+
 dotenv.config();
 
 const app = express();
@@ -39,8 +41,8 @@ app.use("/api/appuser", appuserRoutes);
 app.use("/api", userRoutes);
 app.use("/api/type", typeRoutes);
 app.use("/api/contact", contactRoutes);
-app.use("/uploads", express.static("uploads"));
-
+app.use("/upload", express.static("upload"));
+app.use("/upload", multerRoutes);
 
 app.listen(PORT, () => {
 	connectDB();

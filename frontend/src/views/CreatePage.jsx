@@ -27,10 +27,11 @@ const CreatePage = () => {
 		// Utiliser FormData pour inclure l'image et les autres données
 		const formDataToSend = new FormData();
 		formDataToSend.append("file", file); // Ajoute l'image
+		console.log("file? :", file);
 		for (const key in formData) {
 			formDataToSend.append(key, formData[key]); // Ajoute les autres champs
+			console.log("key ?", key);
 		}
-
 
 		try {
 			const response = await fetch("http://localhost:5000/api/pokeflon", {
