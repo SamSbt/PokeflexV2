@@ -12,7 +12,11 @@ function CustomCard({ to, name, img_src, type }) {
 				className="text-decoration-none mb-4 cardStyle bg-dark text-light"
 			>
 				<div className="d-flex justify-content-center m-3">
-					<Card.Img variant="top" src={img_src} alt={`Image du Pokéflon ${name}`} />
+					<Card.Img
+						variant="top"
+						src={`/uploads/${img_src}`}
+						alt={`Image du Pokéflon ${name}`}
+					/>
 				</div>
 				<Card.Body>
 					<Card.Title>{name}</Card.Title>

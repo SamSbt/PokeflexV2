@@ -46,11 +46,23 @@ export const getOnePokeflon = async (req, res) => {
 
 export const postPokeflon = async (req, res) => {
 	try {
-		const { pokeflons } = req.body; // pokeflons est l'objet contenant les données du formulaire
+		const pokeflons = req.body; // pokeflons est l'objet contenant les données du formulaire
 		const file = req.file; // Le fichier téléchargé est dans req.file
+		console.log("req.body:", req.body);
+		console.log("req.file:", req.file);
 
-		console.log("Received Pokeflon data:", req.body.pokeflons);
-		//console.log("Received file:", req.file);
+		if (!req.body || !req.body.pokeflons) {
+			return res.status(400).json({
+				success: false,
+				message: "Missing Pokeflon data in request body.",
+			});
+		}
+
+		if (!req.file) {
+			return res
+				.status(400)
+				.json({ success: false, message: "No file uploaded." });
+		}
 
 		// Vérification des champs requis
 		if (
@@ -69,10 +81,26 @@ export const postPokeflon = async (req, res) => {
 		}
 
 		// TODO : validations à garder ici ET en front ?
-		// conversion 'height' et 'weight' en nbs avec 2 décimales
-		//pokeflons.height = parseFloat(pokeflons.height).toFixed(2); // Limite à 2 décimales et reconvertit en nombre
-		//pokeflons.weight = parseFloat(pokeflons.weight).toFixed(2);
-		//TODO: empêcher d'aller en dessous de 0 pr poids etc ou lettres interdites
+		// empêcher d'aller en dessous de 0 ou lettres interdites
+if (
+	!/^\d+(\.\d+)?$/.test(pokeflons.height) ||
+	parseFloat(pokeflons.height) <= 0
+) {
+	return res.status(400).json({
+		success: false,
+		message: "Invalid height value. Only numbers are allowed.",
+	});
+}
+
+if (
+	!/^\d+(\.\d+)?$/.test(pokeflons.weight) ||
+	parseFloat(pokeflons.weight) <= 0
+) {
+	return res.status(400).json({
+		success: false,
+		message: "Invalid weight value. Only numbers are allowed.",
+	});
+}
 
 		// TODO : validation des références aux utilisateurs (created_by et appuser)
 		// const createdByExists = mongoose.Types.ObjectId.isValid(pokeflons.created_by);
@@ -85,17 +113,16 @@ export const postPokeflon = async (req, res) => {
 
 		// récupération des types
 		const types = [pokeflons.type1, pokeflons.type2];
-		console.log(types);
 
-		// Création du Pokéflon avec les types directement
+		// création du Pokéflon avec les types directement
 		const newPokeflon = new Pokeflon({
 			name: pokeflons.name,
 			sound: pokeflons.sound,
-			height: pokeflons.height,
-			weight: pokeflons.weight,
+			height: parseFloat(pokeflons.height).toFixed(2), //nbs avec 2 décimales
+			weight: parseFloat(pokeflons.weight).toFixed(2),
 			summary: pokeflons.summary,
-			img_src: file ? `/uploads/${file.filename}` : null, // Chemin du fichier
-			types: types, // Ajout des types directement ici
+			img_src: file ? `/uploads/${file.filename}` : null,
+			types: types,
 		});
 
 		// Sauvegarde du Pokéflon avec les types associés
@@ -108,7 +135,7 @@ export const postPokeflon = async (req, res) => {
 			data: savedPokeflon,
 		});
 	} catch (error) {
-		console.error("Error in Create Pokeflon:", error.message);
+		console.error("Erreur lors de la création :", response.statusText);
 		return res.status(500).json({ success: false, message: "Server Error" });
 	}
 };

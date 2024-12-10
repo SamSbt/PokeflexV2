@@ -5,7 +5,7 @@ import Pokeflon from "../models/Pokeflon.model.js";
 
 const router = express.Router();
 
-router.post("/upload", upload.single("image"), async (req, res) => {
+router.post("/upload", upload.single("file"), async (req, res) => {
 	try {
 		const { file } = req;
 		if (!file) {
@@ -17,7 +17,7 @@ router.post("/upload", upload.single("image"), async (req, res) => {
 		// Stocker l'URL ou chemin du fichier dans la base de données
 		const pokeflon = new Pokeflon({
 			...req.body,
-			img_src: `/upload/${file.filename}`,
+			img_src: `/uploads/${file.filename}`,
 		});
 		await pokeflon.save();
 
