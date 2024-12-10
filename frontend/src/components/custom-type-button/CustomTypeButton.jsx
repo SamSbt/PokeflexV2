@@ -32,6 +32,7 @@ function CustomTypeButton() {
 	const [activeTypeId, setActiveTypeId] = useState(null);
 
 	const handleTagClick = (id) => {
+		//console.log("Clicked type ID:", id);
 		setActiveTypeId(id);
 	};
 
