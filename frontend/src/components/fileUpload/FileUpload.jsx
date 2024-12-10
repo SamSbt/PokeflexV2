@@ -7,6 +7,9 @@ import "./file-upload.scss";
 
 const MAX_MB_SIZE = 1;
 
+//TODO: gérer la preview ici ou dans createpage pour que ça s'enlève après submit
+// ou alors envoyer sur la page du pokeflon nouvellement créé...
+
 const FileUpload = ({ controlId, onFileSelected }) => {
 	const [file, setFile] = useState(null);
 	const [previewSrc, setPreviewSrc] = useState("");
@@ -53,7 +56,6 @@ const FileUpload = ({ controlId, onFileSelected }) => {
 		}
 	};
 
-
 	const handleButtonClick = () => {
 		fileInputRef.current.click(); // Simule le clic sur l'input
 	};
@@ -79,7 +81,8 @@ const FileUpload = ({ controlId, onFileSelected }) => {
 									setFile(null);
 									setPreviewSrc("");
 									setErrorMessage("");
-									onFileSelected(null);}}
+									onFileSelected(null);
+								}}
 								className="mt-2"
 							>
 								&times;

@@ -53,19 +53,7 @@ const pokeflonSchema = new mongoose.Schema(
 				ref: "Type",
 				required: true, // type1 est obligatoire
 			},
-			{
-				type: mongoose.Schema.Types.ObjectId,
-				ref: "Type",
-				required: false, // type2 est maintenant optionnel
-			},
 		],
-		// type: [
-		// 	{
-		// 		type: mongoose.Schema.Types.ObjectId,
-		// 		ref: "Type",
-		// 		//
-		// 	},
-		// ],
 		// références aux notifications
 		// notifications: [
 		// 	{

@@ -18,7 +18,6 @@ import userRoutes from "./routes/userRoutes.js";
 import typeRoutes from "./routes/type.routes.js";
 import contactRoutes from "./routes/contact.routes.js";
 
-
 dotenv.config();
 
 const app = express();

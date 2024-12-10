@@ -2,7 +2,6 @@ import express from "express";
 import { upload } from "../middlewares/multerMiddleware.js";
 import Pokeflon from "../models/Pokeflon.model.js";
 
-
 const router = express.Router();
 
 router.post("/upload", upload.single("file"), async (req, res) => {

@@ -1,6 +1,12 @@
 import express from "express";
 import multer from "multer";
-import { deletePokeflon, getOnePokeflon, getPokeflons, postPokeflon, putPokeflon } from "../controllers/Pokeflon.controller.js";
+import {
+	deletePokeflon,
+	getOnePokeflon,
+	getPokeflons,
+	postPokeflon,
+	putPokeflon,
+} from "../controllers/Pokeflon.controller.js";
 
 const upload = multer({ dest: "uploads/" });
 const router = express.Router();

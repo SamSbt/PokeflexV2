@@ -9,23 +9,26 @@ const CreatePage = () => {
 	const { formData, setFormData, resetForm, types } = useFormStore();
 	const [file, setFile] = useState(null); // ajout pour stocker l'image
 
+	//TODO: gérer la preview ici ou dans fileupload pour que ça s'enlève après submit
+	// ou alors envoyer sur la page du pokeflon nouvellement créé...
+
 	useEffect(() => {
 		// Récupérer les types au montage du composant
 		fetchTypes();
 	}, []);
 
-const handleChange = (e) => {
-	const { name, value } = e.target;
-	setFormData(name, value);
-};
-
-const handleNumberChange = (e) => {
-	const { name, value } = e.target;
-	// Vérifier si la valeur est un nombre valide
-	if (/^\d*\.?\d*$/.test(value)) {
+	const handleChange = (e) => {
+		const { name, value } = e.target;
 		setFormData(name, value);
-	}
-};
+	};
+
+	const handleNumberChange = (e) => {
+		const { name, value } = e.target;
+		// Vérifier si la valeur est un nombre valide
+		if (/^\d*\.?\d*$/.test(value)) {
+			setFormData(name, value);
+		}
+	};
 
 	const handleSubmit = async (e) => {
 		e.preventDefault();
@@ -52,7 +55,6 @@ const handleNumberChange = (e) => {
 				console.log("Pokéflon créé avec succès !");
 				resetForm();
 				setFile(null); // réinitialise l'image
-				setPreviewSrc(""); // et la preview
 			} else {
 				console.error("Erreur lors de la création :", response.statusText);
 			}
