@@ -11,6 +11,10 @@ const useFormStore = create((set) => ({
 		summary: "",
 	},
 	types: [], // stockage des types récupérés
+	currentPokeflon: null,
+	isLoading: false,
+	error: null,
+
 	setFormData: (key, value) =>
 		set((state) => ({
 			formData: { ...state.formData, [key]: value },
@@ -44,6 +48,10 @@ const useFormStore = create((set) => ({
 				summary: "",
 			},
 		}),
+
+
+	// Fonction pour effacer le Pokéflon actuel
+	clearCurrentPokeflon: () => set({ currentPokeflon: null }),
 }));
 
 // récupération des types et mise à jour dans le store

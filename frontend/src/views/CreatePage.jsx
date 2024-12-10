@@ -12,6 +12,8 @@ const CreatePage = () => {
 	//TODO: gérer la preview ici ou dans fileupload pour que ça s'enlève après submit
 	// ou alors envoyer sur la page du pokeflon nouvellement créé...
 
+	//TODO: gérer le switch visibility on ou off
+
 	useEffect(() => {
 		// Récupérer les types au montage du composant
 		fetchTypes();

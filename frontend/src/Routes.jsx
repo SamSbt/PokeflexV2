@@ -9,6 +9,7 @@ import RegisterPage from "./views/RegisterPage";
 import LoginPage from "./views/LoginPage";
 import ProfilUserPage from "./views/ProfilUserPage";
 
+
 const Routing = () => {
 	return (
 		<>
