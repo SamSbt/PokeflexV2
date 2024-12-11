@@ -17,17 +17,19 @@
 }
 
 .btn-active {
-		&::after {
-			content: "";
-			position: absolute;
-			top: -6px;
-			left: -6px;
-			right: -6px;
-			bottom: -6px;
-			border: 2px solid white;
-			border-radius: 10px;
-			z-index: 999;
-		}
+		position: relative;  /* Si ce n'est pas déjà fait, le positionnement absolu ne fonctionnera pas correctement */
+    
+    &::after {
+        content: "";
+        position: absolute;
+        top: -6px;
+        left: -6px;
+        right: -6px;
+        bottom: -6px;
+        border: 2px solid white;
+        border-radius: 10px;
+        z-index: 999;
+    }
 	}
 
 
@@ -48,7 +50,7 @@
 }
 
 // couleurs des tags
-$types: (
+$typesColor: (
 	1: #a55239,
 	// combat
 	2: #7b63e7,
@@ -82,7 +84,7 @@ $types: (
 );
 
 // ajout des styles dynamiques pour chaque type :
-@each $id, $color in $types {
+@each $id, $color in $typesColor {
 	.type-#{$id} {
 		background-color: $color !important;
 		border-color: $color !important;
