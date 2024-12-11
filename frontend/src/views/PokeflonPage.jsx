@@ -9,16 +9,16 @@ import { usePokeflonStore } from "../store/store";
 
 const PokeflonPage = () => {
 	const { id } = useParams();
-	const { fetchPokeflon, isLoading, error } = usePokeflonStore();
+	const { fetchPokeflonById, isLoading, error } = usePokeflonStore();
 	const [pokeflon, setPokeflon] = useState(null);
 
 	useEffect(() => {
 		const loadPokeflon = async () => {
-			const data = await fetchPokeflon(id);
+			const data = await fetchPokeflonById(id);
 			setPokeflon(data);
 		};
 		loadPokeflon();
-	}, [id, fetchPokeflon]);
+	}, [id, fetchPokeflonById]);
 
 	if (isLoading) {
 		return <div>Loading...</div>;
