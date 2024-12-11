@@ -66,15 +66,7 @@ const TypesPage = () => {
 			<Container>
 				<Row>
 					{filteredPokeflons.map((pokeflon) => (
-						<Col
-							key={pokeflon._id}
-							xs={12}
-							sm={6}
-							md={4}
-							lg={3}
-							xl={3}
-							xxl={2}
-						>
+						<Col key={pokeflon._id} xs={12} sm={6} md={4} lg={3} xl={3} xxl={2}>
 							<CustomCard
 								to={`/pokeflon/${pokeflon._id}`}
 								name={pokeflon.name}

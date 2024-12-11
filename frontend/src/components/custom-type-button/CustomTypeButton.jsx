@@ -24,7 +24,6 @@ const btnTypesColor = [
 ];
 
 function CustomTypeButton({ onTypeSelect, activeTypeId, typesColor = [] }) {
-
 	const handleTypeSelect = (id) => {
 		// Trouver l'objet correspondant dans MongoDB
 		const selectedType = btnTypesColor.find((t) => t._id === id);
