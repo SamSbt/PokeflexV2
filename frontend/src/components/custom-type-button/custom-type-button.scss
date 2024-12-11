@@ -17,7 +17,7 @@
 }
 
 .btn-active {
-		position: relative;  /* Si ce n'est pas déjà fait, le positionnement absolu ne fonctionnera pas correctement */
+		position: relative; 
     
     &::after {
         content: "";
@@ -49,7 +49,7 @@
 	}
 }
 
-// couleurs des tags
+// couleurs des boutons
 $typesColor: (
 	1: #a55239,
 	// combat

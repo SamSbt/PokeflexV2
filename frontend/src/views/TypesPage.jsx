@@ -8,63 +8,39 @@ import useFormStore, { fetchTypes } from "../store/useFormStore";
 const TypesPage = () => {
 	const [activeTypeId, setActiveTypeId] = useState(null);
 	const { pokeflons, isLoading, error, fetchPokeflons } = usePokeflonStore();
-	const { types } = useFormStore();
+	//const { types } = useFormStore();
 
-	useEffect(() => {
-		const loadTypes = async () => {
-			console.log("Types data:", loadTypes);
-			await fetchTypes();
-			fetchPokeflons(); // récupérer aussi les Pokéflons après les types
-		};
+	// useEffect(() => {
+	// 	const loadTypes = async () => {
+	// 		await fetchTypes();
+	// 		fetchPokeflons(); // récupérer aussi les Pokéflons après les types
+	// 	};
 
-		loadTypes();
-	}, []);
+	// 	loadTypes();
+	// }, []);
 
 	const filteredPokeflons = useMemo(() => {
-		console.log("Filtrage avec activeTypeId :", activeTypeId);
-		if (activeTypeId === 0) {
-			return [];
-		} else {
-			return pokeflons.filter(
-				(p) => p.types.some((t) => activeTypeId.includes(t._id)) // Vérifie si l’un des types du Pokéflon correspond à l’un des types sélectionnés
-			);
-		}
-	}, [activeTypeId, pokeflons]);
+		if (!pokeflons || !Array.isArray(pokeflons)) return [];
+		if (activeTypeId === null) return [];
 
-	// const handleTypeSelect = (typeId) => {
-	// 	console.log("Type sélectionné :", typeId);
-	// 	setActiveTypeId((prevTypeId) => (prevTypeId === typeId ? null : typeId));
-	// };
+		return pokeflons.filter((pokeflon) =>
+			pokeflon.types?.some((type) => type.includes(activeTypeId))
+		);
+	}, [pokeflons, activeTypeId]);
 
-	// const handleTypeSelect = (mongoId) => {
-	// 	console.log("Type MongoDB sélectionné :", mongoId);
-	// 	setActiveTypeId((prevTypeId) => (prevTypeId === mongoId ? null : mongoId));
-	// };
 
-	const handleTypeSelect = (mongoId) => {
-		console.log("Type MongoDB sélectionné :", mongoId);
-		setActiveTypeId((prevIds) => {
-			const newIds = prevIds.includes(mongoId)
-				? prevIds.filter((id) => id !== mongoId)
-				: [...prevIds, mongoId];
-			return newIds;
-		});
-	};
 
 	if (isLoading) return <div>Chargement...</div>;
 	if (error) return <div>Erreur : {error}</div>;
 
 	return (
 		<>
-			<div className="marginSize">
+			<div className="marginSize my-3">
 				<CustomTypeButton
-					onTypeSelect={handleTypeSelect}
-					activeTypeId={activeTypeId}
-					types={types}
 				/>
 			</div>
 			<Container>
-				<Row>
+				<Row className="mt-5">
 					{filteredPokeflons.map((pokeflon) => (
 						<Col key={pokeflon._id} xs={12} sm={6} md={4} lg={3} xl={3} xxl={2}>
 							<CustomCard
