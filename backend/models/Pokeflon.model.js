@@ -64,8 +64,15 @@ const pokeflonSchema = new mongoose.Schema(
 	},
 	{
 		timestamps: true, // ajoute automatiquement createdAt et updatedAt
+		toJSON: { virtuals: true },
+		toObject: { virtuals: true },
 	}
 );
+
+//add un champ virtuel pour "id" basé sur "_id"
+pokeflonSchema.virtual("id").get(function () {
+	return this._id.toHexString();
+});
 
 const Pokeflon = mongoose.model("Pokeflon", pokeflonSchema);
 

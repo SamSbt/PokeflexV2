@@ -60,9 +60,16 @@ const appUserSchema = new mongoose.Schema(
 	},
 	{
 		timestamps: true, // ajoute automatiquement createdAt et updatedAt
+		toJSON: { virtuals: true },
+		toObject: { virtuals: true },
 	}
 );
 appUserSchema.plugin(uniqueValidator);
+
+//add un champ virtuel pour "id" basé sur "_id"
+appUserSchema.virtual("id").get(function () {
+	return this._id.toHexString();
+});
 
 const AppUser = mongoose.model("AppUser", appUserSchema);
 

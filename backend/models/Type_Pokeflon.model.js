@@ -13,7 +13,18 @@ const typePokeflonSchema = new mongoose.Schema(
 			required: true,
 		},
 	},
+	{
+		toJSON: { virtuals: true },
+		toObject: { virtuals: true },
+	}
 );
+
+//add un champ virtuel pour "id" basé sur "_id"
+typePokeflonSchema.virtual("id").get(function() {
+	return this._id.toHexString();
+});
+
+
 
 // pour spécifier le nom de la collection explicitement :
 typePokeflonSchema.set("collection", "type_pokeflon");

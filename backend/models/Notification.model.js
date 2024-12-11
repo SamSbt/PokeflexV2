@@ -18,8 +18,15 @@ const notificationSchema = new mongoose.Schema(
 	},
 	{
 		timestamps: true, // ajoute automatiquement createdAt et updatedAt
+		toJSON: { virtuals: true },
+		toObject: { virtuals: true },
 	}
 );
+
+//add un champ virtuel pour "id" basé sur "_id"
+notificationSchema.virtual("id").get(function () {
+	return this._id.toHexString();
+});
 
 const Notification = mongoose.model("Notification", notificationSchema);
 

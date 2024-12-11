@@ -19,9 +19,16 @@ const roleSchema = new mongoose.Schema(
 	},
 	{
 		timestamps: true, // ajoute automatiquement createdAt et updatedAt
+		toJSON: { virtuals: true },
+		toObject: { virtuals: true },
 	}
 );
 roleSchema.plugin(uniqueValidator);
+
+//add un champ virtuel pour "id" basé sur "_id"
+roleSchema.virtual("id").get(function () {
+	return this._id.toHexString();
+});
 
 const Role = mongoose.model("Role", roleSchema);
 

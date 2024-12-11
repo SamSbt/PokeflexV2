@@ -1,19 +1,24 @@
 import Pokeflon from "../models/Pokeflon.model";
 
 
-export const getTypesByPokeflon = async (req, res) => {
-	const { typeId } = req.params;
+export const getTypesOfPokeflon = async (req, res) => {
+	const { id } = req.params;
 
 	try {
 		const pokeflons = await Pokeflon.find()
 			.populate({
 				path: "types",
-				match: { _id: typeId }, // Filtrer les Pokéflons par type
+				match: { _id: mongoose.Types.ObjectId(id) }, // Filtrer les Pokéflons par type
 				select: "type_name",
 			})
 			.exec();
 
-		res.json(pokeflons);
+		// Filtrer les Pokéflons qui ont des types correspondant au 'typeId'
+		const filteredPokeflons = pokeflons.filter(
+			(pokeflon) => pokeflon.types.length > 0
+		);
+
+		res.json(filteredPokeflons);
 	} catch (err) {
 		res
 			.status(500)

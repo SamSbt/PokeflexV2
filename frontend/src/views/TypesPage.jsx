@@ -3,31 +3,28 @@ import { Col, Container, Row } from "react-bootstrap";
 import CustomTypeButton from "../components/custom-type-button/CustomTypeButton";
 import CustomCard from "../components/custom-card/CustomCard";
 import { usePokeflonStore } from "../store/store";
-import useFormStore, { fetchTypes } from "../store/useFormStore";
+
 
 const TypesPage = () => {
 	const [activeTypeId, setActiveTypeId] = useState(null);
-	const { pokeflons, isLoading, error, fetchPokeflons } = usePokeflonStore();
-	//const { types } = useFormStore();
+	const { pokeflons, isLoading, error, fetchPokeflonsByType } =
+		usePokeflonStore();
 
-	// useEffect(() => {
-	// 	const loadTypes = async () => {
-	// 		await fetchTypes();
-	// 		fetchPokeflons(); // récupérer aussi les Pokéflons après les types
-	// 	};
 
-	// 	loadTypes();
-	// }, []);
+	useEffect(() => {
+    if (activeTypeId !== null) {
+      fetchPokeflonsByType(activeTypeId); // Filtrer les Pokéflons par type
+    }
+  }, [activeTypeId, fetchPokeflonsByType]); // Re-exécute quand activeTypeId change
 
 	const filteredPokeflons = useMemo(() => {
 		if (!pokeflons || !Array.isArray(pokeflons)) return [];
 		if (activeTypeId === null) return [];
-
+		
 		return pokeflons.filter((pokeflon) =>
 			pokeflon.types?.some((type) => type.includes(activeTypeId))
 		);
 	}, [pokeflons, activeTypeId]);
-
 
 
 	if (isLoading) return <div>Chargement...</div>;
@@ -36,8 +33,7 @@ const TypesPage = () => {
 	return (
 		<>
 			<div className="marginSize my-3">
-				<CustomTypeButton
-				/>
+				<CustomTypeButton setActiveTypeId={setActiveTypeId} />
 			</div>
 			<Container>
 				<Row className="mt-5">

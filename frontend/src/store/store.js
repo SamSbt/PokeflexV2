@@ -42,27 +42,13 @@ export const usePokeflonStore = create((set) => ({
 			return null;
 		}
 	},
-	// Fonction pour récupérer les types depuis l'API
-	fetchTypes: async () => {
-		set({ isLoading: true });
-		try {
-			const response = await fetch("http://localhost:5000/api/type"); // Point d'API pour récupérer les types
-			if (!response.ok) {
-				throw new Error(`HTTP error! Status: ${response.status}`);
-			}
-			const data = await response.json();
-			set({ types: data.data, isLoading: false });
-		} catch (err) {
-			set({ error: "Failed to fetch types", isLoading: false });
-		}
-	},
 
 	// Fonction pour récupérer les Pokéflons selon le type sélectionné
-	fetchPokeflonsByType: async (typeId) => {
+	fetchPokeflonsByType: async (id) => {
 		set({ isLoading: true });
 		try {
 			const response = await fetch(
-				`http://localhost:5000/api/pokeflon/${typeId}`
+				`http://localhost:5000/api/pokeflon/${id}`
 			); // Point d'API pour récupérer les Pokéflons par type
 			const data = await response.json();
 			set({ pokeflons: data, isLoading: false });

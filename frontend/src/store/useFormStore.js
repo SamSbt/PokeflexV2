@@ -14,12 +14,14 @@ const useFormStore = create((set) => ({
 	currentPokeflon: null,
 	isLoading: false,
 	error: null,
+	pokeflons: [],
 
 	setFormData: (key, value) =>
 		set((state) => ({
 			formData: { ...state.formData, [key]: value },
 		})),
 	setTypes: (types) => set({ types }), // mise à jour des types
+	setPokeflons: (pokeflons) => set({ pokeflons }), //  mise à jour des Pokéflons
 
 	setType1: (type1) =>
 		set((state) => {
@@ -48,7 +50,6 @@ const useFormStore = create((set) => ({
 				summary: "",
 			},
 		}),
-
 
 	// Fonction pour effacer le Pokéflon actuel
 	clearCurrentPokeflon: () => set({ currentPokeflon: null }),

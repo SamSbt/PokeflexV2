@@ -13,7 +13,17 @@ const pokeflonAppUserSchema = new mongoose.Schema(
 			required: true,
 		},
 	},
+	{
+		toJSON: { virtuals: true },
+		toObject: { virtuals: true },
+	}
 );
+
+//add un champ virtuel pour "id" basé sur "_id"
+pokeflonAppUserSchema.virtual("id").get(function () {
+	return this._id.toHexString();
+});
+
 
 // pour spécifier le nom de la collection explicitement :
 pokeflonAppUserSchema.set("collection", "pokeflon_appuser");
