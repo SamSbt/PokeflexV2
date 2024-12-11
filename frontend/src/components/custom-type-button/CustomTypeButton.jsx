@@ -2,6 +2,7 @@
 import { Button, Col, Row } from "react-bootstrap";
 
 import "./custom-type-button.scss";
+import { useState } from "react";
 
 // TODO: bordure qui a disparu au clic ??
 
@@ -23,13 +24,12 @@ const btnTypesColor = [
 	{ Id_types: 15, name: "Vol" },
 ];
 
-function CustomTypeButton({ onTypeSelect, activeTypeId, typesColor = [] }) {
+function CustomTypeButton() {
+	const [activeBorderType, setActiveBorderType] = useState(null);
+
 	const handleTypeSelect = (id) => {
-		// Trouver l'objet correspondant dans MongoDB
-		const selectedType = btnTypesColor.find((t) => t._id === id);
-		if (selectedType) {
-			onTypeSelect(selectedType._id); // Passer le _id à onTypeSelect
-		}
+		//console.log("Clicked type ID:", id);
+		setActiveBorderType(id);
 	};
 
 	return (
@@ -37,22 +37,19 @@ function CustomTypeButton({ onTypeSelect, activeTypeId, typesColor = [] }) {
 			<Row className="justify-content-center text-center btnStyle g-0">
 				{/* Map à travers la liste des types */}
 				{btnTypesColor.map((type) => {
-					const activeClass = activeTypeId === type._id ? "btn-active" : "";
-					const colorClass = typesColor[type.Id_types]
-						? `type-${type.Id_types}`
-						: "";
+					const activeClass =
+						activeBorderType === type.Id_types ? "btn-active" : "";
+					const colorClass = `type-${type.Id_types}`;
+						
 
-					// 2e return dans le map
+					// 2e return dans le map return (
 					return (
 						<Col key={type.Id_types}>
 							<Button
 								className={`mx-3 px-0 text-black my-2 ${activeClass} ${colorClass}`}
-								onClick={() => {
-									console.log("Bouton cliqué pour le type Id:", type.Id_types);
-									handleTypeSelect(type.Id_types);
-								}}
+								onClick={() => handleTypeSelect(type.Id_types)}
 							>
-								{type.type_name}
+								{type.name}
 							</Button>
 						</Col>
 					);
