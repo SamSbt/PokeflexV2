@@ -9,51 +9,57 @@ export const usePokeflonStore = create((set) => ({
 	pokeflons: [],
 	types: [],
 	selectedType: null,
-	isLoading: false,
 	error: null,
+	loadingPokeflons: false,
+	loadingPokeflonsByType: false,
 	fetchPokeflons: async () => {
-		set({ isLoading: true }); // On commence à charger les données
+		set({ loadingPokeflons: true });
 		try {
 			const response = await fetch("http://localhost:5000/api/pokeflon");
 			const data = await response.json();
 			if (data.success) {
-				set({ pokeflons: data.data, isLoading: false });
+				set({ pokeflons: data.data, loadingPokeflons: false });
 			} else {
-				set({ error: "Failed to fetch Pokeflons", isLoading: false });
+				set({ error: "Failed to fetch Pokeflons", loadingPokeflons: false });
 			}
 		} catch (error) {
-			set({ error: error.message, isLoading: false });
+			set({ error: error.message, loadingPokeflons: false });
 		}
 	},
 	fetchPokeflonById: async (id) => {
-		set({ isLoading: true });
 		try {
 			const response = await fetch(`http://localhost:5000/api/pokeflon/${id}`);
 			const data = await response.json();
 			if (data.success) {
-				set({ isLoading: false });
+				set({ loadingPokeflonsByType: false });
 				return data.data; // Renvoie le Pokéflon spécifique
 			} else {
-				set({ error: "Failed to fetch Pokeflon", isLoading: false });
+				set({
+					error: "Failed to fetch Pokeflon"
+				});
 				return null;
 			}
 		} catch (error) {
-			set({ error: error.message, isLoading: false });
+			set({ error: error.message });
 			return null;
 		}
 	},
 
 	// Fonction pour récupérer les Pokéflons selon le type sélectionné
-	fetchPokeflonsByType: async (id) => {
-		set({ isLoading: true });
+	fetchPokeflonsByIdType: async (id) => {
+		set({ loadingPokeflonsByType: true });
 		try {
 			const response = await fetch(
-				`http://localhost:5000/api/pokeflon/${id}`
+				`http://localhost:5000/api/pokeflon/by-type/${id}`
 			); // Point d'API pour récupérer les Pokéflons par type
 			const data = await response.json();
-			set({ pokeflons: data, isLoading: false });
+			//console.log(data.data);
+			set({ pokeflons: data.data, loadingPokeflonsByType: false });
 		} catch (err) {
-			set({ error: "Failed to fetch Pokéflons", isLoading: false });
+			set({
+				error: "Failed to fetch Pokéflons",
+				loadingPokeflonsByType: false,
+			});
 		}
 	},
 
@@ -61,6 +67,6 @@ export const usePokeflonStore = create((set) => ({
 	setSelectedType: (typeId) => {
 		set({ selectedType: typeId });
 		// Appelle la fonction pour récupérer les Pokéflons en fonction du type sélectionné
-		set().fetchPokeflonsByType(typeId);
+		set().fetchPokeflonsByIdType(typeId);
 	},
 }));

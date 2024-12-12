@@ -14,6 +14,10 @@ const typeSchema = new mongoose.Schema(
 			maxlength: [25, "type name cannot exceed 25 characters"],
 			unique: true,
 		},
+		color: {
+			type: String,
+			required: true,
+		},
 		is_deleted: {
 			type: Boolean,
 			default: false, // soft delete

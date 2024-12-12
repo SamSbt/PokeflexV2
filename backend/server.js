@@ -9,6 +9,8 @@ import cors from "cors";
 import dotenv from "dotenv";
 import path from "path";
 import { connectDB } from "./config/db.js";
+import { reqLogger } from "./middlewares/Logger.js";
+import { errormiddleware } from "./middlewares/errorMiddleware.js";
 
 import pokeflonRoutes from "./routes/pokeflon.routes.js";
 import roleRoutes from "./routes/role.routes.js";
@@ -16,8 +18,7 @@ import appuserRoutes from "./routes/appuser.routes.js";
 import userRoutes from "./routes/userRoutes.js";
 import typeRoutes from "./routes/type.routes.js";
 import contactRoutes from "./routes/contact.routes.js";
-import { reqLogger } from "./middlewares/Logger.js";
-import { errormiddleware } from "./middlewares/errorMiddleware.js";
+import { getPokeflonByIdType } from "./controllers/Pokeflon.controller.js";
 
 dotenv.config();
 
@@ -48,6 +49,7 @@ app.use("/api/appuser", appuserRoutes);
 app.use("/api", userRoutes);
 app.use("/api/type", typeRoutes);
 app.use("/api/contact", contactRoutes);
+app.get("/api/pokeflon/by-type/:id", getPokeflonByIdType);
 
 app.use(errormiddleware);
 

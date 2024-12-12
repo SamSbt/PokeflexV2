@@ -4,11 +4,11 @@ import Pokeflon from "../models/Pokeflon.model.js";
 export const getPokeflons = async (req, res) => {
 	try {
 		const pokeflons = await Pokeflon.find({}) // empty {} here : fetch ALL pokeflons
-		.populate({
+			.populate({
 				path: "types", // Charge les types associés à ce Pokéflon
 				select: "type_name", // On sélectionne uniquement le nom des types pour l'affichage
 			})
-			.exec();	
+			.exec();
 		res.status(200).json({ success: true, data: pokeflons });
 	} catch (error) {
 		console.log("Error in fetching Pokeflons:", error.message);
@@ -46,6 +46,33 @@ export const getOnePokeflon = async (req, res) => {
 	} catch (error) {
 		console.log("Error in fetching Pokeflon by ID:", error.message);
 		res.status(500).json({ success: false, message: "Server Error" });
+	}
+};
+
+export const getPokeflonByIdType = async (req, res) => {
+	const { id } = req.params;
+
+	if (!mongoose.Types.ObjectId.isValid(id)) {
+		return res.status(404).json({ success: false, message: "Invalid Type ID" });
+	}
+
+	try {
+		const pokeflons = await Pokeflon.find({ types: id }).populate({
+			path: "types",
+			select: "type_name",
+		});
+
+		if (!pokeflons.length) {
+			return res.status(404).json({
+				success: false,
+				message: "No Pokéflons found for the given type.",
+			});
+		}
+
+		res.status(200).json({ success: true, data: pokeflons });
+	} catch (error) {
+		console.error("Error fetching Pokéflons by type:", error.message);
+		return res.status(500).json({ success: false, message: "Server Error" });
 	}
 };
 
