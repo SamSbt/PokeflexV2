@@ -1,18 +1,16 @@
-import React, { useEffect, useState } from "react";
-import { Col, Container, Row } from "react-bootstrap";
+import React, { useEffect } from "react";
+import { Col, Container, Row, Spinner } from "react-bootstrap";
 import CustomFilterButton from "../components/custom-filter-button/CustomFilterButton";
 import CustomCard from "../components/custom-card/CustomCard";
 
 import { usePokeflonStore } from "../store/store";
 
 const HomePage = () => {
-	const [loading, setLoading] = useState(true);
-	const { pokeflons, fetchPokeflons } = usePokeflonStore();
+	const { pokeflons, fetchPokeflons, loadingPokeflons } = usePokeflonStore();
 
-useEffect(() => {
-	setLoading(true);
-	fetchPokeflons().finally(() => setLoading(false));
-}, [fetchPokeflons]);
+	useEffect(() => {
+		fetchPokeflons().finally(() => loadingPokeflons(false));
+	}, [fetchPokeflons]);
 
 	// TODO : affichage des types sur la carte de base ?
 	// TODO: à partir de 1200 et jusqu à 1400, pb avec gap entre les cards ?
@@ -21,13 +19,13 @@ useEffect(() => {
 		<Row className="mt-5 justify-content-center gap-3">
 			{pokeflons.map((pokeflon) => (
 				<Col
+					key={pokeflon._id}
 					xs={12}
 					sm={6}
 					md={4}
 					lg={3}
 					xl={3}
 					xxl={2}
-					key={pokeflon._id}
 					className="d-flex justify-content-center"
 				>
 					<CustomCard
@@ -46,15 +44,14 @@ useEffect(() => {
 		<>
 			<CustomFilterButton />
 			<Container>
-				{loading && (
-					<p className="col-12 text-center mt-5">Chargement des données...</p>
-				)}
-				{pokeflons.length > 0 ? (
+				{loadingPokeflons ? (
+					<div className="col-12 text-center mt-5">
+						<Spinner animation="grow" variant="dark" />
+					</div>
+				) : pokeflons.length > 0 ? (
 					<Row className="mt-5 justify-content-center">{cardsHomepageView}</Row>
 				) : (
-					!loading && (
-						<p className="col-12 text-center mt-5">Aucun Pokéflon trouvé.</p>
-					)
+					<p className="col-12 text-center mt-5">Aucun Pokéflon trouvé.</p>
 				)}
 			</Container>
 		</>

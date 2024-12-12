@@ -3,6 +3,7 @@ import multer from "multer";
 import {
 	deletePokeflon,
 	getOnePokeflon,
+	getPokeflonByIdType,
 	getPokeflons,
 	postPokeflon,
 	putPokeflon,
@@ -19,6 +20,7 @@ const router = express.Router();
 
 router.get("/", getPokeflons);
 router.get("/:id", getOnePokeflon);
+router.get("/by-type/:id", getPokeflonByIdType);
 router.post("/", upload.single("file"), postPokeflon);
 router.put("/:id", putPokeflon);
 router.delete("/:id", deletePokeflon);
