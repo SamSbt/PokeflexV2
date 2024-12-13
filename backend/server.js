@@ -22,8 +22,8 @@ import typeRoutes from "./routes/type.routes.js";
 import contactRoutes from "./routes/contact.routes.js";
 import { getPokeflonByIdType } from "./controllers/Pokeflon.controller.js";
 
-//import adminRoutes from "./routes/admin.routes.js";
 
+// TODO: remettre une vraie clé dans .env
 dotenv.config();
 
 const app = express();
@@ -61,7 +61,7 @@ app.use("/api/admin", (req, res, next) => {
 	req.user = { role: "admin" }; // Simule un admin
 	next();
 });
-// app.use("/api/admin", adminRoutes);
+
 
 app.use(errormiddleware);
 

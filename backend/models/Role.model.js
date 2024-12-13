@@ -16,6 +16,7 @@ const roleSchema = new mongoose.Schema(
 			type: Boolean,
 			default: false, // soft delete
 		},
+		default: { type: Boolean, default: true },
 	},
 	{
 		timestamps: true, // ajoute automatiquement createdAt et updatedAt

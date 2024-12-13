@@ -1,15 +1,22 @@
 import express from "express";
 import { authenticate, hasRole } from "../middlewares/authMiddleware.js";
-import { login } from "../controllers/Auth.controller.js";
+import { login, register } from "../controllers/Auth.controller.js";
 
 const router = express.Router();
 
-// Route de connexion pour générer un token
+// route de connexion
 router.post("/login", login);
 
-// Exemple de route protégée nécessitant une authentification et un rôle spécifique
-router.get("/protected", authenticate, hasRole("admin"), (req, res) => {
-	res.status(200).json({ success: true, message: "Access granted" });
+// route d'enregistrement
+router.post("/register", register);
+
+// route dashboard nécessitant authentification et rôle admin
+router.get("/dashboard", authenticate, hasRole("admin"), (req, res) => {
+	res.status(200).json({
+		success: true,
+		message: "Bienvenue sur le Dashboard Admin",
+		data: {},
+	});
 });
 
 export default router;
