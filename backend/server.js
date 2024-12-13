@@ -11,6 +11,8 @@ import path from "path";
 import { connectDB } from "./config/db.js";
 import { reqLogger } from "./middlewares/Logger.js";
 import { errormiddleware } from "./middlewares/errorMiddleware.js";
+import { authenticate, hasRole } from "./middlewares/authMiddleware.js";
+import authRoutes from "./routes/auth.routes.js";
 
 import pokeflonRoutes from "./routes/pokeflon.routes.js";
 import roleRoutes from "./routes/role.routes.js";
@@ -19,6 +21,8 @@ import userRoutes from "./routes/userRoutes.js";
 import typeRoutes from "./routes/type.routes.js";
 import contactRoutes from "./routes/contact.routes.js";
 import { getPokeflonByIdType } from "./controllers/Pokeflon.controller.js";
+
+//import adminRoutes from "./routes/admin.routes.js";
 
 dotenv.config();
 
@@ -44,12 +48,20 @@ app.use("/api/uploads", express.static(path.join(process.cwd(), "uploads")));
 
 // Définir les routes pour l'API
 app.use("/api/pokeflon", pokeflonRoutes);
-app.use("/api/role", roleRoutes);
+app.get("/api/pokeflon/by-type/:id", getPokeflonByIdType);
+app.use("/api/admin/role", authenticate, hasRole("admin"), roleRoutes);
 app.use("/api/appuser", appuserRoutes);
 app.use("/api", userRoutes);
 app.use("/api/type", typeRoutes);
 app.use("/api/contact", contactRoutes);
-app.get("/api/pokeflon/by-type/:id", getPokeflonByIdType);
+
+
+app.use("/api/auth", authRoutes);
+app.use("/api/admin", (req, res, next) => {
+	req.user = { role: "admin" }; // Simule un admin
+	next();
+});
+// app.use("/api/admin", adminRoutes);
 
 app.use(errormiddleware);
 
@@ -83,3 +95,4 @@ app.listen(PORT, () => {
 // 11. installation npm install mongoose-unique-validator@latest
 // need downgrader version mongoose to v7 (for now 8.8.3): npm install mongoose@7.x.x
 // 12. npm install multer pr gérer les téléchargements de fichiers + middleware
+// 13. init dashboard et role permissions
