@@ -4,7 +4,7 @@ import AppUser from "../models/AppUser.model.js";
 import Role from "../models/Role.model.js";
 
 export const register = async (req, res) => {
-	const { username, email, password, role } = req.body;
+	const { username, email, password } = req.body;
 
 	if (!username || !email || !password) {
 		return res.status(400).json({
@@ -26,8 +26,7 @@ export const register = async (req, res) => {
 		// Hache le mot de passe
 		const hashedPassword = await bcrypt.hash(password, 10);
 
-
-    const defaultRole = await Role.findOne({ default: true });
+		const defaultRole = await Role.findOne({ default: false });
 		if (!defaultRole) {
 			return res.status(500).json({
 				success: false,
@@ -60,7 +59,6 @@ export const register = async (req, res) => {
 	}
 };
 
-
 export const login = async (req, res) => {
 	const { email, password } = req.body;
 
@@ -88,9 +86,10 @@ export const login = async (req, res) => {
 
 		const payload = { userId: user.id, role: user.role };
 
-//TODO: modifier l'expiration !
+		//TODO: modifier l'expiration !
 
-const secretKey = process.env.JWT_SECRET;
+		const secretKey = process.env.JWT_SECRET;
+		//console.log("auth controller process.env.JWT_SECRET :" + secretKey);
 
 		const token = jwt.sign(payload, secretKey, { expiresIn: "24h" });
 
@@ -103,7 +102,4 @@ const secretKey = process.env.JWT_SECRET;
 		console.error("Login error:", error.message);
 		res.status(500).json({ success: false, message: "Server Error" });
 	}
-  
 };
-
-

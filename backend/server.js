@@ -23,7 +23,6 @@ import contactRoutes from "./routes/contact.routes.js";
 import { getPokeflonByIdType } from "./controllers/Pokeflon.controller.js";
 
 
-// TODO: remettre une vraie clé dans .env
 dotenv.config();
 
 const app = express();
@@ -49,7 +48,7 @@ app.use("/api/uploads", express.static(path.join(process.cwd(), "uploads")));
 // Définir les routes pour l'API
 app.use("/api/pokeflon", pokeflonRoutes);
 app.get("/api/pokeflon/by-type/:id", getPokeflonByIdType);
-app.use("/api/admin/role", authenticate, hasRole("admin"), roleRoutes);
+app.use("/api/admin/role", roleRoutes);
 app.use("/api/appuser", appuserRoutes);
 app.use("/api", userRoutes);
 app.use("/api/type", typeRoutes);
@@ -57,11 +56,11 @@ app.use("/api/contact", contactRoutes);
 
 
 app.use("/api/auth", authRoutes);
-app.use("/api/admin", (req, res, next) => {
-	req.user = { role: "admin" }; // Simule un admin
-	next();
-});
 
+// app.use("/api/admin", (req, res, next) => {
+// 	req.user = { role: "674f3c37feb15e84a3fee343" }; // Simule un admin
+// 	next();
+// });
 
 app.use(errormiddleware);
 

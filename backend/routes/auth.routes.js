@@ -11,7 +11,7 @@ router.post("/login", login);
 router.post("/register", register);
 
 // route dashboard nécessitant authentification et rôle admin
-router.get("/dashboard", authenticate, hasRole("admin"), (req, res) => {
+router.get("/dashboard", authenticate, hasRole("Admin"), (req, res) => {
 	res.status(200).json({
 		success: true,
 		message: "Bienvenue sur le Dashboard Admin",

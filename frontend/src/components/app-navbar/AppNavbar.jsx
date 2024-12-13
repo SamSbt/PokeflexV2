@@ -6,7 +6,7 @@ import CustomButton from "../custom-button/CustomButton";
 import "./app-navbar.scss";
 
 const AppNavbar = () => {
-	const { isLoggedIn } = useStore();
+	const { isLoggedIn, userRole  } = useStore();
 	const location = useLocation(); // Hook pour obtenir la localisation actuelle
 
 	return (
@@ -71,13 +71,15 @@ const AppNavbar = () => {
 					)}
 
 				{/* btn affiché si connecté(store), ou sur la page account user si admin*/}
-				{isLoggedIn && location.pathname !== "/dashboard" && (
-					<Nav>
-						<Link to="/admin">
-							<CustomButton text="Dashboard" className="btn-red me-3" />
-						</Link>
-					</Nav>
-				)}
+				{isLoggedIn &&
+					userRole?.default &&
+					location.pathname !== "/dashboard" && (
+						<Nav>
+							<Link to="/dashboard">
+								<CustomButton text="Dashboard" className="btn-red me-3" />
+							</Link>
+						</Nav>
+					)}
 
 				<Form
 					className="d-flex form-search position-relative"
