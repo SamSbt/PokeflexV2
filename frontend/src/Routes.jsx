@@ -8,6 +8,7 @@ import PokeflonPage from "./views/PokeflonPage";
 import RegisterPage from "./views/RegisterPage";
 import LoginPage from "./views/LoginPage";
 import ProfilUserPage from "./views/ProfilUserPage";
+import DashboardPage from "./views/DashboardPage";
 
 
 const Routing = () => {
@@ -22,6 +23,7 @@ const Routing = () => {
 				<Route path="/login" element={<LoginPage />} />
 				<Route path="/login/:id" element={<ProfilUserPage />} />
 				{/*<Route path="/login/:id/favorites" element /> */}
+				<Route path="/dashboard" element={<DashboardPage />} />
 			</Routes>
 		</>
 	);

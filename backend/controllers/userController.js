@@ -18,7 +18,7 @@ export const putUserRole = async (req, res) => {
 		// Met à jour le rôle de l'utilisateur
 		const updatedUser = await AppUser.findByIdAndUpdate(
 			userId,
-			{ role: role._id },
+			{ role: role.id },
 			{ new: true }
 		);
 

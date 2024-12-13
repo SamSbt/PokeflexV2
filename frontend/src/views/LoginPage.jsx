@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Form, Row, Col } from "react-bootstrap";
 import CustomButton from "../components/custom-button/CustomButton";
 
@@ -10,10 +10,10 @@ const LoginPage = () => {
 	});
 	const [formErrors, setFormErrors] = useState({});
 	const [isFormValid, setIsFormValid] = useState(false);
+	const [loading, setLoading] = useState(false);
+	const [errorMessage, setErrorMessage] = useState("");
 
-	// useEffect(() => {
-	// 	validateForm();
-	// }, [formState]);
+	  const navigate = useNavigate();
 
 	const handleInputChange = (e) => {
 		const { name, value } = e.target;
@@ -22,10 +22,37 @@ const LoginPage = () => {
 		});
 	};
 
-	const handleFormSubmit = (e) => {
+	const handleFormSubmit = async (e) => {
 		e.preventDefault();
-		console.log("Email:", formState.email);
-		console.log("Password:", formState.password);
+		setLoading(true);
+		setErrorMessage("");
+
+		const { email, password } = formState;
+
+		try {
+			// Envoi de la requête de connexion
+			const response = await fetch("http://localhost:5000/api/auth/login", {
+				method: "POST",
+				body: JSON.stringify({ email, password }),
+				headers: {
+					"Content-Type": "application/json",
+				},
+			});
+
+			const data = await response.json();
+
+			if (data.success) {
+				// Stocker le token dans localStorage
+				localStorage.setItem("authToken", data.data.token);
+				navigate("/dashboard"); // Rediriger vers le Dashboard après la connexion
+			} else {
+				setErrorMessage(data.message); // Afficher un message d'erreur si la connexion échoue
+			}
+		} catch (error) {
+			setErrorMessage("Une erreur est survenue lors de la connexion.");
+		} finally {
+			setLoading(false);
+		}
 
 		// Réinitialiser l'état après la soumission
 		setFormState({
@@ -60,7 +87,6 @@ const LoginPage = () => {
 									{formErrors.email}
 								</Form.Control.Feedback>
 							</Form.Group>
-
 							<Form.Group className="mb-1" controlId="inputPassword">
 								<Form.Label>Mot de passe :</Form.Label>
 								<Form.Control
@@ -72,14 +98,16 @@ const LoginPage = () => {
 									required
 								/>
 							</Form.Group>
-
+							{/* Affichage du message d'erreur */}
+							{errorMessage && (
+								<p className="text-danger">{errorMessage}</p>
+							)}{" "}
 							<div className="text-end mb-3">
 								<Link to="" className="text-decoration-none">
 									<small className="text-white-50">Mot de passe oublié ?</small>
 								</Link>
 							</div>
-
-							<div className="d-flex justify-content-center">
+							{/* <div className="d-flex justify-content-center">
 								<Link to="/login/:id">
 									<CustomButton
 										type="submit"
@@ -88,8 +116,15 @@ const LoginPage = () => {
 										disabled={!isFormValid}
 									/>
 								</Link>
+							</div> */}
+							<div className="d-flex justify-content-center">
+								<CustomButton
+									type="submit"
+									text={loading ? "Chargement..." : "Se connecter"}
+									className="btn-black"
+									disabled={loading || !formState.email || !formState.password}
+								/>
 							</div>
-
 							<h6 className="mt-4 mb-2 text-center">
 								Ou alors <span className="underline">bienvenue</span> !
 							</h6>

@@ -4,12 +4,12 @@ import {
 	getContacts,
 	postContact,
 } from "../controllers/Contact.controller.js";
-import { authenticate, isAdmin } from "../middlewares/authMiddleware.js";
+import { authenticate, hasRole } from "../middlewares/authMiddleware.js";
 
 const router = express.Router();
 
-router.get("/", authenticate, isAdmin, getContacts);
+router.get("/", authenticate, hasRole("admin"), getContacts);
 router.post("/", postContact);
-router.delete("/:id", authenticate, isAdmin, deleteContact);
+router.delete("/:id", authenticate, hasRole("admin"), deleteContact);
 
 export default router;

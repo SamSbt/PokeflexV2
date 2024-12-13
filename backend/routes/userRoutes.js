@@ -2,11 +2,11 @@
 
 import express from "express";
 import { putUserRole } from "../controllers/userController.js";
-import { authenticate, isAdmin } from "../middlewares/authMiddleware.js";
+import { authenticate, hasRole } from "../middlewares/authMiddleware.js";
 
 const router = express.Router();
 
 // Route protégée pour modifier le rôle d'un utilisateur, accessible uniquement aux admins
-router.put("/update-role", authenticate, isAdmin, putUserRole);
+router.put("/update-role", authenticate, hasRole("admin"), putUserRole);
 
 export default router;
