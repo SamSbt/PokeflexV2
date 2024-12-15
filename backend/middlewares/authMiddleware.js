@@ -11,6 +11,8 @@ export const authenticate = (req, res, next) => {
 
 	try {
 		const decoded = jwt.verify(token, process.env.JWT_SECRET); // Utilise une clé secrète dans .env
+		// decode : permet de lire le contenu (payload), "lecture seule" kinda
+		// verify : vérifie que le token est valide (signature correcte avec la clé secrète), si non : exception dans catch
 		//console.log("auth middleware process.env.JWT_SECRET :" + process.env.JWT_SECRET);
 		req.user = decoded; // Ajouter l'utilisateur décodé à req.user
 		//req.role = decoded.role;
