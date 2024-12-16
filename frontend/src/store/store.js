@@ -16,6 +16,8 @@ export const usePokeflonStore = create((set) => ({
 	loadingPokeflons: false,
 	loadingPokeflonsByType: false,
 
+	setLoadingPokeflons: (status) => set({ loadingPokeflons: status }),
+
 	fetchPokeflons: async () => {
 		set({ loadingPokeflons: true });
 		try {
@@ -28,6 +30,8 @@ export const usePokeflonStore = create((set) => ({
 			}
 		} catch (error) {
 			set({ error: error.message, loadingPokeflons: false });
+		} finally {
+      set({ loadingPokeflons: false });
 		}
 	},
 	fetchPokeflonById: async (id) => {
@@ -62,6 +66,8 @@ export const usePokeflonStore = create((set) => ({
 				error: "Failed to fetch Pokéflons",
 				loadingPokeflonsByIdType: false,
 			});
+		} finally {
+			set({ loadingPokeflonsByType: false });
 		}
 	},
 	// Sélectionner un type

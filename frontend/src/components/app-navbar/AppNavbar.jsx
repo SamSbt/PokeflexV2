@@ -1,6 +1,7 @@
-import { Form, Image, Nav, Navbar } from "react-bootstrap";
+import { Dropdown, Form, Image, Nav, Navbar } from "react-bootstrap";
 import { Link, useLocation } from "react-router-dom";
-import { useStore } from "../../store/store";
+import { useEffect, useState } from "react";
+import { usePokeflonStore, useStore } from "../../store/store";
 import CustomButton from "../custom-button/CustomButton";
 
 import "./app-navbar.scss";
@@ -8,6 +9,38 @@ import "./app-navbar.scss";
 const AppNavbar = () => {
 	const { isLoggedIn, userRole  } = useStore();
 	const location = useLocation(); // Hook pour obtenir la localisation actuelle
+	const { pokeflons, fetchPokeflons } = usePokeflonStore();
+	const [searchTerm, setSearchTerm] = useState("");
+	const [filteredPokeflons, setFilteredPokeflons] = useState(
+		[]
+	);
+
+	// Récupérer les Pokéflons dès que le composant est monté
+	useEffect(() => {
+		fetchPokeflons();
+	}, [fetchPokeflons]);
+
+	// Fonction pour gérer les changements dans le champ de recherche
+	const handleInputChange = (event) => {
+		const term = event.target.value;
+		setSearchTerm(term);
+
+		// Si la recherche est vide, ne pas afficher de résultats
+		if (term.length === 0) {
+			setFilteredPokeflons([]);
+		} else {
+			// Filtrer les Pokéflons qui contiennent la chaîne de recherche
+			const filtered = pokeflons.filter((pokeflon) =>
+				pokeflon.name.toLowerCase().includes(term.toLowerCase())
+			);
+			setFilteredPokeflons(filtered);
+		}
+	};
+
+const resetSearch = () => {
+	setSearchTerm("");
+	setFilteredPokeflons([]);
+};
 
 	return (
 		<Navbar
@@ -92,23 +125,24 @@ const AppNavbar = () => {
 						name="inputsearch"
 						placeholder="Rechercher un PokéFlon"
 						aria-label="Search"
-						// value={searchTerm}
-						// onChange={handleInputChange}
+						value={searchTerm}
+						onChange={handleInputChange}
 					/>
-					{/* <Dropdown.Menu show className="position-absolute w-100 border-0">
-								{filteredPokemon.length > 0 ? (
-									filteredPokemon.map((pokemon) => (
-										<Dropdown.Item
-											key={pokemon.Id_pokemon}
-											href={`/pokemon/${pokemon.Id_pokemon}`}
-										>
-											{pokemon.name}
-										</Dropdown.Item>
-									))
-								) : noResults ? (
-									<Dropdown.Item disabled>Aucun Pokémon trouvé</Dropdown.Item>
-								) : null}
-							</Dropdown.Menu> */}
+					{/* Affichage dynamique des résultats de recherche */}
+					{searchTerm && filteredPokeflons.length > 0 && (
+						<Dropdown.Menu show className="position-absolute w-100 border-0">
+							{filteredPokeflons.map((pokeflon) => (
+								<Dropdown.Item
+									key={pokeflon.id}
+									as={Link}
+									to={`/pokeflon/${pokeflon.id}`}
+									onClick={resetSearch}
+								>
+									{pokeflon.name}
+								</Dropdown.Item>
+							))}
+						</Dropdown.Menu>
+					)}
 					<CustomButton text="Rechercher" className="btn-black" />
 				</Form>
 			</Navbar.Collapse>

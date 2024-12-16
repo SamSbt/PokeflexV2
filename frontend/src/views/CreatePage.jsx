@@ -162,7 +162,7 @@ const CreatePage = () => {
 										<Row className="ms-4">
 											<Col xs={12} md={6}>
 												<Form.Group>
-													<Form.Label htmlFor="type1">Type 1 :</Form.Label>
+													<Form.Label>Type 1 :</Form.Label>
 													<Form.Control
 														as="select"
 														id="type1"
@@ -184,7 +184,7 @@ const CreatePage = () => {
 											</Col>
 											<Col xs={12} md={6}>
 												<Form.Group>
-													<Form.Label htmlFor="type2">Type 2 :</Form.Label>
+													<Form.Label>Type 2 :</Form.Label>
 													<Form.Control
 														as="select"
 														id="type2"

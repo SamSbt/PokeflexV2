@@ -8,9 +8,9 @@ import { usePokeflonStore } from "../store/store";
 const HomePage = () => {
 	const { pokeflons, fetchPokeflons, loadingPokeflons } = usePokeflonStore();
 
-	useEffect(() => {
-		fetchPokeflons().finally(() => loadingPokeflons(false));
-	}, [fetchPokeflons]);
+useEffect(() => {
+	fetchPokeflons();
+}, [fetchPokeflons]);
 
 	// TODO : affichage des types sur la carte de base ?
 	// TODO: à partir de 1200 et jusqu à 1400, pb avec gap entre les cards ?
@@ -19,7 +19,7 @@ const HomePage = () => {
 		<Row className="mt-5 justify-content-center gap-3">
 			{pokeflons.map((pokeflon) => (
 				<Col
-					key={pokeflon._id}
+					key={pokeflon.id}
 					xs={12}
 					sm={6}
 					md={4}
@@ -29,7 +29,7 @@ const HomePage = () => {
 					className="d-flex justify-content-center"
 				>
 					<CustomCard
-						to={`/pokeflon/${pokeflon._id}`}
+						to={`/pokeflon/${pokeflon.id}`}
 						name={pokeflon.name}
 						createdBy={pokeflon.createdBy}
 						img_src={pokeflon.img_src}
