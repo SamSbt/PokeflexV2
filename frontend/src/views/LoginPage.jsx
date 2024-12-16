@@ -4,7 +4,6 @@ import { Form, Row, Col } from "react-bootstrap";
 import CustomButton from "../components/custom-button/CustomButton";
 import { useStore } from "../store/store";
 
-
 const LoginPage = () => {
 	const [formState, setFormState] = useState({
 		email: "",
@@ -45,16 +44,19 @@ const LoginPage = () => {
 			});
 
 			const data = await response.json();
+			console.log("Réponse de l'API:", data);
 
 			if (data.success) {
 				// Mise à jour du store Zustand
 				setLoginStatus(true);
-				setUserRole(data.user.role);
+				setUserRole(data.data.user.role);
+				useStore.getState().setUsername(data.data.user.username);
+				console.log("date username ? : " +data.data.user.username);
 
 				// Stocker le token dans localStorage
 				localStorage.setItem("authToken", data.data.token);
 				// Redirection vers le dashboard pour les admins ou l'accueil pour les autres
-				if (data.user.role.default) {
+				if (data.data.user.role.default) {
 					navigate("/dashboard");
 				} else {
 					navigate("/");
@@ -63,6 +65,7 @@ const LoginPage = () => {
 				setErrorMessage(data.message); // Afficher un message d'erreur si la connexion échoue
 			}
 		} catch (error) {
+			console.error("Erreur lors de la connexion:", error);
 			setErrorMessage("Une erreur est survenue lors de la connexion.");
 		} finally {
 			setLoading(false);

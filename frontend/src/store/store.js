@@ -3,8 +3,13 @@ import { create } from "zustand";
 export const useStore = create((set) => ({
 	isLoggedIn: false,
 	userRole: null,
+	username: localStorage.getItem("username") || "",
 	setLoginStatus: (status) => set({ isLoggedIn: status }),
 	setUserRole: (role) => set({ userRole: role }),
+	setUsername: (username) => {
+		localStorage.setItem("username", username); // Sauvegarder le username dans localStorage
+		set({ username }); // Mettre à jour l'état du username
+	},
 }));
 
 export const usePokeflonStore = create((set) => ({

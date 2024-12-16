@@ -1,11 +1,11 @@
 import { useState } from "react";
 import CustomButton from "../components/custom-button/CustomButton";
 import { Form, Row, Col } from "react-bootstrap";
-import { Link } from "react-router-dom";
+
 
 const RegisterPage = () => {
 	const [formState, setFormState] = useState({
-		userName: "",
+		username: "",
 		email: "",
 		password: "",
 		passwordConfirm: "",
@@ -23,6 +23,7 @@ const RegisterPage = () => {
 
 	const handleFormSubmit = async (e) => {
 		e.preventDefault();
+		console.log("formstate registerPage handleFormmSubmit :" +formState);
 		// Vérification des mots de passe
 		if (formState.password !== formState.passwordConfirm) {
 			setError("Les mots de passe ne correspondent pas.");
@@ -31,7 +32,7 @@ const RegisterPage = () => {
 
 		// Créer l'objet à envoyer au backend
 		const userData = {
-			userName: formState.userName,
+			username: formState.username,
 			email: formState.email,
 			password: formState.password,
 		};
@@ -54,7 +55,7 @@ const RegisterPage = () => {
 				setError(null); // Réinitialiser l'erreur si l'inscription a réussi
 				// Réinitialiser le formulaire après succès
 				setFormState({
-					userName: "",
+					username: "",
 					email: "",
 					password: "",
 					passwordConfirm: "",
@@ -89,8 +90,8 @@ const RegisterPage = () => {
 								<Form.Control
 									type="text"
 									placeholder="Entrez votre nom d'utilisateur"
-									name="userName"
-									value={formState.userName}
+									name="username"
+									value={formState.username}
 									onChange={handleInputChange}
 									required
 								/>

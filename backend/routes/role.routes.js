@@ -13,7 +13,7 @@ const router = express.Router();
 // TODO: penser à remettre le bon default dans has role
 
 router.use(authenticate);  // Tous les accès nécessitent d'abord l'authentification
-router.use(hasRole("674f3c37feb15e84a3fee343")); // Vérifiez que l'utilisateur est un admin avant de continuer
+router.use(hasRole("Admin")); // Vérifiez que l'utilisateur est un admin avant de continuer
 
 
 router.get("/", getRoles);
