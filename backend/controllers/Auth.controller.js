@@ -95,7 +95,7 @@ export const login = async (req, res) => {
 
 		const secretKey = process.env.JWT_SECRET;
 		//console.log("auth controller process.env.JWT_SECRET :" + secretKey);
-		const token = jwt.sign(payload, secretKey, { expiresIn: "24h" });
+		const token = jwt.sign(payload, secretKey, { expiresIn: "1h" });
 
 		res.status(200).json({
 			success: true,
