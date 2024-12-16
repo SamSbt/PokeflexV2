@@ -25,7 +25,7 @@ const RegisterPage = () => {
 		e.preventDefault();
 		// Vérification des mots de passe
 		if (formState.password !== formState.passwordConfirm) {
-			setError("Les mots de passe ne correspondent pas");
+			setError("Les mots de passe ne correspondent pas.");
 			return;
 		}
 
@@ -60,7 +60,7 @@ const RegisterPage = () => {
 					passwordConfirm: "",
 				});
 			} else {
-				setError(result.message || "Erreur lors de l'inscription");
+				setError(result.message || "Erreur lors de l'inscription.");
 			}
 		} catch (error) {
 			setError("Une erreur s'est produite. Veuillez réessayer.");

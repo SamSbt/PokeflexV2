@@ -9,7 +9,7 @@ export const register = async (req, res) => {
 	if (!username || !email || !password) {
 		return res.status(400).json({
 			success: false,
-			message: "Email et mot de passe sont requis",
+			message: "Email et mot de passe sont requis.",
 		});
 	}
 
@@ -19,7 +19,7 @@ export const register = async (req, res) => {
 		if (existingUser) {
 			return res.status(409).json({
 				success: false,
-				message: "Un utilisateur avec cet email existe déjà",
+				message: "Un utilisateur avec cet email existe déjà.",
 			});
 		}
 
