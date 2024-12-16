@@ -1,4 +1,4 @@
-import { Col, Row } from "react-bootstrap";
+import { Col, Row, Form } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import CustomButton from "../components/custom-button/CustomButton";
 
@@ -17,61 +17,54 @@ const ProfilUserPage = () => {
 			<section>
 				<div className="d-flex justify-content-center">
 					<Row className="justify-content-center rounded-2 bg-dark my-3 p-2 size-row-userProfile">
-						<form className="p-3 sizeFormUserProfile" method="" noValidate>
-							<div className="mb-3">
-								<label htmlFor="inputPseudo" className="form-label">
-									Nom d'utilisateur :
-								</label>
-								<input
+						<Form className="p-3 sizeFormUserProfile" method="" noValidate>
+							<Form.Group className="mb-3" controlId="inputPseudo">
+								<Form.Label>Nom d'utilisateur :</Form.Label>
+								<Form.Control
 									type="text"
-									className="form-control"
-									id="inputPseudo"
 									name="userName"
 									placeholder="User123"
 									disabled
 								/>
-							</div>
+							</Form.Group>
+
 							<Row className="mb-3">
-								<label htmlFor="inputEmail" className="form-label">
-									Adresse Email :
-								</label>
-								<Col sm={10}>
-									<input
+								<Form.Group as={Col} sm={10} controlId="inputEmail">
+									<Form.Label>Adresse Email :</Form.Label>
+									<Form.Control
 										type="email"
-										className="form-control"
-										id="inputEmail"
 										name="email"
 										placeholder="n**@exemple.com"
 										disabled
 									/>
-								</Col>
+								</Form.Group>
 								<Col
 									sm={2}
 									className="d-flex justify-content-center align-items-end"
 								>
-									<p className="underline">Modifier</p>
+									<p className="underline" onClick={handleEdit}>
+										Modifier
+									</p>
 								</Col>
 							</Row>
 
 							<Row className="mb-3">
-								<label htmlFor="inputPassword" className="form-label">
-									Mot de passe :
-								</label>
-								<Col sm={10}>
-									<input
+								<Form.Group as={Col} sm={10} controlId="inputPassword">
+									<Form.Label>Mot de passe :</Form.Label>
+									<Form.Control
 										type="password"
-										className="form-control"
-										id="inputPassword"
 										name="password"
 										placeholder="*********"
 										disabled
 									/>
-								</Col>
+								</Form.Group>
 								<Col
 									sm={2}
 									className="d-flex justify-content-center align-items-end"
 								>
-									<p className="underline">Modifier</p>
+									<p className="underline" onClick={handleEdit}>
+										Modifier
+									</p>
 								</Col>
 							</Row>
 
@@ -94,7 +87,7 @@ const ProfilUserPage = () => {
 									onClick={handleDelete}
 								/>
 							</div>
-						</form>
+						</Form>
 					</Row>
 				</div>
 			</section>
