@@ -1,7 +1,7 @@
 import Routing from "./Routes";
 import { Container } from "react-bootstrap";
 import { useStore } from "./store/store";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useEffect } from "react";
 import AppNavbar from "./components/app-navbar/AppNavbar";
 import AppHeader from "./components/app-header/AppHeader";
@@ -10,6 +10,7 @@ import AppFooter from "./components/app-footer/AppFooter";
 function App() {
 	const { isLoggedIn, userRole } = useStore();
 	const navigate = useNavigate();
+	const location = useLocation();
 
 	// Cette variable permet de savoir si on a déjà redirigé l'admin.
 	const hasRedirected = localStorage.getItem("hasRedirected");
@@ -40,7 +41,7 @@ function App() {
 			<Container fluid>
 				<div className="wrapper">
 					<AppNavbar />
-					<AppHeader />
+					{location.pathname !== "/dashboard" && <AppHeader />}
 					<main>
 						<Routing />
 					</main>

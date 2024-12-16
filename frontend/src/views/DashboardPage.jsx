@@ -31,11 +31,16 @@ useEffect(() => {
 
 	return (
 		<section>
-			<Container className="dashboard-page">
+			<Container className="mt-5">
+				<Row className="justify-content-center mb-4">
+					<Col xs="auto" className="text-center underline">
+						<h2>Tableau de bord de l'Admin</h2>
+					</Col>
+				</Row>
 				<Row>
 					{/* Tableau pour afficher les rôles */}
 					<Col>
-						<h2>Rôles</h2>
+						<h4>Rôles</h4>
 						<Table striped bordered hover responsive>
 							<thead>
 								<tr>
@@ -56,8 +61,7 @@ useEffect(() => {
 								)} */}
 								<tr>
 									<td>Les rôles seront ici.</td>
-									
-									</tr>
+								</tr>
 							</tbody>
 						</Table>
 					</Col>
