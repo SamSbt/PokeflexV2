@@ -81,9 +81,10 @@ const TypesPage = () => {
 							width="100"
 							className="mb-3"
 						/>
-					<p className="text-center mt-3 mx-4">
-						Aucun Pokéflon trouvé pour ce type.
-					</p></div>
+						<p className="text-center mt-3 mx-4">
+							Aucun Pokéflon trouvé pour ce type.
+						</p>
+					</div>
 				)}
 			</Container>
 		</>

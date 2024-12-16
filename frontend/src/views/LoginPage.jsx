@@ -2,6 +2,8 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Form, Row, Col } from "react-bootstrap";
 import CustomButton from "../components/custom-button/CustomButton";
+import { useStore } from "../store/store";
+
 
 const LoginPage = () => {
 	const [formState, setFormState] = useState({
@@ -13,7 +15,10 @@ const LoginPage = () => {
 	const [loading, setLoading] = useState(false);
 	const [errorMessage, setErrorMessage] = useState("");
 
-	  const navigate = useNavigate();
+	const navigate = useNavigate();
+
+	// Store Zustand pour gérer l'état de connexion et le rôle utilisateur
+	const { setLoginStatus, setUserRole } = useStore();
 
 	const handleInputChange = (e) => {
 		const { name, value } = e.target;
@@ -42,9 +47,18 @@ const LoginPage = () => {
 			const data = await response.json();
 
 			if (data.success) {
+				// Mise à jour du store Zustand
+				setLoginStatus(true);
+				setUserRole(data.user.role);
+
 				// Stocker le token dans localStorage
 				localStorage.setItem("authToken", data.data.token);
-				navigate("/dashboard"); // Rediriger vers le Dashboard après la connexion
+				// Redirection vers le dashboard pour les admins ou l'accueil pour les autres
+				if (data.user.role.default) {
+					navigate("/dashboard");
+				} else {
+					navigate("/");
+				}
 			} else {
 				setErrorMessage(data.message); // Afficher un message d'erreur si la connexion échoue
 			}

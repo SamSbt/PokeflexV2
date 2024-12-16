@@ -52,16 +52,6 @@ export const postAppUser = async (req, res) => {
 			.json({ success: false, message: "Please provide all required fields" });
 	}
 
-	// recherche de l'ObjectId du rôle 'dresseur' dans la collection Role
-	const defaultRole = await Role.findOne({ name: "Dresseur" });
-	if (!defaultRole) {
-		return res.status(500).json({
-			success: false,
-			message:
-				"Default role 'dresseur' not found. Please configure roles in the database.",
-		});
-	}
-
 	// hachage du mot de passe avant save, + gestion d'erreurs
 	let hashedPassword;
 	try {
@@ -78,23 +68,22 @@ export const postAppUser = async (req, res) => {
 	// remplacement password par sa version hachée
 	appusers.password = hashedPassword;
 
-	// création new appuser avec rôle par défaut
-	const newAppUser = new AppUser({
-		...appusers,
-		password: hashedPassword,
-		role: defaultRole._id,
-	});
-
-	try {
-		console.log("Saving new AppUser to database...");
-		await newAppUser.save();
-		res.status(201).json({
-			success: true,
-			message: "AppUser created successfully.",
-			data: newAppUser,
-		});
-	} catch (error) {
-		console.error("Error in Create AppUser:", error.message);
+  // Création de l'utilisateur avec le rôle par défaut
+  const newAppUser = new AppUser({
+    ...appusers,
+    password: hashedPassword,
+  });
+  try {
+    await newAppUser.save();
+    res.status(201).json({
+      success: true,
+      message: "AppUser created successfully.",
+      data: newAppUser,
+    });
+  } catch (error) {
+    console.error("Error in Create AppUser:", error.message);
+    res.status(500).json({ success: false, message: "Server Error" });
+  
 
 		// vérif spécifique des erreurs de duplication
 		if (error.name === "ValidationError" && error.errors) {
@@ -141,12 +130,15 @@ export const putAppUser = async (req, res) => {
 	// Validation des champs à mettre à jour (par exemple, l'email ne doit pas être dupliqué)
 	try {
 		const existingAppUser = await AppUser.findOne({ email: appusers.email });
-		if (existingAppUser && existingAppUser._id.toString() !== id) {
+		if (existingAppUser && existingAppUser.id.toString() !== id) {
 			return res.status(400).json({
 				success: false,
 				message: "This email is already taken by another user.",
 			});
 		}
+
+		// Exclure le champ `role` de la mise à jour
+		delete appusers.role;
 
 		// Mise à jour de l'AppUser
 		const updatedAppUser = await AppUser.findByIdAndUpdate(
