@@ -83,7 +83,7 @@ export const login = async (req, res) => {
 		if (!isMatch) {
 			return res
 				.status(401)
-				.json({ success: false, message: "Invalid password" });
+				.json({ success: false, message: "Mot de passe incorrect." });
 		}
 
 		const payload = { userId: user.id, role: user.role };
