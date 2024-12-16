@@ -89,3 +89,11 @@ textarea:focus {
 .underline {
 	text-decoration: underline;
 }
+
+//homepage link
+.custom-homepage-link {
+	color: #dc0a2d;
+	&:hover {
+		color: #b60926;
+	}
+}

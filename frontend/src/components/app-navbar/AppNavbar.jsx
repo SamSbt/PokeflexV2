@@ -1,19 +1,21 @@
 import { Dropdown, Form, Image, Nav, Navbar } from "react-bootstrap";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { usePokeflonStore, useStore } from "../../store/store";
 import CustomButton from "../custom-button/CustomButton";
+import { FaSignOutAlt } from "react-icons/fa";
 
 import "./app-navbar.scss";
 
 const AppNavbar = () => {
-	const { isLoggedIn, userRole  } = useStore();
+	const { isLoggedIn, userRole, setUserRole, setLoginStatus } = useStore();
 	const location = useLocation(); // Hook pour obtenir la localisation actuelle
 	const { pokeflons, fetchPokeflons } = usePokeflonStore();
 	const [searchTerm, setSearchTerm] = useState("");
-	const [filteredPokeflons, setFilteredPokeflons] = useState(
-		[]
-	);
+	const [filteredPokeflons, setFilteredPokeflons] = useState([]);
+	//console.log("Valeur de userRole :", userRole);
+
+	const navigate = useNavigate();
 
 	// Récupérer les Pokéflons dès que le composant est monté
 	useEffect(() => {
@@ -37,10 +39,23 @@ const AppNavbar = () => {
 		}
 	};
 
-const resetSearch = () => {
-	setSearchTerm("");
-	setFilteredPokeflons([]);
-};
+	const resetSearch = () => {
+		setSearchTerm("");
+		setFilteredPokeflons([]);
+	};
+
+	const handleLogout = () => {
+		// Supprimer le token du localStorage
+		localStorage.removeItem("authToken");
+		localStorage.removeItem("hasRedirected");
+
+		// Réinitialiser l'état de connexion dans le store
+		setLoginStatus(false);
+		setUserRole(null);
+
+		// Rediriger vers la page d'accueil après la déconnexion
+		navigate("/");
+	};
 
 	return (
 		<Navbar
@@ -103,11 +118,26 @@ const resetSearch = () => {
 						</Nav>
 					)}
 
+				{isLoggedIn && userRole === "Dresseur" && (
+					<Nav className="d-flex align-items-center">
+						<FaSignOutAlt
+							onClick={handleLogout}
+							className="text-white me-3 cursor-pointer"
+							style={{ fontSize: "1.5rem" }} // Taille de l'icône
+						/>
+					</Nav>
+				)}
+
 				{/* btn affiché si connecté(store), ou sur la page account user si admin*/}
 				{isLoggedIn &&
-					userRole?.default &&
+					userRole === "Admin" &&
 					location.pathname !== "/dashboard" && (
-						<Nav>
+						<Nav className="d-flex align-items-center">
+							<FaSignOutAlt
+								onClick={handleLogout}
+								className="text-white me-3 cursor-pointer"
+								style={{ fontSize: "1.5rem" }} // Taille de l'icône
+							/>
 							<Link to="/dashboard">
 								<CustomButton text="Dashboard" className="btn-red me-3" />
 							</Link>

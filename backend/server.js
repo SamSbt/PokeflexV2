@@ -57,10 +57,6 @@ app.use("/api/contact", contactRoutes);
 
 app.use("/api/auth", authRoutes);
 
-// app.use("/api/admin", (req, res, next) => {
-// 	req.user = { role: "674f3c37feb15e84a3fee343" }; // Simule un admin
-// 	next();
-// });
 
 app.use(errormiddleware);
 

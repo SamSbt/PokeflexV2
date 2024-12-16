@@ -6,7 +6,7 @@ export const authenticate = (req, res, next) => {
 	console.log("Token reçu:", token);
 
 	if (!token) {
-		return res.status(401).json({ message: "No token provided" });
+		return res.status(401).json({ message: "Non autorisé" });
 	}
 
 	try {
@@ -15,11 +15,12 @@ export const authenticate = (req, res, next) => {
 		// verify : vérifie que le token est valide (signature correcte avec la clé secrète), si non : exception dans catch
 		//console.log("auth middleware process.env.JWT_SECRET :" + process.env.JWT_SECRET);
 		req.user = decoded; // Ajouter l'utilisateur décodé à req.user
+		console.log("req.user ici is :" + req.user);
 		//req.role = decoded.role;
 		next(); // Passer au middleware suivant
 	} catch (error) {
 		console.error("JWT verification error:", error);
-		res.status(401).json({ message: "Invalid or expired token" });
+		res.status(401).json({ message: "Token invalide ou expiré." });
 	}
 };
 
@@ -33,6 +34,6 @@ export const hasRole = (requiredRole) => (req, res, next) => {
 	}
 	return res.status(403).json({
 		success: false,
-		message: `Access denied. Requires ${requiredRole} role.`,
+		message: "Accès refusé",
 	});
 };

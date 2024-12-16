@@ -1,10 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { Col, Container, Row, Table } from "react-bootstrap";
-import { useStore } from "../store/store";
+import { usePokeflonStore, useStore } from "../store/store";
+import { useNavigate } from "react-router-dom";
 
 const DashboardPage = () => {
 	const [error, setError] = useState("");
-	const { roles, fetchRoles } = useStore();
+	const { roles, fetchRoles } = usePokeflonStore();
+	const { isLoggedIn, userRole } = useStore();
+	const navigate = useNavigate();
 
 	useEffect(() => {
 		fetchRoles(); // Appel de la méthode pour récupérer les rôles
@@ -13,10 +16,18 @@ const DashboardPage = () => {
 	if (error) {
 		return <Alert variant="danger">{error}</Alert>;
 	}
-console.log("roles ?? :" + roles);
-	if (!roles.length) {
-		return <p>Chargement des rôles...</p>;
+	console.log("roles ?? :" + roles);
+	// if (!roles.length) {
+	// 	return <p>Chargement des rôles...</p>;
+	// }
+
+useEffect(() => {
+	// Vérifie si l'utilisateur est connecté et a le rôle "Admin"
+	if (!isLoggedIn || userRole !== "Admin") {
+		navigate("/"); // Redirige vers la page d'accueil s'il n'est pas admin
 	}
+}, [isLoggedIn, userRole, navigate]);
+
 
 	return (
 		<section>
@@ -33,7 +44,7 @@ console.log("roles ?? :" + roles);
 								</tr>
 							</thead>
 							<tbody>
-								{roles && roles.length > 0 ? (
+								{/* {roles && roles.length > 0 ? (
 									roles.map((role) => (
 										<tr key={role.id}>
 											<td>{role.role_name}</td>
@@ -42,7 +53,11 @@ console.log("roles ?? :" + roles);
 									))
 								) : (
 									<p>Aucun rôle trouvé.</p> // Optionnel : affiche un message si roles est vide ou non défini
-								)}
+								)} */}
+								<tr>
+									<td>Les rôles seront ici.</td>
+									
+									</tr>
 							</tbody>
 						</Table>
 					</Col>
