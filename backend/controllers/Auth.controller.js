@@ -27,7 +27,7 @@ export const register = async (req, res) => {
 		// Hache le mot de passe
 		const hashedPassword = await bcrypt.hash(password, 10);
 
-		const defaultRole = await Role.findOne({ default: false });
+		const defaultRole = await Role.findOne({ role_name: "Dresseur" });
 		if (!defaultRole) {
 			return res.status(500).json({
 				success: false,
@@ -71,14 +71,17 @@ export const login = async (req, res) => {
 	}
 
 	try {
-		const user = await AppUser.findOne({ email });
+		const user = await AppUser.findOne({ email }).populate("role");
 		console.log("Utilisateur trouvé:", user);
+	
+		// vérif du user
 		if (!user) {
 			return res
 				.status(404)
-				.json({ success: false, message: "User not found" });
+				.json({ success: false, message: "Utilisateur non trouvé." });
 		}
 
+		// vérif du password
 		const isMatch = await bcrypt.compare(password, user.password);
 		if (!isMatch) {
 			return res
@@ -86,23 +89,27 @@ export const login = async (req, res) => {
 				.json({ success: false, message: "Mot de passe incorrect." });
 		}
 
-		const payload = { userId: user.id, role: user.role };
+		const payload = { userId: user.id, role: user.role.role_name };
 
 		//TODO: modifier l'expiration !
 
 		const secretKey = process.env.JWT_SECRET;
 		//console.log("auth controller process.env.JWT_SECRET :" + secretKey);
-
 		const token = jwt.sign(payload, secretKey, { expiresIn: "24h" });
 
 		res.status(200).json({
 			success: true,
 			message: "Login successful",
-			data: { 
+			data: {
 				token,
-        user: { id: user.id, username: user.username, email: user.email, role: user.role },
-		},
-	});
+				user: {
+					id: user.id,
+					username: user.username,
+					email: user.email,
+					role: user.role.role_name,
+				},
+			},
+		});
 	} catch (error) {
 		console.error("Login error:", error.message);
 		res.status(500).json({ success: false, message: "Server Error" });

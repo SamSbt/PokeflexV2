@@ -17,7 +17,7 @@ const LoginPage = () => {
 	const navigate = useNavigate();
 
 	// Store Zustand pour gérer l'état de connexion et le rôle utilisateur
-	const { setLoginStatus, setUserRole } = useStore();
+	const { setLoginStatus, setUserRole, setUsername } = useStore();
 
 	const handleInputChange = (e) => {
 		const { name, value } = e.target;
@@ -50,19 +50,11 @@ const LoginPage = () => {
 				// Mise à jour du store Zustand
 				setLoginStatus(true);
 				setUserRole(data.data.user.role);
-				useStore.getState().setUsername(data.data.user.username);
-				console.log("date username ? : " +data.data.user.username);
-
+				setUsername(data.data.user.username);
 				// Stocker le token dans localStorage
 				localStorage.setItem("authToken", data.data.token);
-				// Redirection vers le dashboard pour les admins ou l'accueil pour les autres
-				if (data.data.user.role.default) {
-					navigate("/dashboard");
-				} else {
-					navigate("/");
-				}
 			} else {
-				setErrorMessage(data.message); // Afficher un message d'erreur si la connexion échoue
+				setErrorMessage(data.message);
 			}
 		} catch (error) {
 			console.error("Erreur lors de la connexion:", error);
