@@ -9,7 +9,7 @@ import RegisterPage from "./views/RegisterPage";
 import LoginPage from "./views/LoginPage";
 import ProfilUserPage from "./views/ProfilUserPage";
 import DashboardPage from "./views/DashboardPage";
-
+import NotFoundPage from "./components/NotFoundPage";
 
 const Routing = () => {
 	return (
@@ -24,6 +24,9 @@ const Routing = () => {
 				<Route path="/login/:id" element={<ProfilUserPage />} />
 				{/*<Route path="/login/:id/favorites" element /> */}
 				<Route path="/dashboard" element={<DashboardPage />} />
+
+				{/* Route 404 à la fin pour capturer toutes les autres routes non définies */}
+				<Route path="*" element={<NotFoundPage />} />
 			</Routes>
 		</>
 	);

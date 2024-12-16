@@ -37,10 +37,8 @@ function CustomCard({
 					<Card.Title>{name}</Card.Title>
 
 					<Card.Subtitle className="my-3 text-light poppins-light small-text">
-						Created by : {createdBy}
+						Créé par : {createdBy}
 					</Card.Subtitle>
-					{/* TODO : changer ici pour un created by
-					cmt connecter username au created by ? */}
 					<hr />
 					<Card.Text className="small-text">
 						Type(s) :{" "}
@@ -55,7 +53,7 @@ function CustomCard({
 					{weight && (
 						<Card.Text className="small-text">Poids : {weight} kg</Card.Text>
 					)}
-					{summary && <Card.Text className="mt-3">{summary}</Card.Text>}
+					{summary && <Card.Text className="mt-3">Description : {summary}</Card.Text>}
 				</Card.Body>
 			</Card>
 		</>

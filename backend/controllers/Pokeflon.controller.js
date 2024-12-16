@@ -8,6 +8,10 @@ export const getPokeflons = async (req, res) => {
 				path: "types", // Charge les types associés à ce Pokéflon
 				select: "type_name", // On sélectionne uniquement le nom des types pour l'affichage
 			})
+			.populate({
+				path: "created_by", 
+				select: "username", 
+			})
 			.exec();
 		res.status(200).json({ success: true, data: pokeflons });
 	} catch (error) {

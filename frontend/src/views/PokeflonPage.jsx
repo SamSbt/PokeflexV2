@@ -32,14 +32,15 @@ const PokeflonPage = () => {
     return <div>Aucun Pokéflon trouvé</div>;
   }
 
-	// fonctions des boutons
-	const handleEdit = () => {
-		console.log("Vous voulez modifier la carte.");
-	};
+	// TODO: faire en sorte d'avoir un affichage différent ici quand user loggedin
+	// fonctions des boutons user connected
+	// const handleEdit = () => {
+	// 	console.log("Vous voulez modifier la carte.");
+	// };
 
-	const handleDelete = () => {
-		console.log("Vous voulez supprimer la carte.");
-	};
+	// const handleDelete = () => {
+	// 	console.log("Vous voulez supprimer la carte.");
+	// };
 
 	//TODO: gérer le switch visibility on ou off dans la createpage puis ici
 
@@ -59,6 +60,11 @@ const PokeflonPage = () => {
 					>
 						<CustomCard
 							to={`/pokeflon/${pokeflon._id}`}
+							createdBy={
+								pokeflon.created_by
+									? pokeflon.created_by.username
+									: "Utilisateur supprimé"
+							}
 							name={pokeflon.name}
 							sound={pokeflon.sound}
 							height={pokeflon.height}
@@ -70,7 +76,7 @@ const PokeflonPage = () => {
 						/>
 					</Col>
 				</Row>
-				<div className="text-center mt-3 mb-2">
+				{/* <div className="text-center mt-3 mb-2">
 					<CustomButton
 						text="Modifier"
 						className="btn-black me-5"
@@ -81,7 +87,7 @@ const PokeflonPage = () => {
 						className="btn-red"
 						onClick={handleDelete}
 					/>
-				</div>
+				</div> */}
 			</section>
 		</>
 	);

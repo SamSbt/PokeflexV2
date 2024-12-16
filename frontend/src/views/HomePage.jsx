@@ -33,7 +33,9 @@ const HomePage = () => {
 					<CustomCard
 						to={`/pokeflon/${pokeflon.id}`}
 						name={pokeflon.name}
-						createdBy={pokeflon.createdBy}
+						createdBy={
+							pokeflon.created_by ? pokeflon.created_by.username : "Utilisateur supprimé"
+						}
 						img_src={pokeflon.img_src}
 						types={pokeflon.types.map((type) => type.type_name).join(", ")}
 					/>
