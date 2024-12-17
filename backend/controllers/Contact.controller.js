@@ -1,4 +1,5 @@
 import Contact from "../models/Contact.model.js";
+import { sendMail } from "../services/mailService.js";
 
 export const getContacts = async (req, res) => {
 	try {
@@ -11,21 +12,26 @@ export const getContacts = async (req, res) => {
 };
 
 export const postContact = async (req, res) => {
-	const { username, email, message } = req.body; // données envoyées par l'utilisateur
+	const { username, email, subject, message } = req.body; // données envoyées par l'utilisateur
 
-	if (!username || !email || !message) {
+	if (!username || !email || !subject || !message) {
 		return res.status(400).json({
 			success: false,
-			message: "Please provide username, email, and message.",
+			message: "Please provide your username, email, subject, and message.",
 		});
 	}
 
 	// création new contact
-	const newContact = new Contact({ username, email, message });
+	const newContact = new Contact({ username, email, subject, message });
 
 	try {
-		console.log("Saving new contact message to database...");
+		console.log("Saving new email to database...");
 		await newContact.save();
+
+		// Envoi de l'email
+		console.log("Envoi de l'email...");
+	// logique pour l'envoi ici
+
 		res.status(201).json({
 			success: true,
 			message: "Your message is send. Thank you for participating.",
