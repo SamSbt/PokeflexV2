@@ -1,5 +1,4 @@
 import Contact from "../models/Contact.model.js";
-import { sendMail } from "../services/mailService.js";
 
 export const getContacts = async (req, res) => {
 	try {
