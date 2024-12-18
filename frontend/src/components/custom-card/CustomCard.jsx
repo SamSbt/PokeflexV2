@@ -65,9 +65,9 @@ CustomCard.propTypes = {
 	name: PropTypes.string.isRequired,
 	img_src: PropTypes.string.isRequired,
 	types: PropTypes.oneOfType([
-    PropTypes.string,
-    PropTypes.arrayOf(PropTypes.object),
-]).isRequired,
+		PropTypes.string,
+		PropTypes.arrayOf(PropTypes.object),
+	]).isRequired,
 	sound: PropTypes.string,
 	height: PropTypes.number,
 	weight: PropTypes.number,

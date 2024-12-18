@@ -1,8 +1,12 @@
 import { Col, Row, Form } from "react-bootstrap";
 import { Link } from "react-router-dom";
+import { useState } from "react";
 import CustomButton from "../components/custom-button/CustomButton";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 const ProfilUserPage = () => {
+	const [showPassword, setShowPassword] = useState(false);
+
 	// fonctions des boutons
 	const handleEdit = () => {
 		console.log("Vous voulez modifier votre mail ?");
@@ -10,6 +14,10 @@ const ProfilUserPage = () => {
 
 	const handleDelete = () => {
 		console.log("Vous voulez supprimer votre compte ?");
+	};
+
+	const togglePasswordVisibility = () => {
+		setShowPassword(!showPassword);
 	};
 
 	return (
@@ -22,8 +30,9 @@ const ProfilUserPage = () => {
 								<Form.Label>Nom d'utilisateur :</Form.Label>
 								<Form.Control
 									type="text"
-									name="userName"
+									name="username"
 									placeholder="User123"
+									autoComplete="username"
 									disabled
 								/>
 							</Form.Group>
@@ -35,6 +44,7 @@ const ProfilUserPage = () => {
 										type="email"
 										name="email"
 										placeholder="n**@exemple.com"
+										autoComplete="email"
 										disabled
 									/>
 								</Form.Group>
@@ -51,12 +61,21 @@ const ProfilUserPage = () => {
 							<Row className="mb-3">
 								<Form.Group as={Col} sm={10} controlId="inputPassword">
 									<Form.Label>Mot de passe :</Form.Label>
-									<Form.Control
-										type="password"
-										name="password"
-										placeholder="*********"
-										disabled
-									/>
+									<div className="position-relative">
+										<Form.Control
+											type={showPassword ? "text" : "password"}
+											name="password"
+											placeholder="*********"
+											disabled
+										/>
+										<span
+											className="position-absolute top-50 end-0 translate-middle-y me-3 text-black"
+											style={{ cursor: "pointer" }}
+											onClick={togglePasswordVisibility}
+										>
+											{showPassword ? <FaEyeSlash /> : <FaEye />}
+										</span>
+									</div>
 								</Form.Group>
 								<Col
 									sm={2}
@@ -76,9 +95,9 @@ const ProfilUserPage = () => {
 									/>
 								</Link>
 							</div>
-							<p className="small-text text-white-50">
+							{/* <p className="small-text text-white-50">
 								Profil créé le xx/xx/xx. Mis à jour le xx/xx/xx.
-							</p>
+							</p> */}
 
 							<div className="text-center mt-3">
 								<CustomButton

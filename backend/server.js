@@ -21,8 +21,9 @@ import typeRoutes from "./routes/type.routes.js";
 import contactRoutes from "./routes/contact.routes.js";
 import { getPokeflonByIdType } from "./controllers/Pokeflon.controller.js";
 
-
 dotenv.config();
+console.log("Access Token Secret:", process.env.ACCESS_SECRET_TOKEN);
+console.log("Refresh Token Secret:", process.env.REFRESH_SECRET_TOKEN);
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -53,9 +54,7 @@ app.use("/api", userRoutes);
 app.use("/api/type", typeRoutes);
 app.use("/api/contact", contactRoutes);
 
-
 app.use("/api/auth", authRoutes);
-
 
 app.use(errormiddleware);
 

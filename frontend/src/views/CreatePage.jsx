@@ -10,21 +10,21 @@ const CreatePage = () => {
 	const [file, setFile] = useState(null); // ajout pour stocker l'image
 	const { isLoggedIn } = useStore();
 
-if (!isLoggedIn) {
-	return (
-		<div className="mt-5 text-center">
-			<h6 className="mx-4">
-				Pour créer vos propres Pokéflons, connectez-vous !
-			</h6>
-			<Image
-				alt="Logo de DevFreak blanc et noir"
-				src="/images/dev-freak_logo-void.png"
-				width="100"
-				className="mt-3"
-			/>
-		</div>
-	);
-}
+	if (!isLoggedIn) {
+		return (
+			<div className="mt-5 text-center">
+				<h6 className="mx-4">
+					Pour créer vos propres Pokéflons, connectez-vous !
+				</h6>
+				<Image
+					alt="Logo de DevFreak blanc et noir"
+					src="/images/dev-freak_logo-void.png"
+					width="100"
+					className="mt-3"
+				/>
+			</div>
+		);
+	}
 
 	//TODO: gérer la preview ici ou dans fileupload pour que ça s'enlève après submit
 	// ou alors envoyer sur la page du pokeflon nouvellement créé...
@@ -99,8 +99,11 @@ if (!isLoggedIn) {
 										controlId="fileUpload"
 										className="mt-1 input-width"
 									>
-										<Form.Label>Importer une photo :</Form.Label>
+										<Form.Label htmlFor="fileUpload">
+											Importer une photo :
+										</Form.Label>
 										<FileUpload
+											controlId="fileUpload"
 											onFileSelected={(selectedFile) => setFile(selectedFile)} // Enregistre l'image dans l'état
 										/>
 									</Form.Group>
@@ -110,10 +113,11 @@ if (!isLoggedIn) {
 									<Row>
 										<Col xs={12} md={6}>
 											<Form.Group className="mt-3">
-												<Form.Label>Nom :</Form.Label>
+												<Form.Label htmlFor="name">Nom :</Form.Label>
 												<Form.Control
 													type="text"
 													name="name"
+													id="name"
 													autoComplete="name"
 													value={formData.name}
 													onChange={handleChange}
@@ -124,10 +128,11 @@ if (!isLoggedIn) {
 										</Col>
 										<Col xs={12} md={6}>
 											<Form.Group className="mt-3">
-												<Form.Label>Cri :</Form.Label>
+												<Form.Label htmlFor="sound">Cri :</Form.Label>
 												<Form.Control
 													type="text"
 													name="sound"
+													id="sound"
 													value={formData.sound}
 													onChange={handleChange}
 													placeholder="Cri du Pokéflon"
@@ -140,10 +145,11 @@ if (!isLoggedIn) {
 									<Row>
 										<Col xs={12} md={6}>
 											<Form.Group className="mt-3">
-												<Form.Label>Taille (en m):</Form.Label>
+												<Form.Label htmlFor="height">Taille (en m):</Form.Label>
 												<Form.Control
 													type="text"
 													name="height"
+													id="height"
 													value={formData.height}
 													onChange={handleNumberChange}
 													placeholder="Taille du Pokéflon (ex. : 10.2)"
@@ -153,10 +159,11 @@ if (!isLoggedIn) {
 										</Col>
 										<Col xs={12} md={6}>
 											<Form.Group className="mt-3">
-												<Form.Label>Poids (en kg):</Form.Label>
+												<Form.Label htmlFor="weight">Poids (en kg):</Form.Label>
 												<Form.Control
 													type="text"
 													name="weight"
+													id="weight"
 													value={formData.weight}
 													onChange={handleNumberChange}
 													placeholder="Poids du Pokéflon (ex. : 51.6)"
@@ -179,11 +186,11 @@ if (!isLoggedIn) {
 										<Row className="ms-4">
 											<Col xs={12} md={6}>
 												<Form.Group>
-													<Form.Label>Type 1 :</Form.Label>
+													<Form.Label htmlFor="type1">Type 1 :</Form.Label>
 													<Form.Control
 														as="select"
-														id="type1"
 														name="type1"
+														id="type1"
 														className="input-small-width"
 														value={formData.type1 || ""}
 														onChange={(e) =>
@@ -201,11 +208,11 @@ if (!isLoggedIn) {
 											</Col>
 											<Col xs={12} md={6}>
 												<Form.Group>
-													<Form.Label>Type 2 :</Form.Label>
+													<Form.Label htmlFor="type2">Type 2 :</Form.Label>
 													<Form.Control
 														as="select"
-														id="type2"
 														name="type2"
+														id="type2"
 														className="input-small-width"
 														value={formData.type2 || ""}
 														onChange={(e) =>
@@ -233,11 +240,12 @@ if (!isLoggedIn) {
 									<Row>
 										<Col xs={12}>
 											<Form.Group className="mt-4">
-												<Form.Label>Description :</Form.Label>
+												<Form.Label htmlFor="summary">Description :</Form.Label>
 												<Form.Control
 													as="textarea"
 													rows={3}
 													name="summary"
+													id="summary"
 													value={formData.summary}
 													onChange={handleChange}
 													placeholder="Entrez la description du Pokéflon"

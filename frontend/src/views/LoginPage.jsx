@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { Form, Row, Col } from "react-bootstrap";
 import CustomButton from "../components/custom-button/CustomButton";
 import { useStore } from "../store/store";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 const LoginPage = () => {
 	const [formState, setFormState] = useState({
@@ -13,6 +14,7 @@ const LoginPage = () => {
 	const [isFormValid, setIsFormValid] = useState(false);
 	const [loading, setLoading] = useState(false);
 	const [errorMessage, setErrorMessage] = useState("");
+	const [showPassword, setShowPassword] = useState(false);
 
 	const navigate = useNavigate();
 
@@ -52,7 +54,9 @@ const LoginPage = () => {
 				setUserRole(data.data.user.role);
 				setUsername(data.data.user.username);
 				// Stocker le token dans localStorage
-				localStorage.setItem("authToken", data.data.token);
+				localStorage.setItem("authToken", data.data.accessToken);
+				// Stocker le refresh token dans localStorage
+				localStorage.setItem("refreshToken", data.data.refreshToken);
 			} else {
 				setErrorMessage(data.message);
 			}
@@ -68,6 +72,10 @@ const LoginPage = () => {
 			email: "",
 			password: "",
 		});
+	};
+
+	const togglePasswordVisibility = () => {
+		setShowPassword(!showPassword);
 	};
 
 	return (
@@ -90,6 +98,7 @@ const LoginPage = () => {
 									value={formState.email}
 									onChange={handleInputChange}
 									isInvalid={!!formErrors.email}
+									autoComplete="email"
 									required
 								/>
 								<Form.Control.Feedback type="invalid">
@@ -98,14 +107,24 @@ const LoginPage = () => {
 							</Form.Group>
 							<Form.Group className="mb-1" controlId="inputPassword">
 								<Form.Label>Mot de passe :</Form.Label>
-								<Form.Control
-									type="password"
-									placeholder="Entrez votre mot de passe"
-									name="password"
-									value={formState.password}
-									onChange={handleInputChange}
-									required
-								/>
+								<div className="position-relative">
+									<Form.Control
+										type={showPassword ? "text" : "password"}
+										placeholder="Entrez votre mot de passe"
+										name="password"
+										value={formState.password}
+										onChange={handleInputChange}
+										autoComplete="current-password"
+										required
+									/>
+									<span
+										className="position-absolute top-50 end-0 translate-middle-y me-3 text-black"
+										style={{ cursor: "pointer" }}
+										onClick={togglePasswordVisibility}
+									>
+										{showPassword ? <FaEyeSlash /> : <FaEye />}
+									</span>
+								</div>
 							</Form.Group>
 							{/* Affichage du message d'erreur */}
 							{errorMessage && (
@@ -116,21 +135,11 @@ const LoginPage = () => {
 									<small className="text-white-50">Mot de passe oublié ?</small>
 								</Link>
 							</div>
-							{/* <div className="d-flex justify-content-center">
-								<Link to="/login/:id">
-									<CustomButton
-										type="submit"
-										text="Se connecter"
-										className="btn-black"
-										disabled={!isFormValid}
-									/>
-								</Link>
-							</div> */}
 							<div className="d-flex justify-content-center">
 								<CustomButton
 									type="submit"
 									text={loading ? "Chargement..." : "Se connecter"}
-									className="btn-black"
+									className="btn-red"
 									disabled={loading || !formState.email || !formState.password}
 								/>
 							</div>
@@ -142,7 +151,7 @@ const LoginPage = () => {
 							</p>
 							<div className="d-flex justify-content-center">
 								<Link to="/register">
-									<CustomButton text="S'inscrire" className="btn-red" />
+									<CustomButton text="S'inscrire" className="btn-black" />
 								</Link>
 							</div>
 						</Form>
