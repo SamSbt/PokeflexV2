@@ -73,7 +73,7 @@ export const login = async (req, res) => {
 	try {
 		const user = await AppUser.findOne({ email }).populate("role");
 		console.log("Utilisateur trouvé:", user);
-	
+
 		// vérif du user
 		if (!user) {
 			return res
@@ -93,8 +93,8 @@ export const login = async (req, res) => {
 
 		//TODO: modifier l'expiration !
 
-		const secretKey = process.env.JWT_SECRET;
-		//console.log("auth controller process.env.JWT_SECRET :" + secretKey);
+		const secretKey = process.env.ACCESS_SECRET_TOKEN;
+		//console.log("auth controller process.env.ACCESS_SECRET_TOKEN :" + secretKey);
 		const token = jwt.sign(payload, secretKey, { expiresIn: "1h" });
 
 		res.status(200).json({

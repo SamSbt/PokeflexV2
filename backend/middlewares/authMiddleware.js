@@ -10,10 +10,10 @@ export const authenticate = (req, res, next) => {
 	}
 
 	try {
-		const decoded = jwt.verify(token, process.env.JWT_SECRET); // Utilise une clé secrète dans .env
+		const decoded = jwt.verify(token, process.env.ACCESS_SECRET_TOKEN); // Utilise une clé secrète dans .env
 		// decode : permet de lire le contenu (payload), "lecture seule" kinda
 		// verify : vérifie que le token est valide (signature correcte avec la clé secrète), si non : exception dans catch
-		//console.log("auth middleware process.env.JWT_SECRET :" + process.env.JWT_SECRET);
+		//console.log("auth middleware process.env.ACCESS_SECRET_TOKEN :" + process.env.ACCESS_SECRET_TOKEN);
 		req.user = decoded; // Ajouter l'utilisateur décodé à req.user
 		console.log("req.user ici is :" + req.user);
 		//req.role = decoded.role;

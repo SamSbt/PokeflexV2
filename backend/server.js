@@ -11,7 +11,6 @@ import path from "path";
 import { connectDB } from "./config/db.js";
 import { reqLogger } from "./middlewares/Logger.js";
 import { errormiddleware } from "./middlewares/errorMiddleware.js";
-import { authenticate, hasRole } from "./middlewares/authMiddleware.js";
 import authRoutes from "./routes/auth.routes.js";
 
 import pokeflonRoutes from "./routes/pokeflon.routes.js";
