@@ -30,13 +30,25 @@ const CustomButton = ({
 
 CustomButton.propTypes = {
 	text: PropTypes.string,
-	type: PropTypes.string,
-	className: PropTypes.string,
-	onClick: PropTypes.func,
-	disabled: PropTypes.bool,
+	type: PropTypes.oneOf(["button", "submit", "reset"]),
+	className: PropTypes.string, 
+	onClick: PropTypes.func, 
+	variant: PropTypes.oneOf([
+		"primary",
+		"secondary",
+		"success",
+		"danger",
+		"warning",
+		"info",
+		"light",
+		"dark",
+		"link", 
+	]), 
+	size: PropTypes.oneOf(["sm", "lg"]),
+	disabled: PropTypes.bool, 
 };
 
 export default CustomButton;
 
 // style btn rouge : btn-red
-// style btn noir : bg-black
+// style btn noir : btn-black

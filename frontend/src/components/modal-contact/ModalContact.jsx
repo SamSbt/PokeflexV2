@@ -1,3 +1,4 @@
+import PropTypes from "prop-types";
 import { useEffect, useRef, useState } from "react";
 import { Modal, Form } from "react-bootstrap";
 
@@ -30,7 +31,7 @@ function Contact({ show, handleClose }) {
 		if (!emailRegex.test(formState.email)) {
 			errors.email = "Email incorrect (format d'email invalide).";
 		}
-    if (formState.subject.trim().length < 3) {
+		if (formState.subject.trim().length < 3) {
 			errors.subject = "Objet trop court (3 caractères minimum).";
 		}
 		if (formState.message.trim().length < 5) {
@@ -78,7 +79,7 @@ function Contact({ show, handleClose }) {
 			console.log(response);
 
 			if (!response.ok) {
-        const result = await response.json();
+				const result = await response.json();
 				if (response.status === 400 && result.errors) {
 					// afficher les erreurs de validation côté frontend
 					setFormErrors(
@@ -95,7 +96,6 @@ function Contact({ show, handleClose }) {
 				setTimeout(() => {
 					resetForm(); // Réinitialisation du formulaire après 10 secondes
 				}, 10000);
-
 			}
 		} catch (error) {
 			console.error("Erreur lors de la soumission du formulaire", error);
@@ -233,4 +233,10 @@ function Contact({ show, handleClose }) {
 		</>
 	);
 }
+
+Contact.propTypes = {
+	show: PropTypes.bool.isRequired, // 'show' doit être un booléen et est requis
+	handleClose: PropTypes.func.isRequired, // 'handleClose' doit être une fonction et est requise
+};
+
 export default Contact;

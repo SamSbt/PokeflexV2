@@ -111,7 +111,8 @@ const AppNavbar = () => {
 				{!isLoggedIn &&
 					location.pathname !== "/login" &&
 					location.pathname !== "/login/:id" &&
-					location.pathname !== "/register" && (
+					location.pathname !== "/register" && 
+					(
 						<Nav>
 							<Link to="/login">
 								<CustomButton text="Se connecter" className="btn-red me-3" />
@@ -161,6 +162,7 @@ const AppNavbar = () => {
 						aria-label="Search"
 						value={searchTerm}
 						onChange={handleInputChange}
+						autoComplete="off"
 					/>
 					{/* Affichage dynamique des résultats de recherche */}
 					{searchTerm && filteredPokeflons.length > 0 && (

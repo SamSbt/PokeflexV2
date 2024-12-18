@@ -1,7 +1,7 @@
 import { useState } from "react";
 import CustomButton from "../components/custom-button/CustomButton";
 import { Form, Row, Col } from "react-bootstrap";
-
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 const RegisterPage = () => {
 	const [formState, setFormState] = useState({
@@ -13,6 +13,8 @@ const RegisterPage = () => {
 
 	const [error, setError] = useState(null); // Pour afficher les erreurs
 	const [success, setSuccess] = useState(null); // Pour afficher le succès
+	const [showPassword, setShowPassword] = useState(false);
+	const [showPasswordConfirm, setShowPasswordConfirm] = useState(false);
 
 	const handleInputChange = (event) => {
 		const { name, value } = event.target;
@@ -23,7 +25,7 @@ const RegisterPage = () => {
 
 	const handleFormSubmit = async (e) => {
 		e.preventDefault();
-		console.log("formstate registerPage handleFormmSubmit :" +formState);
+		console.log("formstate registerPage handleFormmSubmit :" + formState);
 		// Vérification des mots de passe
 		if (formState.password !== formState.passwordConfirm) {
 			setError("Les mots de passe ne correspondent pas.");
@@ -69,6 +71,13 @@ const RegisterPage = () => {
 		}
 	};
 
+	const togglePasswordVisibility = () => {
+		setShowPassword(!showPassword);
+	};
+	const togglePasswordConfirmVisibility = () => {
+		setShowPasswordConfirm(!showPasswordConfirm);
+	};
+
 	return (
 		<>
 			<section className="d-flex justify-content-center align-items-center">
@@ -93,6 +102,7 @@ const RegisterPage = () => {
 									name="username"
 									value={formState.username}
 									onChange={handleInputChange}
+									autoComplete="username"
 									required
 								/>
 							</Form.Group>
@@ -105,32 +115,53 @@ const RegisterPage = () => {
 									name="email"
 									value={formState.email}
 									onChange={handleInputChange}
+									autoComplete="email"
 									required
 								/>
 							</Form.Group>
 
 							<Form.Group className="mb-3" controlId="inputPassword">
 								<Form.Label>Mot de passe :</Form.Label>
-								<Form.Control
-									type="password"
-									placeholder="Entrez votre mot de passe"
-									name="password"
-									value={formState.password}
-									onChange={handleInputChange}
-									required
-								/>
+								<div className="position-relative">
+									<Form.Control
+										type={showPassword ? "text" : "password"}
+										placeholder="Entrez votre mot de passe"
+										name="password"
+										value={formState.password}
+										onChange={handleInputChange}
+										autoComplete="new-password"
+										required
+									/>
+									<span
+										className="position-absolute top-50 end-0 translate-middle-y me-3 text-black"
+										style={{ cursor: "pointer" }}
+										onClick={togglePasswordVisibility}
+									>
+										{showPassword ? <FaEyeSlash /> : <FaEye />}
+									</span>
+								</div>
 							</Form.Group>
 
 							<Form.Group className="mb-3" controlId="inputPasswordConfirm">
 								<Form.Label>Confirmez votre mot de passe :</Form.Label>
-								<Form.Control
-									type="password"
-									placeholder="Confirmez votre mot de passe"
-									name="passwordConfirm"
-									value={formState.passwordConfirm}
-									onChange={handleInputChange}
-									required
-								/>
+								<div className="position-relative">
+									<Form.Control
+										type={showPasswordConfirm ? "text" : "password"}
+										placeholder="Confirmez votre mot de passe"
+										name="passwordConfirm"
+										value={formState.passwordConfirm}
+										onChange={handleInputChange}
+										autoComplete="new-password"
+										required
+									/>
+									<span
+										className="position-absolute top-50 end-0 translate-middle-y me-3 text-black"
+										style={{ cursor: "pointer" }}
+										onClick={togglePasswordConfirmVisibility}
+									>
+										{showPasswordConfirm ? <FaEyeSlash /> : <FaEye />}
+									</span>
+								</div>
 							</Form.Group>
 
 							<div className="d-flex justify-content-center">

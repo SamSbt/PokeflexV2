@@ -1,4 +1,5 @@
 import React, { useState, useRef } from "react";
+import PropTypes from "prop-types";
 import { Col, Image, Row } from "react-bootstrap";
 
 import CustomButton from "../custom-button/CustomButton";
@@ -61,63 +62,68 @@ const FileUpload = ({ controlId, onFileSelected }) => {
 	};
 
 	return (
-		<div className="m-3">
-			<div className="mb-3">
-				<label className="d-flex flex-column align-items-center">
-					<CustomButton
-						className="btn-red file-upload-btn d-flex align-items-center justify-content-center"
-						text="Parcourir"
-						onClick={handleButtonClick}
-					/>
-
-					{previewSrc && (
-						<div className="file-preview mt-3">
-							<Image src={previewSrc} className="img-thumbnail" />
-							<CustomButton
-								text="X"
-								variant="danger"
-								size="sm"
-								onClick={() => {
-									setFile(null);
-									setPreviewSrc("");
-									setErrorMessage("");
-									onFileSelected(null);
-								}}
-								className="mt-2"
-							>
-								&times;
-							</CustomButton>
-						</div>
-					)}
-
-					{errorMessage && (
-						<div className="text-danger mt-2">{errorMessage}</div>
-					)}
-					<Row className="d-flex justify-content-start smaller-text">
-						<Col xs={12}>
-							<p className="mt-3 mb-1">
-								- Formats d'image acceptés: JPG, JPEG, PNG et GIF.
-							</p>
-						</Col>
-						<Col xs={12}>
-							<p className="my-2">- Taille maximale du fichier: 1 MB.</p>
-						</Col>
-						<Col xs={12}>
-							<p>- Si l'image est trop grande, elle sera centrée.</p>
-						</Col>
-					</Row>
-				</label>
-				<input
-					type="file"
-					onChange={handleFileChange}
-					accept="image/*"
-					ref={fileInputRef}
-					id={controlId}
-					className="hidden-file-input"
+		<>
+			{/* <div className="m-3">
+		<div className="mb-3"> */}
+			<label className="d-flex flex-column align-items-center">
+				<CustomButton
+					className="btn-red file-upload-btn d-flex align-items-center justify-content-center"
+					text="Parcourir"
+					onClick={handleButtonClick}
 				/>
-			</div>
-		</div>
+
+				{previewSrc && (
+					<div className="file-preview mt-3">
+						<Image src={previewSrc} className="img-thumbnail" />
+						<CustomButton
+							text="X"
+							variant="danger"
+							size="sm"
+							onClick={() => {
+								setFile(null);
+								setPreviewSrc("");
+								setErrorMessage("");
+								onFileSelected(null);
+							}}
+							className="mt-2"
+						>
+							&times;
+						</CustomButton>
+					</div>
+				)}
+
+				{errorMessage && <div className="text-danger mt-2">{errorMessage}</div>}
+				<Row className="d-flex justify-content-start smaller-text">
+					<Col xs={12}>
+						<p className="mt-3 mb-1">
+							- Formats d'image acceptés: JPG, JPEG, PNG et GIF.
+						</p>
+					</Col>
+					<Col xs={12}>
+						<p className="my-2">- Taille maximale du fichier: 1 MB.</p>
+					</Col>
+					<Col xs={12}>
+						<p>- Si l'image est trop grande, elle sera centrée.</p>
+					</Col>
+				</Row>
+			</label>
+			<input
+				type="file"
+				onChange={handleFileChange}
+				accept="image/*"
+				ref={fileInputRef}
+				id={controlId}
+				className="hidden-file-input"
+			/>
+			{/* </div>
+		</div> */}
+		</>
 	);
+};
+
+FileUpload.propTypes = {
+	controlId: PropTypes.string.isRequired, 
+	onFileSelected: PropTypes.func,
 };
 
 export default FileUpload;
