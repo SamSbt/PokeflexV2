@@ -31,6 +31,7 @@ const LoginPage = () => {
 		setLoading(true);
 		setErrorMessage("");
 
+		
 		const { email, password } = formState;
 
 		try {
@@ -52,7 +53,9 @@ const LoginPage = () => {
 				setUserRole(data.data.user.role);
 				setUsername(data.data.user.username);
 				// Stocker le token dans localStorage
-				localStorage.setItem("authToken", data.data.token);
+				localStorage.setItem("authToken", data.data.accessToken);
+				// Stocker le refresh token dans localStorage
+				localStorage.setItem("refreshToken", data.data.refreshToken);
 			} else {
 				setErrorMessage(data.message);
 			}

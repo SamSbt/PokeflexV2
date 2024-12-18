@@ -1,4 +1,4 @@
-import jwt from "jsonwebtoken";
+import { verifyAccessToken } from "../utils/jwtUtils.js";
 
 // Middleware pour authentifier l'utilisateur avec JWT
 export const authenticate = (req, res, next) => {
@@ -10,12 +10,10 @@ export const authenticate = (req, res, next) => {
 	}
 
 	try {
-		const decoded = jwt.verify(token, process.env.ACCESS_SECRET_TOKEN); // Utilise une clé secrète dans .env
-		// decode : permet de lire le contenu (payload), "lecture seule" kinda
-		// verify : vérifie que le token est valide (signature correcte avec la clé secrète), si non : exception dans catch
-		//console.log("auth middleware process.env.ACCESS_SECRET_TOKEN :" + process.env.ACCESS_SECRET_TOKEN);
+		const decoded = verifyAccessToken(token);
+		// decode : permet de lire le contenu, "lecture seule" kinda
 		req.user = decoded; // Ajouter l'utilisateur décodé à req.user
-		console.log("req.user ici is :" + req.user);
+		console.log("Utilisateur authentifié:", req.use);
 		//req.role = decoded.role;
 		next(); // Passer au middleware suivant
 	} catch (error) {

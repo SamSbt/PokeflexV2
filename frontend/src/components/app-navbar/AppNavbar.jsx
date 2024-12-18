@@ -47,7 +47,8 @@ const AppNavbar = () => {
 	const handleLogout = () => {
 		// Supprimer le token du localStorage
 		localStorage.removeItem("authToken");
-		localStorage.removeItem("hasRedirected");
+		localStorage.removeItem("refreshToken");
+	
 
 		// Réinitialiser l'état de connexion dans le store
 		setLoginStatus(false);
@@ -129,20 +130,23 @@ const AppNavbar = () => {
 				)}
 
 				{/* btn affiché si connecté(store), ou sur la page account user si admin*/}
-				{isLoggedIn &&
-					userRole === "Admin" &&
-					location.pathname !== "/dashboard" && (
-						<Nav className="d-flex align-items-center">
-							<FaSignOutAlt
-								onClick={handleLogout}
-								className="text-white me-3 cursor-pointer"
-								style={{ fontSize: "1.5rem" }} // Taille de l'icône
-							/>
+				{isLoggedIn && userRole === "Admin" && (
+					<Nav className="d-flex align-items-center">
+						{/* L'icône de déconnexion est toujours affichée */}
+						<FaSignOutAlt
+							onClick={handleLogout}
+							className="text-white me-3 cursor-pointer"
+							style={{ fontSize: "1.5rem" }} // Taille de l'icône
+						/>
+
+						{/* Le bouton Dashboard n'est affiché que si on n'est pas déjà sur /dashboard */}
+						{location.pathname !== "/dashboard" && (
 							<Link to="/dashboard">
 								<CustomButton text="Dashboard" className="btn-red me-3" />
 							</Link>
-						</Nav>
-					)}
+						)}
+					</Nav>
+				)}
 
 				<Form
 					className="d-flex form-search position-relative"

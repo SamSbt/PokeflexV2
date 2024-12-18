@@ -16,10 +16,6 @@ const DashboardPage = () => {
 	if (error) {
 		return <Alert variant="danger">{error}</Alert>;
 	}
-	console.log("roles ?? :" + roles);
-	// if (!roles.length) {
-	// 	return <p>Chargement des rôles...</p>;
-	// }
 
 useEffect(() => {
 	// Vérifie si l'utilisateur est connecté et a le rôle "Admin"

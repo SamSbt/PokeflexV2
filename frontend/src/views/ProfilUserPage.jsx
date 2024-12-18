@@ -76,9 +76,9 @@ const ProfilUserPage = () => {
 									/>
 								</Link>
 							</div>
-							<p className="small-text text-white-50">
+							{/* <p className="small-text text-white-50">
 								Profil créé le xx/xx/xx. Mis à jour le xx/xx/xx.
-							</p>
+							</p> */}
 
 							<div className="text-center mt-3">
 								<CustomButton

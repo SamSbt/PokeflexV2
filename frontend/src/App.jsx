@@ -12,29 +12,15 @@ function App() {
 	const navigate = useNavigate();
 	const location = useLocation();
 
-	// Cette variable permet de savoir si on a déjà redirigé l'admin.
-	const hasRedirected = localStorage.getItem("hasRedirected");
-
-	useEffect(() => {
-		// Si l'utilisateur est connecté
-		if (isLoggedIn) {
-			// Vérifie si l'utilisateur a déjà été redirigé
-			if (!hasRedirected) {
-				// Si l'utilisateur est admin et qu'il n'a pas encore été redirigé
-				if (userRole === "Admin") {
-					// Marquer que l'admin a été redirigé
-					localStorage.setItem("hasRedirected", "admin");
-					// Rediriger l'admin vers le dashboard
-					navigate("/dashboard");
-				}
-				// Si l'utilisateur est un dresseur, redirige vers la page d'accueil
-				else if (userRole === "Dresseur") {
-					localStorage.setItem("hasRedirected", "dresseur");
-					navigate("/");
-				}
-			}
+useEffect(() => {
+	if (isLoggedIn && location.pathname === "/login") {
+		if (userRole === "Admin") {
+			navigate("/dashboard"); // Redirige l'admin vers le dashboard
+		} else if (userRole === "Dresseur") {
+			navigate("/"); // Redirige le dresseur vers la page d'accueil
 		}
-	}, [isLoggedIn, userRole, navigate, hasRedirected]);
+	}
+}, [isLoggedIn, userRole, location.pathname, navigate]);
 
 	return (
 		<>
