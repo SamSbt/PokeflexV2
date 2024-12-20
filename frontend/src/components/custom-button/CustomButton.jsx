@@ -15,7 +15,7 @@ const CustomButton = ({
 	return (
 		<>
 			<Button
-				className={`btn ${className} border border-light`}
+				className={`btn ${className} border border-white`}
 				variant={variant}
 				size={size}
 				type={type}

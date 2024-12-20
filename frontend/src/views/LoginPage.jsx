@@ -2,7 +2,8 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Form, Row, Col } from "react-bootstrap";
 import CustomButton from "../components/custom-button/CustomButton";
-import { useStore } from "../store/store";
+import { useAuthStore } from "../store/authStore";
+import { setCookie } from "../utils/cookieUtils";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 const LoginPage = () => {
@@ -19,7 +20,7 @@ const LoginPage = () => {
 	const navigate = useNavigate();
 
 	// Store Zustand pour gérer l'état de connexion et le rôle utilisateur
-	const { setLoginStatus, setUserRole, setUsername } = useStore();
+	const { login, setLoginStatus, setUserRole, setUsername } = useAuthStore();
 
 	const handleInputChange = (e) => {
 		const { name, value } = e.target;
@@ -36,16 +37,9 @@ const LoginPage = () => {
 		const { email, password } = formState;
 
 		try {
-			// Envoi de la requête de connexion
-			const response = await fetch("http://localhost:5000/api/auth/login", {
-				method: "POST",
-				body: JSON.stringify({ email, password }),
-				headers: {
-					"Content-Type": "application/json",
-				},
-			});
+			// Use the login method from authStore
+			const data = await login({ email, password });
 
-			const data = await response.json();
 			console.log("Réponse de l'API:", data);
 
 			if (data.success) {
@@ -53,10 +47,10 @@ const LoginPage = () => {
 				setLoginStatus(true);
 				setUserRole(data.data.user.role);
 				setUsername(data.data.user.username);
-				// Stocker le token dans localStorage
-				localStorage.setItem("authToken", data.data.accessToken);
-				// Stocker le refresh token dans localStorage
-				localStorage.setItem("refreshToken", data.data.refreshToken);
+				// Stocker le token dans le cookie
+				setCookie("authToken", data.data.accessToken);
+				// Stocker le refresh token dans le cookie
+				setCookie("refreshToken", data.data.refreshToken);
 			} else {
 				setErrorMessage(data.message);
 			}
@@ -83,7 +77,9 @@ const LoginPage = () => {
 			<section className="d-flex justify-content-center align-items-center">
 				<Row>
 					<Col md={12}>
-						<h5 className="mt-5 mb-2 text-center">Bon retour parmi nous !</h5>
+						<h5 className="mt-4 mb-2 text-center smallerMargin">
+							Bon retour parmi nous !
+						</h5>
 						<Form
 							className="border border-1 rounded-3 p-3 sizeFormLoginRegister"
 							noValidate

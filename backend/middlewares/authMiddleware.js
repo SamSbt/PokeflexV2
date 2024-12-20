@@ -13,11 +13,11 @@ export const authenticate = (req, res, next) => {
 		const decoded = verifyAccessToken(token);
 		// decode : permet de lire le contenu, "lecture seule" kinda
 		req.user = decoded; // Ajouter l'utilisateur décodé à req.user
-		console.log("Utilisateur authentifié:", req.use);
+		console.log("Utilisateur décodé:", decoded);
 		//req.role = decoded.role;
 		next(); // Passer au middleware suivant
 	} catch (error) {
-		console.error("JWT verification error:", error);
+		console.error("Erreur de vérification du token :", error);
 		res.status(401).json({ message: "Token invalide ou expiré." });
 	}
 };
@@ -25,11 +25,12 @@ export const authenticate = (req, res, next) => {
 // vérif du rôle :
 export const hasRole = (requiredRole) => (req, res, next) => {
 	const user = req.user;
-	console.log("user is :" + user.role);
-	console.log("requiredRole is :" + requiredRole);
-	if (user && user.role === requiredRole) {
+	console.log("user is :", user.role);
+	console.log("requiredRole is :", requiredRole);
+	if (user && user.role && user.role.role_name === requiredRole) {
 		return next();
 	}
+	console.log("Rôle de l'utilisateur:", user?.role?.role_name);
 	return res.status(403).json({
 		success: false,
 		message: "Accès refusé",

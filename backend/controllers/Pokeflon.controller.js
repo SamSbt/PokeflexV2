@@ -9,8 +9,8 @@ export const getPokeflons = async (req, res) => {
 				select: "type_name", // On sélectionne uniquement le nom des types pour l'affichage
 			})
 			.populate({
-				path: "created_by", 
-				select: "username", 
+				path: "created_by",
+				select: "username",
 			})
 			.exec();
 		res.status(200).json({ success: true, data: pokeflons });
@@ -84,8 +84,18 @@ export const postPokeflon = async (req, res) => {
 	try {
 		const pokeflons = req.body; // pokeflons est l'objet contenant les données du formulaire
 		const file = req.file; // Le fichier téléchargé est dans req.file
+		const userId = req.user?.id;
 		console.log("req.body:", req.body);
 		console.log("req.file:", req.file);
+		console.log("req.user id:", req.user?.id);
+
+		// Vérifie que l'utilisateur est connecté
+		if (!userId) {
+			return res.status(401).json({
+				success: false,
+				message: "Unauthorized: User not authenticated.",
+			});
+		}
 
 		if (!req.body || !req.body.pokeflons) {
 			return res.status(400).json({
@@ -165,6 +175,7 @@ export const postPokeflon = async (req, res) => {
 			summary: pokeflons.summary,
 			img_src: file ? `uploads/${file.filename}` : null,
 			types: types,
+			created_by: userId,
 		});
 
 		// Sauvegarde du Pokéflon avec les types associés

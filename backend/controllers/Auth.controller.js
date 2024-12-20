@@ -8,7 +8,7 @@ import { createAccessToken, createRefreshToken } from "../utils/jwtUtils.js";
 export const register = async (req, res) => {
 	const { username, email, password } = req.body;
 
-	console.log("req.body ds auth controller :" + req.body);
+	console.log("req.body ds auth controller :", req.body);
 	if (!username || !email || !password) {
 		return res.status(400).json({
 			success: false,
@@ -146,14 +146,17 @@ export const refreshAccessToken = async (req, res) => {
 
 		// Vérifier la validité du refresh token
 		const decoded = jwt.verify(refreshToken, process.env.REFRESH_SECRET_TOKEN);
-		const userId = decoded.userId;
+		// Suppression du token expiré de la base
+		await RefreshToken.findOneAndDelete({ token: refreshToken });
 
-		// Générer un nouveau access token
-		const newAccessToken = jwt.sign(
-			{ userId: userId, role: decoded.role }, // Décoder le rôle si nécessaire
-			process.env.ACCESS_SECRET_TOKEN,
-			{ expiresIn: "1h" }
-		);
+		const newAccessToken = createAccessToken({ userId: decoded.userId });
+		const newRefreshToken = createRefreshToken({ userId: decoded.userId });
+
+		// Enregistrez le nouveau refresh token
+		await RefreshToken.create({
+			token: newRefreshToken,
+			userId: decoded.userId,
+		});
 
 		res.status(200).json({
 			success: true,

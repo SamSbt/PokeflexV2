@@ -1,4 +1,5 @@
 import { create } from "zustand";
+//import { useAuthStore } from "../store/authStore";
 
 const useFormStore = create((set) => ({
 	formData: {
@@ -58,7 +59,12 @@ const useFormStore = create((set) => ({
 // récupération des types et mise à jour dans le store
 const fetchTypes = async () => {
 	try {
-		const response = await fetch("http://localhost:5000/api/type");
+		//const fetchProtectedResource = useAuthStore.getState().fetchProtectedResource;
+		// const response = await fetchProtectedResource(
+		// 	"http://localhost:5000/api/type"
+		// );
+
+const response = await fetch("http://localhost:5000/api/type");
 
 		if (!response.ok) {
 			throw new Error(`HTTP error! Status: ${response.status}`);

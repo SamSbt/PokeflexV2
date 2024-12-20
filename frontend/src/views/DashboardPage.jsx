@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { Col, Container, Row, Table } from "react-bootstrap";
-import { usePokeflonStore, useStore } from "../store/store";
+import { usePokeflonStore } from "../store/store";
+import { useAuthStore } from "../store/authStore";
 import { useNavigate } from "react-router-dom";
 
 const DashboardPage = () => {
 	const [error, setError] = useState("");
 	const { roles, fetchRoles } = usePokeflonStore();
-	const { isLoggedIn, userRole } = useStore();
+	const { isLoggedIn, userRole } = useAuthStore();
 	const navigate = useNavigate();
 
 	useEffect(() => {

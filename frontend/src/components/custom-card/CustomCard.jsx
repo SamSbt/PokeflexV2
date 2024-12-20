@@ -3,9 +3,7 @@ import { Card } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import "./custom-card.scss";
 
-
 // TODO: voir comment augmenter la taille de la card dans PokeflonPage
-
 
 function CustomCard({
 	to,
@@ -17,45 +15,50 @@ function CustomCard({
 	weight,
 	summary,
 	createdBy,
+	size = "small",
 }) {
 	return (
 		<>
-			<Card
-				as={Link}
-				to={to}
-				className="text-decoration-none mb-4 cardStyle bg-dark text-light"
-			>
-				<div className="d-flex justify-content-center m-3">
-					<Card.Img
-						variant="top"
-						src={`http://localhost:5000/api/${img_src}`}
-						// src={`/uploads/${img_src}`}
-						alt={`Image du Pokéflon ${name}`}
-					/>
-				</div>
-				<Card.Body>
-					<Card.Title>{name}</Card.Title>
+				<Card
+					as={Link}
+					to={to}
+					className={`text-decoration-none mb-4 cardStyle bg-dark text-light ${size}`}
+				>
+					<div className="d-flex justify-content-center m-3">
+						<Card.Img
+							variant="top"
+							src={`http://localhost:5000/api/${img_src}`}
+							// src={`/uploads/${img_src}`}
+							alt={`Image du Pokéflon ${name}`}
+						/>
+					</div>
+					<Card.Body>
+						<Card.Title>{name}</Card.Title>
 
-					<Card.Subtitle className="my-3 text-light poppins-light small-text">
-						Créé par : {createdBy}
-					</Card.Subtitle>
-					<hr />
-					<Card.Text className="small-text">
-						Type(s) :{" "}
-						{Array.isArray(types)
-							? types.map((type) => type.type_name).join(", ")
-							: types}
-					</Card.Text>
-					{sound && <Card.Text className="small-text">Cri : {sound}</Card.Text>}
-					{height && (
-						<Card.Text className="small-text">Taille : {height} cm</Card.Text>
-					)}
-					{weight && (
-						<Card.Text className="small-text">Poids : {weight} kg</Card.Text>
-					)}
-					{summary && <Card.Text className="mt-3">Description : {summary}</Card.Text>}
-				</Card.Body>
-			</Card>
+						<Card.Subtitle className="my-3 text-light poppins-light small-text">
+							Créé par : {createdBy}
+						</Card.Subtitle>
+						<hr />
+						<Card.Text className="small-text">
+							Type(s) :{" "}
+							{Array.isArray(types)
+								? types.map((type) => type.type_name).join(", ")
+								: types}
+						</Card.Text>
+						{sound && (
+							<Card.Text className="small-text">Cri : {sound}</Card.Text>
+						)}
+						{height && (
+							<Card.Text className="small-text">Taille : {height} cm</Card.Text>
+						)}
+						{weight && (
+							<Card.Text className="small-text">Poids : {weight} kg</Card.Text>
+						)}
+						{summary && (
+							<Card.Text className="mt-3">Description : {summary}</Card.Text>
+						)}
+					</Card.Body>
+				</Card>
 		</>
 	);
 }
@@ -73,6 +76,7 @@ CustomCard.propTypes = {
 	weight: PropTypes.number,
 	summary: PropTypes.string,
 	createdBy: PropTypes.string,
+	size: PropTypes.oneOf(["small", "large"]),
 };
 
 export default CustomCard;

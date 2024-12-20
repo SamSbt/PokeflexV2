@@ -47,14 +47,9 @@ const PokeflonPage = () => {
 	return (
 		<>
 			<section>
-				<Row className="mt-5 justify-content-center">
+				<Row className="mt-3 text-center">
 					<Col
 						xs={12}
-						sm={6}
-						md={4}
-						lg={3}
-						xl={3}
-						xxl={2}
 						key={pokeflon.id}
 						className="d-flex justify-content-center"
 					>
@@ -73,6 +68,7 @@ const PokeflonPage = () => {
 							summary={pokeflon.summary}
 							//visibility={pokeflon.visibility}
 							types={pokeflon.types}
+							size="large"
 						/>
 					</Col>
 				</Row>

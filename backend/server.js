@@ -60,7 +60,7 @@ app.use(errormiddleware);
 
 app.listen(PORT, () => {
 	connectDB();
-	console.log("Server started at http://localhost:" + PORT);
+	console.log("Server started at http://localhost:", PORT);
 });
 
 // SQL stocke des data dans des tables (rows & columns inside)

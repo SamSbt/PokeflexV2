@@ -18,7 +18,7 @@ function AppFooter() {
 
 	return (
 		<>
-			<footer className="bg-dark mt-4 px-4">
+			<footer className="bg-dark mt-2 px-4">
 				<Row>
 					<Col md={3}></Col>
 					<Col>

@@ -3,12 +3,14 @@ import { Form, Row, Col, Image } from "react-bootstrap";
 import CustomButton from "../components/custom-button/CustomButton";
 import FileUpload from "../components/fileUpload/FileUpload";
 import useFormStore, { fetchTypes } from "../store/useFormStore";
-import { useStore } from "../store/store";
+import { useAuthStore } from "../store/authStore";
+import { getCookie } from "../utils/cookieUtils";
+import { Navigate } from "react-router-dom";
 
 const CreatePage = () => {
 	const { formData, setFormData, resetForm, types } = useFormStore();
 	const [file, setFile] = useState(null); // ajout pour stocker l'image
-	const { isLoggedIn } = useStore();
+	const { isLoggedIn } = useAuthStore();
 
 	if (!isLoggedIn) {
 		return (
@@ -54,6 +56,16 @@ const CreatePage = () => {
 
 		//console.log("Données envoyées : ", formData);
 
+		// Récupérer le token d'authentification depuis le cookie
+		const token = getCookie("authToken");
+
+		// Si pas de token, on peut soit afficher un message d'erreur, soit rediriger vers la page de connexion
+		if (!token) {
+			console.error("Utilisateur non authentifié. Veuillez vous connecter.");
+			setErrorMessage("Utilisateur non authentifié. Veuillez vous connecter.");
+			return;
+		}
+
 		// Utiliser FormData pour inclure l'image et les autres données
 		const formDataToSend = new FormData();
 		formDataToSend.append("file", file); // Ajoute l'image
@@ -67,6 +79,9 @@ const CreatePage = () => {
 		try {
 			const response = await fetch("http://localhost:5000/api/pokeflon", {
 				method: "POST",
+				headers: {
+					Authorization: `Bearer ${token}`, // Ajouter le token dans l'en-tête
+				},
 				body: formDataToSend,
 			});
 
@@ -74,11 +89,15 @@ const CreatePage = () => {
 				console.log("Pokéflon créé avec succès !");
 				resetForm();
 				setFile(null); // réinitialise l'image
+				// TODO: vérif ici la navigation vers la page, doit être celle du pokéflon qui vient d'être créé
+				Navigate("/");
 			} else {
 				console.error("Erreur lors de la création :", response.statusText);
+				setErrorMessage(data.message);
 			}
 		} catch (error) {
 			console.error("Erreur réseau :", error);
+			setErrorMessage("Une erreur est survenue lors de la création.");
 		}
 	};
 
@@ -99,7 +118,7 @@ const CreatePage = () => {
 										controlId="fileUpload"
 										className="mt-1 input-width"
 									>
-										<Form.Label htmlFor="fileUpload">
+										<Form.Label>
 											Importer une photo :
 										</Form.Label>
 										<FileUpload
@@ -113,7 +132,7 @@ const CreatePage = () => {
 									<Row>
 										<Col xs={12} md={6}>
 											<Form.Group className="mt-3">
-												<Form.Label htmlFor="name">Nom :</Form.Label>
+												<Form.Label>Nom :</Form.Label>
 												<Form.Control
 													type="text"
 													name="name"
@@ -128,7 +147,7 @@ const CreatePage = () => {
 										</Col>
 										<Col xs={12} md={6}>
 											<Form.Group className="mt-3">
-												<Form.Label htmlFor="sound">Cri :</Form.Label>
+												<Form.Label>Cri :</Form.Label>
 												<Form.Control
 													type="text"
 													name="sound"
@@ -145,7 +164,7 @@ const CreatePage = () => {
 									<Row>
 										<Col xs={12} md={6}>
 											<Form.Group className="mt-3">
-												<Form.Label htmlFor="height">Taille (en m):</Form.Label>
+												<Form.Label>Taille (en m):</Form.Label>
 												<Form.Control
 													type="text"
 													name="height"
@@ -159,7 +178,7 @@ const CreatePage = () => {
 										</Col>
 										<Col xs={12} md={6}>
 											<Form.Group className="mt-3">
-												<Form.Label htmlFor="weight">Poids (en kg):</Form.Label>
+												<Form.Label>Poids (en kg):</Form.Label>
 												<Form.Control
 													type="text"
 													name="weight"
@@ -186,7 +205,7 @@ const CreatePage = () => {
 										<Row className="ms-4">
 											<Col xs={12} md={6}>
 												<Form.Group>
-													<Form.Label htmlFor="type1">Type 1 :</Form.Label>
+													<Form.Label>Type 1 :</Form.Label>
 													<Form.Control
 														as="select"
 														name="type1"
@@ -208,7 +227,7 @@ const CreatePage = () => {
 											</Col>
 											<Col xs={12} md={6}>
 												<Form.Group>
-													<Form.Label htmlFor="type2">Type 2 :</Form.Label>
+													<Form.Label>Type 2 :</Form.Label>
 													<Form.Control
 														as="select"
 														name="type2"
@@ -240,7 +259,7 @@ const CreatePage = () => {
 									<Row>
 										<Col xs={12}>
 											<Form.Group className="mt-4">
-												<Form.Label htmlFor="summary">Description :</Form.Label>
+												<Form.Label>Description :</Form.Label>
 												<Form.Control
 													as="textarea"
 													rows={3}

@@ -1,14 +1,16 @@
 import { Dropdown, Form, Image, Nav, Navbar } from "react-bootstrap";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { usePokeflonStore, useStore } from "../../store/store";
+import { usePokeflonStore } from "../../store/store";
+import { useAuthStore } from "../../store/authStore";
+import { deleteCookie } from "../../utils/cookieUtils";
 import CustomButton from "../custom-button/CustomButton";
 import { FaSignOutAlt } from "react-icons/fa";
 
 import "./app-navbar.scss";
 
 const AppNavbar = () => {
-	const { isLoggedIn, userRole, setUserRole, setLoginStatus } = useStore();
+	const { isLoggedIn, userRole, setUserRole, setLoginStatus } = useAuthStore();
 	const location = useLocation(); // Hook pour obtenir la localisation actuelle
 	const { pokeflons, fetchPokeflons } = usePokeflonStore();
 	const [searchTerm, setSearchTerm] = useState("");
@@ -45,18 +47,13 @@ const AppNavbar = () => {
 	};
 
 	const handleLogout = () => {
-		// Supprimer le token du localStorage
-		localStorage.removeItem("authToken");
-		localStorage.removeItem("refreshToken");
-	
-
-		// Réinitialiser l'état de connexion dans le store
-		setLoginStatus(false);
-		setUserRole(null);
-
+		logout();
 		// Rediriger vers la page d'accueil après la déconnexion
 		navigate("/");
 	};
+
+	console.log("isLoggedIn:", isLoggedIn);
+	console.log("userRole:", userRole);
 
 	return (
 		<Navbar
@@ -111,8 +108,7 @@ const AppNavbar = () => {
 				{!isLoggedIn &&
 					location.pathname !== "/login" &&
 					location.pathname !== "/login/:id" &&
-					location.pathname !== "/register" && 
-					(
+					location.pathname !== "/register" && (
 						<Nav>
 							<Link to="/login">
 								<CustomButton text="Se connecter" className="btn-red me-3" />

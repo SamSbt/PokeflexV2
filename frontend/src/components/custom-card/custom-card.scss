@@ -2,7 +2,14 @@
 	white-space: normal !important;
 	letter-spacing: normal !important;
 	min-height: 190px;
-	width: 240px;
+
+	&.small {
+		width: 240px;
+	}
+
+	&.large {
+		width: 500px !important;
+	}
 
 	img {
 		width: 180px;

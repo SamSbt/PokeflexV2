@@ -60,8 +60,16 @@ textarea:focus {
 
 // Login & Register form
 .sizeFormLoginRegister {
-	width: 350px;
+	max-width: 350px;
+	width: 100%
 }
+
+.smallerMargin {
+		@media (max-width: 576px) {
+		margin-top: 15px !important;
+	}
+}
+
 // profile user form
 .size-row-userProfile {
 	width: 550px;

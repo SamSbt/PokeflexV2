@@ -1,4 +1,6 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useAuthStore } from "../store/authStore";
 import CustomButton from "../components/custom-button/CustomButton";
 import { Form, Row, Col } from "react-bootstrap";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
@@ -15,6 +17,8 @@ const RegisterPage = () => {
 	const [success, setSuccess] = useState(null); // Pour afficher le succès
 	const [showPassword, setShowPassword] = useState(false);
 	const [showPasswordConfirm, setShowPasswordConfirm] = useState(false);
+	const navigate = useNavigate();
+	const { login } = useAuthStore();
 
 	const handleInputChange = (event) => {
 		const { name, value } = event.target;
@@ -25,7 +29,7 @@ const RegisterPage = () => {
 
 	const handleFormSubmit = async (e) => {
 		e.preventDefault();
-		console.log("formstate registerPage handleFormmSubmit :" + formState);
+		console.log("formstate registerPage handleFormmSubmit :", formState);
 		// Vérification des mots de passe
 		if (formState.password !== formState.passwordConfirm) {
 			setError("Les mots de passe ne correspondent pas.");
@@ -55,6 +59,13 @@ const RegisterPage = () => {
 			if (response.ok) {
 				setSuccess("Inscription réussie !");
 				setError(null); // Réinitialiser l'erreur si l'inscription a réussi
+
+				// Automatically log in the user
+        await login({ email: formState.email, password: formState.password });
+
+        // Redirect to the user's profile page
+        navigate(`/login/${result.data.id}`);
+
 				// Réinitialiser le formulaire après succès
 				setFormState({
 					username: "",
@@ -83,7 +94,7 @@ const RegisterPage = () => {
 			<section className="d-flex justify-content-center align-items-center">
 				<Row>
 					<Col md={12}>
-						<h5 className="mt-5 mb-2 text-center">Bienvenue chez DevFreak !</h5>
+						<h5 className="mt-4 mb-2 text-center">Bienvenue chez DevFreak !</h5>
 						<Form
 							className="border border-1 rounded-3 p-3 sizeFormLoginRegister"
 							method="POST"

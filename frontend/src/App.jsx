@@ -1,6 +1,6 @@
 import Routing from "./Routes";
 import { Container } from "react-bootstrap";
-import { useStore } from "./store/store";
+import { useAuthStore } from "../src/store/authStore";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useEffect } from "react";
 import AppNavbar from "./components/app-navbar/AppNavbar";
@@ -8,7 +8,7 @@ import AppHeader from "./components/app-header/AppHeader";
 import AppFooter from "./components/app-footer/AppFooter";
 
 function App() {
-	const { isLoggedIn, userRole } = useStore();
+	const { isLoggedIn, userRole } = useAuthStore();
 	const navigate = useNavigate();
 	const location = useLocation();
 

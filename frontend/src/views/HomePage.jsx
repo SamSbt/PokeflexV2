@@ -3,12 +3,13 @@ import { Col, Container, Row, Spinner } from "react-bootstrap";
 import CustomFilterButton from "../components/custom-filter-button/CustomFilterButton";
 import CustomCard from "../components/custom-card/CustomCard";
 
-import { useStore, usePokeflonStore } from "../store/store";
+import { usePokeflonStore } from "../store/store";
+import { useAuthStore } from "../store/authStore";
 import { Link } from "react-router-dom";
 
 const HomePage = () => {
 	const { pokeflons, fetchPokeflons, loadingPokeflons } = usePokeflonStore();
-	const { username, isLoggedIn } = useStore();
+	const { username, isLoggedIn } = useAuthStore();
 
 	useEffect(() => {
 		fetchPokeflons();
@@ -18,7 +19,7 @@ const HomePage = () => {
 	// TODO: à partir de 1200 et jusqu à 1400, pb avec gap entre les cards ?
 
 	const cardsHomepageView = (
-		<Row className="mt-2 justify-content-center gap-3">
+		<Row className="justify-content-center gap-3">
 			{pokeflons.map((pokeflon) => (
 				<Col
 					key={pokeflon.id}
@@ -34,10 +35,13 @@ const HomePage = () => {
 						to={`/pokeflon/${pokeflon.id}`}
 						name={pokeflon.name}
 						createdBy={
-							pokeflon.created_by ? pokeflon.created_by.username : "Utilisateur supprimé"
+							pokeflon.created_by
+								? pokeflon.created_by.username
+								: "Utilisateur supprimé"
 						}
 						img_src={pokeflon.img_src}
 						types={pokeflon.types.map((type) => type.type_name).join(", ")}
+						size="small"
 					/>
 				</Col>
 			))}
@@ -49,7 +53,7 @@ const HomePage = () => {
 			<CustomFilterButton />
 			<section>
 				{isLoggedIn && (
-					<h3 className="mt-5 text-center">
+					<h3 className="mt-4 text-center">
 						Bienvenue{" "}
 						<Link to={`/login/${username}`} className="underline custom-homepage-link">
 							{username}
@@ -59,7 +63,7 @@ const HomePage = () => {
 
 				<Container>
 					{loadingPokeflons ? (
-						<div className="col-12 text-center mt-5">
+						<div className="col-12 text-center">
 							<Spinner animation="grow" variant="dark" />
 						</div>
 					) : pokeflons.length > 0 ? (

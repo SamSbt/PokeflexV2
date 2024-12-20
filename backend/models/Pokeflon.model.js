@@ -45,13 +45,14 @@ const pokeflonSchema = new mongoose.Schema(
 		},
 		created_by: {
 			type: mongoose.Schema.Types.ObjectId,
-			ref: "AppUser", // l'utilisateur qui a créé le Pokéflon
+			ref: "AppUser", 
+			required: true,
 		},
 		types: [
 			{
 				type: mongoose.Schema.Types.ObjectId,
 				ref: "Type",
-				required: true, // type1 est obligatoire
+				required: true,
 			},
 		],
 		// références aux notifications
