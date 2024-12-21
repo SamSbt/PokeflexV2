@@ -3,14 +3,13 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { usePokeflonStore } from "../../store/store";
 import { useAuthStore } from "../../store/authStore";
-import { deleteCookie } from "../../utils/cookieUtils";
 import CustomButton from "../custom-button/CustomButton";
 import { FaSignOutAlt } from "react-icons/fa";
 
 import "./app-navbar.scss";
 
 const AppNavbar = () => {
-	const { isLoggedIn, userRole, setUserRole, setLoginStatus } = useAuthStore();
+	const { isLoggedIn, userRole, logout } = useAuthStore();
 	const location = useLocation(); // Hook pour obtenir la localisation actuelle
 	const { pokeflons, fetchPokeflons } = usePokeflonStore();
 	const [searchTerm, setSearchTerm] = useState("");
@@ -52,8 +51,8 @@ const AppNavbar = () => {
 		navigate("/");
 	};
 
-	console.log("isLoggedIn:", isLoggedIn);
-	console.log("userRole:", userRole);
+	//console.log("isLoggedIn:", isLoggedIn);
+	//console.log("userRole:", userRole);
 
 	return (
 		<Navbar

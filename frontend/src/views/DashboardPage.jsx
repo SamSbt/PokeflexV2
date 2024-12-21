@@ -1,22 +1,22 @@
 import React, { useEffect, useState } from "react";
 import { Col, Container, Row, Table } from "react-bootstrap";
-import { usePokeflonStore } from "../store/store";
+//import { usePokeflonStore } from "../store/store";
 import { useAuthStore } from "../store/authStore";
 import { useNavigate } from "react-router-dom";
 
 const DashboardPage = () => {
 	const [error, setError] = useState("");
-	const { roles, fetchRoles } = usePokeflonStore();
+	//const { roles, fetchRoles } = usePokeflonStore();
 	const { isLoggedIn, userRole } = useAuthStore();
 	const navigate = useNavigate();
 
-	useEffect(() => {
-		fetchRoles(); // Appel de la méthode pour récupérer les rôles
-	}, [fetchRoles]);
+	// useEffect(() => {
+	// 	fetchRoles(); // Appel de la méthode pour récupérer les rôles
+	// }, [fetchRoles]);
 
-	if (error) {
-		return <Alert variant="danger">{error}</Alert>;
-	}
+	// if (error) {
+	// 	return <Alert variant="danger">{error}</Alert>;
+	// }
 
 useEffect(() => {
 	// Vérifie si l'utilisateur est connecté et a le rôle "Admin"

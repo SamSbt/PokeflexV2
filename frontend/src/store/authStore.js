@@ -1,24 +1,27 @@
 import { create } from "zustand";
-import { setCookie, getCookie } from "../utils/cookieUtils.js";
+import { setCookie, getCookie, deleteCookie } from "../utils/cookieUtils.js";
 
 export const useAuthStore = create((set) => ({
 	isLoggedIn: false,
 	userRole: null,
 	username: getCookie("username") || "",
+	loading: false,
 	setLoginStatus: (status) => set({ isLoggedIn: status }),
-	setUserRole: (role) => {
-		console.log("Setting userRole to:", role);
-		set({ userRole: role.role_name });
+	setUserRole: (userRole) => {
+		//console.log("Setting userRole to:", userRole);
+		set({ userRole });
 	},
 	setUsername: (username) => {
 		setCookie("username", username, 7); // Save username in a cookie with 7 days expiry
-		console.log("Setting username to:", username);
+		//console.log("Setting username to:", username);
 		set({ username }); // Update the state of username
 	},
+	setLoading: (loading) => set({ loading }),
 
 	// Login method
 	login: async (credentials) => {
 		try {
+			set({ loading: true });
 			const response = await fetch("http://localhost:5000/api/auth/login", {
 				method: "POST",
 				headers: {
@@ -33,14 +36,16 @@ export const useAuthStore = create((set) => ({
 				setCookie("refreshToken", data.refreshToken, 7); // 7 days expiry
 				set({
 					isLoggedIn: true,
-					userRole: data.data.user.role.role_name,
+					userRole: data.data.user.role,
 					username: data.data.user.username,
 				});
+				return { success: true, data: data.data };
 			} else {
-				throw new Error(data.message);
+				return { success: false, message: data.message };
 			}
 		} catch (error) {
-			throw error;
+			console.error("Login error:", error);
+			return { success: false, message: error.message };
 		}
 	},
 
@@ -54,10 +59,13 @@ export const useAuthStore = create((set) => ({
 
 		const response = await fetch("http://localhost:5000/api/auth/refresh", {
 			method: "POST",
+			credentials: "include",
 			headers: {
 				"Content-Type": "application/json",
 			},
-			body: JSON.stringify({ refreshToken }),
+			credentials: "include",
+			//body: JSON.stringify({ refreshToken }),
+			body: JSON.stringify({}),
 		});
 
 		if (!response.ok) {
@@ -71,6 +79,14 @@ export const useAuthStore = create((set) => ({
 
 	// Fetch protected resource method
 	fetchProtectedResource: async (url, options = {}) => {
+		const { userRole } = useAuthStore.getState(); // Récupère le rôle depuis le store
+
+		if (userRole !== "Admin") {
+			throw new Error(
+				"Access denied: You do not have permission to view this resource."
+			);
+		}
+
 		let accessToken = getCookie("accessToken");
 
 		try {

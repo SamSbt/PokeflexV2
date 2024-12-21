@@ -8,6 +8,7 @@ import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import path from "path";
+import cookieParser from "cookie-parser";
 import { connectDB } from "./config/db.js";
 import { reqLogger } from "./middlewares/Logger.js";
 import { errormiddleware } from "./middlewares/errorMiddleware.js";
@@ -31,12 +32,15 @@ const PORT = process.env.PORT || 5000;
 // middleware - allow us to accept JSON data in the req.body
 app.use(express.json());
 
-//console.log(process.env.MONGO_URI);
+// Middleware pour parser les cookies
+app.use(cookieParser());
+
 
 // CORS - permet les requêtes depuis front-end (localhost:5173)
 app.use(
 	cors({
 		origin: "http://localhost:5173",
+		credentials: true, // permet l'envoi des cookies
 	})
 );
 
@@ -89,3 +93,4 @@ app.listen(PORT, () => {
 // need downgrader version mongoose to v7 (for now 8.8.3): npm install mongoose@7.x.x
 // 12. npm install multer pr gérer les téléchargements de fichiers + middleware
 // 13. init dashboard et role permissions
+// 14. npm install cookie-parser pr gérer les cookies

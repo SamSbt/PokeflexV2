@@ -29,7 +29,7 @@ const RegisterPage = () => {
 
 	const handleFormSubmit = async (e) => {
 		e.preventDefault();
-		console.log("formstate registerPage handleFormmSubmit :", formState);
+		console.log("formstate registerPage handleFormSubmit :", formState);
 		// Vérification des mots de passe
 		if (formState.password !== formState.passwordConfirm) {
 			setError("Les mots de passe ne correspondent pas.");

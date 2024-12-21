@@ -45,12 +45,14 @@ const LoginPage = () => {
 			if (data.success) {
 				// Mise à jour du store Zustand
 				setLoginStatus(true);
+				console.log("User role from API:", data.data.user.role);
 				setUserRole(data.data.user.role);
 				setUsername(data.data.user.username);
 				// Stocker le token dans le cookie
 				setCookie("authToken", data.data.accessToken);
 				// Stocker le refresh token dans le cookie
 				setCookie("refreshToken", data.data.refreshToken);
+				navigate("/");
 			} else {
 				setErrorMessage(data.message);
 			}
