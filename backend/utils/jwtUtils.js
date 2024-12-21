@@ -69,16 +69,10 @@ export const createRefreshToken = (user) => {
 	}
 };
 
-// Fonction pour générer le payload
-// function generateAccessTokenPayload(user) {
-// 	return {
-// 		id: user.id,
-// 		role: user.role.role_name,
-// 	};
-// }
+// générer le payload
 const generateAccessTokenPayload = (user) => {
-	if (!user || !user.role_name) {
+	if (!user || !user.role.role_name) {
 		throw new Error("Invalid user data for token payload");
 	}
-	return { id: user._id, role_name: user.role_name };
+	return { id: user._id, role_name: user.role.role_name };
 };

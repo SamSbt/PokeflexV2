@@ -79,13 +79,14 @@ export const useAuthStore = create((set) => ({
 
 	// Fetch protected resource method
 	fetchProtectedResource: async (url, options = {}) => {
-		const { userRole } = useAuthStore.getState(); // Récupère le rôle depuis le store
+		// TODO: suppr le protected sur les fetch
+		// const { userRole } = useAuthStore.getState(); // Récupère le rôle depuis le store
 
-		if (userRole !== "Admin") {
-			throw new Error(
-				"Access denied: You do not have permission to view this resource."
-			);
-		}
+		// if (userRole !== "Admin") {
+		// 	throw new Error(
+		// 		"Access denied: You do not have permission to view this resource."
+		// 	);
+		// }
 
 		let accessToken = getCookie("accessToken");
 
