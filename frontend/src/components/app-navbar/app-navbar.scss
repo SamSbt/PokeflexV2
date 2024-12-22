@@ -26,6 +26,22 @@
 	}
 }
 
+// TODO : essayer d'aligner les 2 qd burger btn's up
+// logout btn and dashboard btn location <992px
+@media (max-width: 992px) {
+.logoutAndDashboardLocation {
+		display: flex !important;
+    flex-direction: row !important;
+    justify-content: flex-start !important;
+    align-items: center !important;
+    width: 100% !important;
+    gap: 10px !important;
+	}
+	// .logoutAndDashboardLocation .me-3 {
+  //   margin-right: 10px;  
+  // }
+}
+
 // animation logo
 .logoAnimation {
 	img:hover {

@@ -115,34 +115,38 @@ const AppNavbar = () => {
 						</Nav>
 					)}
 
-				{isLoggedIn && userRole === "Dresseur" && (
-					<Nav className="d-flex align-items-center">
-						<FaSignOutAlt
-							onClick={handleLogout}
-							className="text-white me-3 cursor-pointer"
-							style={{ fontSize: "1.5rem" }} // Taille de l'icône
-						/>
-					</Nav>
-				)}
+				{isLoggedIn && (
+					<div className="logoutAndDashboardLocation">
+						{/* Section Dresseur */}
+						{userRole === "Dresseur" && (
+							<Nav className="d-flex align-items-center">
+								<FaSignOutAlt
+									onClick={handleLogout}
+									className="text-white me-3 cursor-pointer"
+									style={{ fontSize: "1.5rem" }} // Taille de l'icône
+								/>
+							</Nav>
+						)}
 
-				{/* btn affiché si connecté(store), ou sur la page account user si admin*/}
-				{isLoggedIn && userRole === "Admin" && (
-				// {isLoggedIn && (
-					<Nav className="d-flex align-items-center">
-						{/* L'icône de déconnexion est toujours affichée */}
-						<FaSignOutAlt
-							onClick={handleLogout}
-							className="text-white me-3 cursor-pointer"
-							style={{ fontSize: "1.5rem" }} // Taille de l'icône
-						/>
+						{/* Section Admin */}
+						{userRole === "Admin" && (
+							<Nav className="d-flex align-items-center">
+								{/* L'icône de déconnexion est toujours affichée */}
+								<FaSignOutAlt
+									onClick={handleLogout}
+									className="text-white me-3 cursor-pointer"
+									style={{ fontSize: "1.5rem" }} // Taille de l'icône
+								/>
 
-						{/* Le bouton Dashboard n'est affiché que si on n'est pas déjà sur /dashboard */}
-						{/* {location.pathname !== "/dashboard" && ( */}
-						<Link to="/dashboard">
-							<CustomButton text="Dashboard" className="btn-red me-3" />
-						</Link>
-						{/* )} */}
-					</Nav>
+								{/* Le bouton Dashboard n'est affiché que si on n'est pas déjà sur /dashboard */}
+								{location.pathname !== "/dashboard" && (
+									<Link to="/dashboard">
+										<CustomButton text="Dashboard" className="btn-red me-3" />
+									</Link>
+								)}
+							</Nav>
+						)}
+					</div>
 				)}
 
 				<Form
