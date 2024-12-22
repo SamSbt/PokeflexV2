@@ -2,8 +2,13 @@ import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import AppUser from "../models/AppUser.model.js";
 import Role from "../models/Role.model.js";
-import RefreshToken from "../models/RefreshToken.model.js";
-import { createAccessToken, createRefreshToken } from "../utils/jwtUtils.js";
+//import RefreshToken from "../models/RefreshToken.model.js";
+import {
+	createAccessToken,
+	createRefreshToken,
+	jwtCookieConfig,
+	verifyRefreshToken,
+} from "../utils/jwtUtils.js";
 
 export const register = async (req, res) => {
 	const { username, email, password } = req.body;
@@ -76,7 +81,7 @@ export const login = async (req, res) => {
 
 	try {
 		const user = await AppUser.findOne({ email }).populate("role");
-		console.log("Utilisateur trouvé:", user);
+		// console.log("Utilisateur trouvé:", user);
 
 		// vérif du user
 		if (!user) {
@@ -93,23 +98,26 @@ export const login = async (req, res) => {
 				.status(401)
 				.json({ success: false, message: "Mot de passe incorrect." });
 		}
-		console.log("Génération du token...");
+		console.log("Génération de l'acces token...");
 		const accessToken = createAccessToken(user);
-		console.log("Token généré :", accessToken);
+		console.log("👍 acces Token généré :", accessToken);
+		console.log("Génération du refresh token...");
 		const refreshToken = createRefreshToken(user);
+		console.log("👍 refreshToken généré :", refreshToken);
 
-		// Sauvegarder le refresh token dans la base de données
-		await RefreshToken.create({
-			token: refreshToken,
-			userId: user.id,
-		});
+		// si désir de sauvegarder le refresh token dans la base de données si rotation de refresh token
+		// await RefreshToken.create({
+		// 	token: refreshToken,
+		// 	userId: user.id,
+		// });
 
+		res.cookie("jwt", refreshToken, jwtCookieConfig); //
 		res.status(200).json({
 			success: true,
 			message: "Login successful",
 			data: {
 				accessToken,
-				refreshToken,
+				// ne jamais mettre le refresh token ici
 				user: {
 					id: user.id,
 					username: user.username,
@@ -126,42 +134,47 @@ export const login = async (req, res) => {
 
 // Rafraîchissement du access token avec un refresh token
 export const refreshAccessToken = async (req, res) => {
-	const { refreshToken } = req.body;
 
-	// Vérifie que le refresh token est fourni
+	console.log("🤔🤔 Requête reçue pour /refresh");
+	const cookies = req.cookies;
+	const refreshToken = cookies.jwt;
+
 	if (!refreshToken) {
 		return res
-			.status(400)
+			.status(403)
 			.json({ success: false, message: "Refresh token manquant." });
 	}
 
 	try {
 		// Vérifier si le refresh token existe dans la base de données
-		const storedToken = await RefreshToken.findOne({ token: refreshToken });
-		if (!storedToken) {
-			return res
-				.status(403)
-				.json({ success: false, message: "Refresh token invalide." });
-		}
+		// const storedToken = await RefreshToken.findOne({ token: refreshToken });
+		// if (!storedToken) {
+		// 	return res
+		// 		.status(403)
+		// 		.json({ success: false, message: "Refresh token invalide." });
+		// }
 
 		// Vérifier la validité du refresh token
-		const decoded = jwt.verify(refreshToken, process.env.REFRESH_SECRET_TOKEN);
+		const payload = verifyRefreshToken(refreshToken);
 		// Suppression du token expiré de la base
-		await RefreshToken.findOneAndDelete({ token: refreshToken });
+		// await RefreshToken.findOneAndDelete({ token: refreshToken });
+		const user = await AppUser.findById(payload.userId).populate("role");
 
-		const newAccessToken = createAccessToken({ userId: decoded.userId });
-		const newRefreshToken = createRefreshToken({ userId: decoded.userId });
+		const newAccessToken = createAccessToken(user);
 
 		// Enregistrez le nouveau refresh token
-		await RefreshToken.create({
-			token: newRefreshToken,
-			userId: decoded.userId,
-		});
+		// await RefreshToken.create({
+		// 	token: newRefreshToken,
+		// 	userId: decoded.userId,
+		// });
 
 		res.status(200).json({
 			success: true,
 			accessToken: newAccessToken,
 		});
+
+		console.log("💵 Nouvel acces token généré :", newAccessToken);
+
 	} catch (error) {
 		console.error("Erreur lors du rafraîchissement :", error.message);
 		res

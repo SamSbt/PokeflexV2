@@ -57,18 +57,25 @@ const TypesPage = () => {
 								key={pokeflon._id}
 								xs={12}
 								sm={6}
-								md={4}
-								lg={3}
+								md={6}
+								lg={4}
 								xl={3}
-								xxl={2}
+								xxl={3}
 								className="d-flex justify-content-center"
 							>
 								<CustomCard
 									to={`/pokeflon/${pokeflon._id}`}
 									name={pokeflon.name}
-									createdBy={pokeflon.createdBy}
+									createdBy={
+										pokeflon.created_by
+											? pokeflon.created_by.username
+											: "Utilisateur supprimé"
+									}
 									img_src={pokeflon.img_src}
-									types={pokeflon.types}
+									types={pokeflon.types
+										.map((type) => type.type_name)
+										.join(", ")}
+									size="small"
 								/>
 							</Col>
 						))}

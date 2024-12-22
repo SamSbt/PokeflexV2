@@ -1,10 +1,6 @@
 import { create } from "zustand";
-import { getCookie } from "../utils/cookieUtils";
-import { useAuthStore } from "../store/authStore";
 
 export const usePokeflonStore = create((set) => {
-	const fetchProtectedResource = useAuthStore.getState().fetchProtectedResource;
-
 	return {
 		pokeflons: [],
 		types: [],
@@ -19,9 +15,9 @@ export const usePokeflonStore = create((set) => {
 		fetchPokeflons: async () => {
 			set({ loadingPokeflons: true });
 			try {
-				const data = await fetchProtectedResource(
-					"http://localhost:5000/api/pokeflon"
-				);
+				const response = await fetch("http://localhost:5000/api/pokeflon");
+				const data = await response.json();
+
 				if (data.success) {
 					set({ pokeflons: data.data, loadingPokeflons: false });
 				} else {
@@ -33,12 +29,15 @@ export const usePokeflonStore = create((set) => {
 				set({ loadingPokeflons: false });
 			}
 		},
+
 		fetchPokeflonById: async (id) => {
 			set({ loadingPokeflonsById: true, error: null });
 			try {
-				const data = await fetchProtectedResource(
+				const response = await fetch(
 					`http://localhost:5000/api/pokeflon/${id}`
 				);
+
+				const data = await response.json();
 				if (data.success) {
 					set({ loadingPokeflonsById: false });
 					return data.data; // Renvoie le Pokéflon spécifique
@@ -59,14 +58,25 @@ export const usePokeflonStore = create((set) => {
 		fetchPokeflonsByIdType: async (id) => {
 			set({ loadingPokeflonsByIdType: true });
 			try {
-				// const data = await fetchProtectedResource(
-				// 	`http://localhost:5000/api/pokeflon/by-type/${id}`
-				// );
-
 				const response = await fetch(
-					`http://localhost:5000/api/pokeflon/by-type/${id}`
-				); // Point d'API pour récupérer les Pokéflons par type
+					`http://localhost:5000/api/pokeflon/by-type/${id}` // Point d'API pour récupérer les Pokéflons par type
+				);
+
+				// Si le backend retourne une erreur 404
+				if (response.status === 404) {
+					console.warn("Aucun Pokéflon trouvé pour ce type.");
+					set({ pokeflons: [], loadingPokeflonsByIdType: false });
+					return;
+				}
+
+				// Gérer une erreur autre que 404
+				if (!response.ok) {
+					throw new Error(`Erreur HTTP ! Statut : ${response.status}`);
+				}
+
 				const data = await response.json();
+
+ console.log(data);
 
 				//console.log("data PokeflonsByIdType", data.data);
 				set({ pokeflons: data.data, loadingPokeflonsByIdType: false });
@@ -85,33 +95,6 @@ export const usePokeflonStore = create((set) => {
 			// Appelle la fonction pour récupérer les Pokéflons en fonction du type sélectionné
 			//set().fetchPokeflonsByIdType(typeId);
 			await usePokeflonStore.getState().fetchPokeflonsByIdType(typeId);
-		},
-
-		// Fonction pour récupérer les rôles
-		fetchRoles: async () => {
-			set({ error: null });
-			try {
-				// récupérer le token depuis le cookie
-				const token = getCookie("authToken");
-
-				if (!token) {
-					set({ error: "Utilisateur non authentifié" });
-					return;
-				}
-				const data = await fetchProtectedResource(
-					"http://localhost:5000/api/admin/role"
-				);
-
-				if (data.success) {
-					set({ roles: data.data }); // Mise à jour du store avec les rôles récupérés
-				} else {
-					set({ error: data.message || "Échec de la récupération des rôles" });
-					//console.error("Échec de la récupération des rôles :", data.message);
-				}
-			} catch (error) {
-				set({ error: error.message });
-				//console.error("Erreur lors de la récupération des rôles :", error);
-			}
 		},
 	};
 });

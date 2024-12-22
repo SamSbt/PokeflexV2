@@ -1,33 +1,58 @@
 import React, { useEffect, useState } from "react";
-import { Col, Container, Row, Table } from "react-bootstrap";
+import { Button, Col, Container, Row, Table} from "react-bootstrap";
 //import { usePokeflonStore } from "../store/store";
 import { useAuthStore } from "../store/authStore";
 import { useNavigate } from "react-router-dom";
+// import { fetchWithAccessToken } from "../utils/fetchWithAccesToken";
 
 const DashboardPage = () => {
+	const { accessToken , fetchWithAccessToken} = useAuthStore();
+	const { userRole } = useAuthStore();
+	//console.log("DashboardPage rendered", userRole);
+	const [data, setData] = useState();
 	const [error, setError] = useState("");
-	//const { roles, fetchRoles } = usePokeflonStore();
-	const { isLoggedIn, userRole } = useAuthStore();
-	const navigate = useNavigate();
+
+	const getData = async () => {
+		try {
+			const response = await fetchWithAccessToken("http://localhost:5000/api/role");
+			// const response = await fetchWithAccessToken("http://localhost:5000/api/role");
+			if (!response.ok) {
+			setError("Erreur lors de la récupération des données");
+			}
+			const data = await response.json();
+			setData(data);
+			console.log("Data fetched successfully", data);
+		} catch (error) {
+			console.error("Error fetching data:", error);
+			setError("Erreur lors de la récupération des données");
+		}
+	};
+
+	//  // Appel de la fonction pour récupérer les données du tableau
+	// 	const [error, setError] = useState("");
+	// 	//const { roles, fetchRoles } = usePokeflonStore();
+	// 	const { isLoggedIn, userRole } = useAuthStore();
+	// 	const navigate = useNavigate();
+
+	// 	// useEffect(() => {
+	// 	// 	fetchRoles(); // Appel de la méthode pour récupérer les rôles
+	// 	// }, [fetchRoles]);
+
+	// 	// if (error) {
+	// 	// 	return <Alert variant="danger">{error}</Alert>;
+	// 	// }
 
 	// useEffect(() => {
-	// 	fetchRoles(); // Appel de la méthode pour récupérer les rôles
-	// }, [fetchRoles]);
-
-	// if (error) {
-	// 	return <Alert variant="danger">{error}</Alert>;
-	// }
-
-useEffect(() => {
-	// Vérifie si l'utilisateur est connecté et a le rôle "Admin"
-	if (!isLoggedIn || userRole !== "Admin") {
-		navigate("/"); // Redirige vers la page d'accueil s'il n'est pas admin
-	}
-}, [isLoggedIn, userRole, navigate]);
-
+	// 	// Vérifie si l'utilisateur est connecté et a le rôle "Admin"
+	// 	if (!isLoggedIn || userRole !== "Admin") {
+	// 		navigate("/"); // Redirige vers la page d'accueil s'il n'est pas admin
+	// 	}
+	// }, [isLoggedIn, userRole, navigate]);
 
 	return (
 		<section>
+			<Button onClick={getData}>Récupérer les données</Button>
+			{error && <p>{error}</p>}
 			<Container className="mt-5">
 				<Row className="justify-content-center mb-4">
 					<Col xs="auto" className="text-center underline">

@@ -1,19 +1,17 @@
 import { create } from "zustand";
-import { setCookie, getCookie, deleteCookie } from "../utils/cookieUtils.js";
 
 export const useAuthStore = create((set) => ({
 	isLoggedIn: false,
 	userRole: null,
-	username: getCookie("username") || "",
+	username: null,
 	loading: false,
+	accessToken: null,
 	setLoginStatus: (status) => set({ isLoggedIn: status }),
 	setUserRole: (userRole) => {
-		//console.log("Setting userRole to:", userRole);
+		console.log("Setting userRole to:", userRole);
 		set({ userRole });
 	},
 	setUsername: (username) => {
-		setCookie("username", username, 7); // Save username in a cookie with 7 days expiry
-		//console.log("Setting username to:", username);
 		set({ username }); // Update the state of username
 	},
 	setLoading: (loading) => set({ loading }),
@@ -27,14 +25,15 @@ export const useAuthStore = create((set) => ({
 				headers: {
 					"Content-Type": "application/json",
 				},
+				credentials: "include",
 				body: JSON.stringify(credentials),
 			});
 
 			const data = await response.json();
 			if (response.ok) {
-				setCookie("accessToken", data.accessToken, 1); // 1 day expiry
-				setCookie("refreshToken", data.refreshToken, 7); // 7 days expiry
+				console.log(response);
 				set({
+					accessToken: data.data.accessToken,
 					isLoggedIn: true,
 					userRole: data.data.user.role,
 					username: data.data.user.username,
@@ -51,21 +50,12 @@ export const useAuthStore = create((set) => ({
 
 	// Refresh access token method
 	refreshAccessToken: async () => {
-		const refreshToken = getCookie("refreshToken");
-
-		if (!refreshToken) {
-			throw new Error("No refresh token available");
-		}
-
 		const response = await fetch("http://localhost:5000/api/auth/refresh", {
 			method: "POST",
 			credentials: "include",
 			headers: {
 				"Content-Type": "application/json",
 			},
-			credentials: "include",
-			//body: JSON.stringify({ refreshToken }),
-			body: JSON.stringify({}),
 		});
 
 		if (!response.ok) {
@@ -73,61 +63,65 @@ export const useAuthStore = create((set) => ({
 		}
 
 		const data = await response.json();
-		setCookie("accessToken", data.accessToken, 1); // 1 day expiry
+
+		set({
+			accessToken: data.accessToken,
+		});
+
 		return data.accessToken;
 	},
 
-	// Fetch protected resource method
-	fetchProtectedResource: async (url, options = {}) => {
-		// TODO: suppr le protected sur les fetch
-		// const { userRole } = useAuthStore.getState(); // Récupère le rôle depuis le store
+	fetchWithAccessToken: async (url, options = {}) => {
+		const { refreshAccessToken, accessToken } = useAuthStore.getState(); // Accéder au state actuel
+		let retry = true; // Flag pour contrôler le rafraîchissement du token
 
-		// if (userRole !== "Admin") {
-		// 	throw new Error(
-		// 		"Access denied: You do not have permission to view this resource."
-		// 	);
-		// }
-
-		let accessToken = getCookie("accessToken");
+		// Préparer les options de la requête avec le token actuel
+		const currentOptions = {
+			...options,
+			headers: {
+				...options.headers,
+				Authorization: `Bearer ${accessToken}`,
+			},
+			credentials: "include", // Inclure les cookies si nécessaire
+		};
 
 		try {
-			let response = await fetch(url, {
-				...options,
-				headers: {
-					...options.headers,
-					Authorization: `Bearer ${accessToken}`,
-				},
-			});
+			// Effectuer la requête initiale
+			let response = await fetch(url, currentOptions);
 
-			if (response.status === 401) {
-				// Access token expired, refresh it
-				accessToken = await useAuthStore.getState().refreshAccessToken();
+			// Si le token est expiré (401), tenter de le rafraîchir
+			if (response.status === 401 && retry) {
+				retry = false; // Empêche une boucle infinie
+				console.warn("⚠️ Token expiré. Tentative de rafraîchissement...");
 
-				// Retry the request with the new access token
-				response = await fetch(url, {
-					...options,
-					headers: {
-						...options.headers,
-						Authorization: `Bearer ${accessToken}`,
-					},
-				});
+				// Rafraîchir le token
+				const newAccessToken = await refreshAccessToken();
+
+				if (newAccessToken) {
+					console.log(
+						"✅ Token rafraîchi avec succès. Nouvelle tentative de requête..."
+					);
+					// Mettre à jour les headers avec le nouveau token
+					currentOptions.headers.Authorization = `Bearer ${newAccessToken}`;
+
+					// Réessayer la requête avec le nouveau token
+					response = await fetch(url, currentOptions);
+				} else {
+					console.error("❌ Échec du rafraîchissement du token.");
+					throw new Error("Unable to refresh access token");
+				}
 			}
 
-			if (!response.ok) {
-				throw new Error("Failed to fetch protected resource");
-			}
-
-			return await response.json();
+			return response; // Retourne la réponse (peut être la requête initiale ou réessayée)
 		} catch (error) {
-			console.error("Failed to fetch protected resource:", error);
-			throw error;
+			console.error("Erreur lors de la requête avec access token :", error);
+			throw error; // Propager l'erreur pour permettre un traitement global
 		}
 	},
 
 	// Logout method
 	logout: () => {
-		deleteCookie("accessToken");
-		deleteCookie("refreshToken");
 		set({ isLoggedIn: false, userRole: null, username: "" });
 	},
+
 }));

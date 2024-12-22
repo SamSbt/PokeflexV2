@@ -9,6 +9,7 @@ import {
 	putPokeflon,
 } from "../controllers/Pokeflon.controller.js";
 import { upload } from "../middlewares/multerMiddleware.js";
+import { authenticate } from "../middlewares/authMiddleware.js";
 
 // const upload = multer({ dest: "uploads/" });
 const router = express.Router();
@@ -21,7 +22,7 @@ const router = express.Router();
 router.get("/", getPokeflons);
 router.get("/:id", getOnePokeflon);
 router.get("/by-type/:id", getPokeflonByIdType);
-router.post("/", upload.single("file"), postPokeflon);
+router.post("/", authenticate, upload.single("file"), postPokeflon);
 router.put("/:id", putPokeflon);
 router.delete("/:id", deletePokeflon);
 

@@ -57,7 +57,7 @@ app.use("/api/appuser", appuserRoutes);
 app.use("/api", userRoutes);
 app.use("/api/type", typeRoutes);
 app.use("/api/contact", contactRoutes);
-
+app.use("/api/role", roleRoutes);
 app.use("/api/auth", authRoutes);
 
 app.use(errormiddleware);

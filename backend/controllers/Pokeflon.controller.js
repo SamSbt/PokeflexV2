@@ -13,6 +13,8 @@ export const getPokeflons = async (req, res) => {
 				select: "username",
 			})
 			.exec();
+		console.log(pokeflons);
+
 		res.status(200).json({ success: true, data: pokeflons });
 	} catch (error) {
 		console.log("Error in fetching Pokeflons:", error.message);
@@ -36,6 +38,10 @@ export const getOnePokeflon = async (req, res) => {
 			.populate({
 				path: "types", // Charge les types associés à ce Pokéflon
 				select: "type_name", // On sélectionne uniquement le nom des types pour l'affichage
+			})
+			.populate({
+				path: "created_by", // Le champ 'created_by' qui est un ObjectId
+				select: "username", // On sélectionne uniquement le 'username' de l'utilisateur
 			})
 			.exec();
 
@@ -61,15 +67,23 @@ export const getPokeflonByIdType = async (req, res) => {
 	}
 
 	try {
-		const pokeflons = await Pokeflon.find({ types: id }).populate({
-			path: "types",
-			select: "type_name",
-		});
+		const pokeflons = await Pokeflon.find({ types: id })
+			.populate({
+				path: "types",
+				select: "type_name",
+			})
+			.populate({
+				path: "created_by", // Le champ 'created_by' qui est un ObjectId
+				select: "username", // On sélectionne uniquement le 'username' de l'utilisateur
+			});
 
-		if (!pokeflons.length) {
-			return res.status(404).json({
-				success: false,
-				message: "No Pokéflons found for the given type.",
+		// si aucun Pokéflon n'est trouvé, renvoyer un tableau vide avec un code 200
+		// to avoid erreur 404 en console
+		if (pokeflons.length === 0) {
+			return res.status(200).json({
+				success: true,
+				data: [], // Retourne un tableau vide
+				message: "No Pokéflons found for the given type", // Message d'information
 			});
 		}
 
@@ -81,6 +95,7 @@ export const getPokeflonByIdType = async (req, res) => {
 };
 
 export const postPokeflon = async (req, res) => {
+	console.log("🗨️ we are in the POST /api/pokeflons route");
 	try {
 		const pokeflons = req.body; // pokeflons est l'objet contenant les données du formulaire
 		const file = req.file; // Le fichier téléchargé est dans req.file
@@ -89,9 +104,9 @@ export const postPokeflon = async (req, res) => {
 		console.log("req.file:", req.file);
 		console.log("req.user id:", req.user?.id);
 
-		// Vérifie que l'utilisateur est connecté
+		//Vérifie que l'utilisateur est connecté
 		if (!userId) {
-			return res.status(401).json({
+			return res.status(404).json({
 				success: false,
 				message: "Unauthorized: User not authenticated.",
 			});
@@ -188,7 +203,7 @@ export const postPokeflon = async (req, res) => {
 			data: savedPokeflon,
 		});
 	} catch (error) {
-		console.error("Erreur lors de la création :", response.statusText);
+		console.error("Erreur lors de la création.");
 		return res.status(500).json({ success: false, message: "Server Error" });
 	}
 };
@@ -196,6 +211,7 @@ export const postPokeflon = async (req, res) => {
 export const putPokeflon = async (req, res) => {
 	const { id } = req.params;
 	const pokeflons = req.body;
+	console.log("🗨️ we are in putPokeflon");
 
 	// vérif validité ID
 	if (!mongoose.Types.ObjectId.isValid(id)) {

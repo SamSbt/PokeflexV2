@@ -3,7 +3,6 @@ import { Link, useNavigate } from "react-router-dom";
 import { Form, Row, Col } from "react-bootstrap";
 import CustomButton from "../components/custom-button/CustomButton";
 import { useAuthStore } from "../store/authStore";
-import { setCookie } from "../utils/cookieUtils";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 const LoginPage = () => {
@@ -20,7 +19,7 @@ const LoginPage = () => {
 	const navigate = useNavigate();
 
 	// Store Zustand pour gérer l'état de connexion et le rôle utilisateur
-	const { login, setLoginStatus, setUserRole, setUsername } = useAuthStore();
+	const { login } = useAuthStore();
 
 	const handleInputChange = (e) => {
 		const { name, value } = e.target;
@@ -43,15 +42,6 @@ const LoginPage = () => {
 			console.log("Réponse de l'API:", data);
 
 			if (data.success) {
-				// Mise à jour du store Zustand
-				setLoginStatus(true);
-				console.log("User role from API:", data.data.user.role);
-				setUserRole(data.data.user.role);
-				setUsername(data.data.user.username);
-				// Stocker le token dans le cookie
-				setCookie("authToken", data.data.accessToken);
-				// Stocker le refresh token dans le cookie
-				setCookie("refreshToken", data.data.refreshToken);
 				navigate("/");
 			} else {
 				setErrorMessage(data.message);
