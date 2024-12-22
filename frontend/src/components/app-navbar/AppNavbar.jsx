@@ -127,6 +127,7 @@ const AppNavbar = () => {
 
 				{/* btn affiché si connecté(store), ou sur la page account user si admin*/}
 				{isLoggedIn && userRole === "Admin" && (
+				// {isLoggedIn && (
 					<Nav className="d-flex align-items-center">
 						{/* L'icône de déconnexion est toujours affichée */}
 						<FaSignOutAlt
@@ -136,11 +137,11 @@ const AppNavbar = () => {
 						/>
 
 						{/* Le bouton Dashboard n'est affiché que si on n'est pas déjà sur /dashboard */}
-						{location.pathname !== "/dashboard" && (
-							<Link to="/dashboard">
-								<CustomButton text="Dashboard" className="btn-red me-3" />
-							</Link>
-						)}
+						{/* {location.pathname !== "/dashboard" && ( */}
+						<Link to="/dashboard">
+							<CustomButton text="Dashboard" className="btn-red me-3" />
+						</Link>
+						{/* )} */}
 					</Nav>
 				)}
 

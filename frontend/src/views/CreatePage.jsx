@@ -4,13 +4,15 @@ import CustomButton from "../components/custom-button/CustomButton";
 import FileUpload from "../components/fileUpload/FileUpload";
 import useFormStore, { fetchTypes } from "../store/useFormStore";
 import { useAuthStore } from "../store/authStore";
-import { getCookie } from "../utils/cookieUtils";
-import { Navigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const CreatePage = () => {
 	const { formData, setFormData, resetForm, types } = useFormStore();
 	const [file, setFile] = useState(null); // ajout pour stocker l'image
-	const { isLoggedIn } = useAuthStore();
+	const { isLoggedIn, fetchWithAccessToken } = useAuthStore();
+		const [errorMessage, setErrorMessage] = useState("");
+
+		const navigate = useNavigate();
 
 	if (!isLoggedIn) {
 		return (
@@ -57,14 +59,14 @@ const CreatePage = () => {
 		//console.log("Données envoyées : ", formData);
 
 		// Récupérer le token d'authentification depuis le cookie
-		const token = getCookie("authToken");
+		// const token = getCookie("accessToken");
 
-		// Si pas de token, on peut soit afficher un message d'erreur, soit rediriger vers la page de connexion
-		if (!token) {
-			console.error("Utilisateur non authentifié. Veuillez vous connecter.");
-			setErrorMessage("Utilisateur non authentifié. Veuillez vous connecter.");
-			return;
-		}
+		// // Si pas de token, on peut soit afficher un message d'erreur, soit rediriger vers la page de connexion
+		// if (!token) {
+		// 	console.error("Utilisateur non authentifié. Veuillez vous connecter.");
+		// 	setErrorMessage("Utilisateur non authentifié. Veuillez vous connecter.");
+		// 	return;
+		// }
 
 		// Utiliser FormData pour inclure l'image et les autres données
 		const formDataToSend = new FormData();
@@ -77,27 +79,28 @@ const CreatePage = () => {
 		}
 
 		try {
-			const response = await fetch("http://localhost:5000/api/pokeflon", {
-				method: "POST",
-				headers: {
-					Authorization: `Bearer ${token}`, // Ajouter le token dans l'en-tête
+			const response = await fetchWithAccessToken(
+				"http://localhost:5000/api/pokeflon", 
+				{
+					method: "POST",
+					// manque un truc
+					body: formDataToSend
 				},
-				body: formDataToSend,
-			});
+			);
 
 			if (response.ok) {
 				console.log("Pokéflon créé avec succès !");
 				resetForm();
 				setFile(null); // réinitialise l'image
 				// TODO: vérif ici la navigation vers la page, doit être celle du pokéflon qui vient d'être créé
-				Navigate("/");
+				navigate("/");
 			} else {
 				console.error("Erreur lors de la création :", response.statusText);
-				setErrorMessage(data.message);
+				//setErrorMessage(data.message);
 			}
 		} catch (error) {
 			console.error("Erreur réseau :", error);
-			setErrorMessage("Une erreur est survenue lors de la création.");
+			//setErrorMessage("Une erreur est survenue lors de la création.");
 		}
 	};
 

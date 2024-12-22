@@ -1,6 +1,6 @@
 import React from "react";
 import { Route, Routes } from "react-router-dom";
-
+import CheckRoles from "./components/CheckRoles";
 import HomePage from "./views/HomePage";
 import TypesPage from "./views/TypesPage";
 import CreatePage from "./views/CreatePage";
@@ -23,7 +23,10 @@ const Routing = () => {
 				<Route path="/login" element={<LoginPage />} />
 				<Route path="/login/:id" element={<ProfilUserPage />} />
 				{/*<Route path="/login/:id/favorites" element /> */}
-				<Route path="/dashboard" element={<DashboardPage />} />
+
+				<Route element={<CheckRoles Allowedroles={["Admin"]} />}>
+					<Route path="/dashboard" element={<DashboardPage />} />
+				</Route>
 
 				{/* Route 404 à la fin pour capturer toutes les autres routes non définies */}
 				<Route path="*" element={<NotFoundPage />} />

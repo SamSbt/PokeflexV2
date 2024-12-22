@@ -3,17 +3,25 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
-const accessTokenConfig = {
-	secret: process.env.ACCESS_SECRET_TOKEN, 
-	expiresIn: "1h", 
+export const accessTokenConfig = {
+	secret: process.env.ACCESS_SECRET_TOKEN,
+	expiresIn: "10s",
 };
 if (!process.env.ACCESS_SECRET_TOKEN) {
 	console.error("ACCESS_SECRET_TOKEN is not defined in .env");
 }
 
-const refreshTokenConfig = {
+export const refreshTokenConfig = {
 	secret: process.env.REFRESH_SECRET_TOKEN,
-	expiresIn: "7d", 
+	expiresIn: "7d",
+};
+
+export const jwtCookieConfig = {
+	httpOnly: true,
+	secure: process.env.NODE_ENV === "production" ? false : true, // true en production, false en développement
+	sameSite: process.env.NODE_ENV === "production" ? "lax" : "none", // Correctement typé
+	maxAge: 7 * 24 * 60 * 60 * 1000, // 7 jours en millisecondes
+	path: "/", // Chemin de validité du cookie
 };
 
 // Fonction pour créer un access token
@@ -39,12 +47,43 @@ export const verifyAccessToken = (token) => {
 	try {
 		const payload = jwt.verify(token, accessTokenConfig.secret);
 		// verify : vérifie que le token est valide (signature correcte avec la clé secrète), si non : exception dans catch
-		console.log("Payload:", payload);
+		// console.log("verifyAccessToken token Payload:", payload);
+		// Ici tu peux ajouter une logique de validation selon ton besoin
+		console.log(payload, "✨ payload de l;assces token"); // Renvoie le payload vérifié);
+		return payload; // Renvoie le payload vérifié
+	} catch (error) {
+		if (error.name === "TokenExpiredError") {
+			console.error("⚠️ Access token expired");
+			throw new Error("Access token expired");
+		} else if (error.name === "JsonWebTokenError") {
+			console.error("Invalid access token");
+			throw new Error("Invalid access token");
+		} else {
+			console.log("Error in verifyAccessToken:");
+			throw error;
+		}
+	}
+};
+
+export const verifyRefreshToken = (refreshToken) => {
+	console.log("Start verifyRefreshToken");
+	try {
+		const payload = jwt.verify(refreshToken, refreshTokenConfig.secret);
+		// verify : vérifie que le token est valide (signature correcte avec la clé secrète), si non : exception dans catch
+		console.log("verifyRefreshToken refreshToken Payload:", payload);
 		// Ici tu peux ajouter une logique de validation selon ton besoin
 		return payload; // Renvoie le payload vérifié
 	} catch (error) {
-		console.log("Error in verifyAccessToken:");
-		throw error;
+		if (error.name === "RefreshTokenExpiredError") {
+			console.error("Refresh token expired");
+			throw new Error("Refresh token expired");
+		} else if (error.name === "JsonWebTokenError") {
+			console.error("Invalid refresh token");
+			throw new Error("Invalid refresh token");
+		} else {
+			console.log("Error in verifyRefreshToken:");
+			throw error;
+		}
 	}
 };
 

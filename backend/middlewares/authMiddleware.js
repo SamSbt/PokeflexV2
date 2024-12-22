@@ -11,7 +11,11 @@ export const authenticate = (req, res, next) => {
 
 	try {
 		const decoded = verifyAccessToken(token);
+		console.log("👍Token décodé avec succès.", decoded);
 		// decode : permet de lire le contenu, "lecture seule" kinda
+		if (!decoded.id) {
+			return res.status(401).json({ message: "Token invalide ou expiré." });
+		}
 		req.user = decoded; // Ajouter l'utilisateur décodé à req.user
 		console.log("Utilisateur décodé:", decoded);
 		//req.role = decoded.role;

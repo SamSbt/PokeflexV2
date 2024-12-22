@@ -15,20 +15,19 @@ const HomePage = () => {
 		fetchPokeflons();
 	}, [fetchPokeflons]);
 
-	// TODO : affichage des types sur la carte de base ?
 	// TODO: à partir de 1200 et jusqu à 1400, pb avec gap entre les cards ?
 
 	const cardsHomepageView = (
-		<Row className="justify-content-center gap-3">
+		<Row className="justify-content-center">
 			{pokeflons.map((pokeflon) => (
 				<Col
 					key={pokeflon.id}
 					xs={12}
 					sm={6}
-					md={4}
-					lg={3}
+					md={5}
+					lg={4}
 					xl={3}
-					xxl={2}
+					xxl={3}
 					className="d-flex justify-content-center"
 				>
 					<CustomCard
@@ -55,7 +54,10 @@ const HomePage = () => {
 				{isLoggedIn && (
 					<h3 className="mt-4 text-center">
 						Bienvenue{" "}
-						<Link to={`/login/${username}`} className="underline custom-homepage-link">
+						<Link
+							to={`/login/${username}`}
+							className="underline custom-homepage-link"
+						>
 							{username}
 						</Link>
 					</h3>

@@ -2,9 +2,11 @@ import mongoose from "mongoose";
 import Role from "../models/Role.model.js";
 
 export const getRoles = async (req, res) => {
+	console.log("Fetching all roles...✨✨");
 	try {
 		const roles = await Role.find({}); // empty {} here : fetch ALL roles
 		res.status(200).json({ success: true, data: roles });
+		console.log("Roles fetched successfully! 🥇");
 	} catch (error) {
 		console.log("Error in fetching roles:", error.message);
 		return res.status(500).json({ success: false, message: "Server Error" });
