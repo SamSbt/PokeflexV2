@@ -8,7 +8,7 @@ import { useNavigate } from "react-router-dom";
 import { useParams } from "react-router-dom";
 
 const CreatePage = () => {
-	const { pokeflonId } = useParams();
+	const { id } = useParams();
 	const { formData, setFormData, resetForm, types } = useFormStore();
 	const [file, setFile] = useState(null); // ajout pour stocker l'image
 	const { isLoggedIn, fetchWithAccessToken } = useAuthStore();
@@ -40,22 +40,38 @@ const CreatePage = () => {
 		// Récupérer les types au montage du composant
 		fetchTypes();
 
+		console.log("Pokéflon ID:", id);
 		// Vérifier si un pokeflonId est présent pour pré-remplir les données
-		if (pokeflonId) {
+		if (id) {
 			const fetchPokeflonData = async () => {
 				try {
 					const response = await fetchWithAccessToken(
-						`http://localhost:5000/api/pokeflon/${pokeflonId}`
+						`http://localhost:5000/api/pokeflon/${id}`
 					);
 					if (response.ok) {
-						const data = await response.json();
-						setFormData("name", data.name);
-						setFormData("sound", data.sound);
-						setFormData("height", data.height);
-						setFormData("weight", data.weight);
-						setFormData("type1", data.type1);
-						setFormData("type2", data.type2);
-						setFormData("summary", data.summary);
+						const { data } = await response.json();
+						console.log("Pokéflon data:", data);
+						// mettre à jour l'ensemble du formData
+						// setFormData({
+						// 	name: data.name,
+						// 	sound: data.sound,
+						// 	height: data.height,
+						// 	weight: data.weight,
+						// 	type1: data.type1,
+						// 	type2: data.type2,
+						// 	summary: data.summary,
+						// });
+						setFormData((prevData) => ({
+							...prevData,
+							name: data.name,
+							sound: data.sound,
+							height: data.height,
+							weight: data.weight,
+							type1: data.type1,
+							type2: data.type2,
+							summary: data.summary,
+						}));
+						//console.log("Form Data after setFormData:", formData);
 					} else {
 						console.error(
 							"Erreur lors du chargement des données :",
@@ -72,9 +88,12 @@ const CreatePage = () => {
 
 			fetchPokeflonData();
 		}
-	}, [pokeflonId]);
+	}, [id, setFormData]);
 
 
+	useEffect(() => {
+  console.log("Form Data has been updated:", formData);
+}, [formData]);
 	
 	const handleChange = (e) => {
 		const { name, value } = e.target;
@@ -107,7 +126,7 @@ const CreatePage = () => {
 		// Utiliser FormData pour inclure l'image et les autres données
 		const formDataToSend = new FormData();
 		formDataToSend.append("file", file); // Ajoute l'image
-		formDataToSend.append("pokeflons", JSON.stringify(formData));
+		//formDataToSend.append("pokeflons", JSON.stringify(formData));
 		//console.log("file? :", file);
 
 		for (const key in formData) {
@@ -116,10 +135,10 @@ const CreatePage = () => {
 
 		try {
 let response;
-		if (pokeflonId) {
+		if (id) {
 			// Si un ID est présent, on met à jour un Pokéflon existant
 			response = await fetchWithAccessToken(
-				`http://localhost:5000/api/pokeflon/${pokeflonId}`,
+				`http://localhost:5000/api/pokeflon/${id}`,
 				{
 					method: "PUT", // Utilisation de la méthode PUT pour les mises à jour
 					body: formDataToSend,
@@ -127,7 +146,7 @@ let response;
 			);
 
 			} else {
-			const response = await fetchWithAccessToken(
+			response = await fetchWithAccessToken(
 				"http://localhost:5000/api/pokeflon",
 				{
 					method: "POST",
@@ -139,14 +158,14 @@ let response;
 
 			if (response.ok) {
 				console.log(
-					pokeflonId
+					id
 						? "Pokéflon mis à jour avec succès !"
 						: "Pokéflon créé avec succès !"
 				);
 				resetForm();
 				setFile(null); // réinitialise l'image
 				// TODO: vérif ici la navigation vers la page, doit être celle du pokéflon qui vient d'être créé ou modifié
-				navigate(pokeflonId ? `/pokeflon/${pokeflonId}` : "/");
+				navigate(id ? `/pokeflon/${id}` : "/");
 			} else {
 				console.error("Erreur lors de la création :", response.statusText);
 				//setErrorMessage(data.message);
@@ -156,8 +175,6 @@ let response;
 			//setErrorMessage("Une erreur est survenue lors de la création.");
 		}
 	};
-
-
 	
 	return (
 		<>
@@ -194,7 +211,7 @@ let response;
 													name="name"
 													id="name"
 													autoComplete="name"
-													value={formData.name}
+													value={formData.name || ""}
 													onChange={handleChange}
 													placeholder="Nom du Pokéflon"
 													className="input-mid-width"
@@ -208,7 +225,7 @@ let response;
 													type="text"
 													name="sound"
 													id="sound"
-													value={formData.sound}
+													value={formData.sound || ""}
 													onChange={handleChange}
 													placeholder="Cri du Pokéflon"
 													className="input-mid-width"
