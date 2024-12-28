@@ -86,6 +86,11 @@ export const useAuthStore = create((set) => ({
 			credentials: "include", // Inclure les cookies si nécessaire
 		};
 
+  if (!(options.body instanceof FormData)) {
+		currentOptions.headers["Content-Type"] = "application/json";
+	}
+
+
 		try {
 			// Effectuer la requête initiale
 			let response = await fetch(url, currentOptions);

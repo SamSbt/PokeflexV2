@@ -214,6 +214,7 @@ export const putPokeflon = async (req, res) => {
 	const { id } = req.params;
 	const pokeflons = req.body;
 	console.log("🗨️ we are in putPokeflon");
+console.log("putPokeflon, pokeflons is:", pokeflons);
 
 	// vérif validité ID
 	if (!mongoose.Types.ObjectId.isValid(id)) {
