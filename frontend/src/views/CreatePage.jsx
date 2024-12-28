@@ -5,14 +5,15 @@ import FileUpload from "../components/fileUpload/FileUpload";
 import useFormStore, { fetchTypes } from "../store/useFormStore";
 import { useAuthStore } from "../store/authStore";
 import { useNavigate } from "react-router-dom";
+import { useParams } from "react-router-dom";
 
 const CreatePage = () => {
+	const { pokeflonId } = useParams();
 	const { formData, setFormData, resetForm, types } = useFormStore();
 	const [file, setFile] = useState(null); // ajout pour stocker l'image
 	const { isLoggedIn, fetchWithAccessToken } = useAuthStore();
-		const [errorMessage, setErrorMessage] = useState("");
-
-		const navigate = useNavigate();
+	//const [errorMessage, setErrorMessage] = useState("");
+	const navigate = useNavigate();
 
 	if (!isLoggedIn) {
 		return (
@@ -38,8 +39,43 @@ const CreatePage = () => {
 	useEffect(() => {
 		// Récupérer les types au montage du composant
 		fetchTypes();
-	}, []);
 
+		// Vérifier si un pokeflonId est présent pour pré-remplir les données
+		if (pokeflonId) {
+			const fetchPokeflonData = async () => {
+				try {
+					const response = await fetchWithAccessToken(
+						`http://localhost:5000/api/pokeflon/${pokeflonId}`
+					);
+					if (response.ok) {
+						const data = await response.json();
+						setFormData("name", data.name);
+						setFormData("sound", data.sound);
+						setFormData("height", data.height);
+						setFormData("weight", data.weight);
+						setFormData("type1", data.type1);
+						setFormData("type2", data.type2);
+						setFormData("summary", data.summary);
+					} else {
+						console.error(
+							"Erreur lors du chargement des données :",
+							response.statusText
+						);
+					}
+				} catch (error) {
+					console.error(
+						"Erreur réseau lors de la récupération des données :",
+						error
+					);
+				}
+			};
+
+			fetchPokeflonData();
+		}
+	}, [pokeflonId]);
+
+
+	
 	const handleChange = (e) => {
 		const { name, value } = e.target;
 		setFormData(name, value);
@@ -79,21 +115,38 @@ const CreatePage = () => {
 		}
 
 		try {
+let response;
+		if (pokeflonId) {
+			// Si un ID est présent, on met à jour un Pokéflon existant
+			response = await fetchWithAccessToken(
+				`http://localhost:5000/api/pokeflon/${pokeflonId}`,
+				{
+					method: "PUT", // Utilisation de la méthode PUT pour les mises à jour
+					body: formDataToSend,
+				}
+			);
+
+			} else {
 			const response = await fetchWithAccessToken(
-				"http://localhost:5000/api/pokeflon", 
+				"http://localhost:5000/api/pokeflon",
 				{
 					method: "POST",
 					// manque un truc
-					body: formDataToSend
-				},
+					body: formDataToSend,
+				}
 			);
+		}
 
 			if (response.ok) {
-				console.log("Pokéflon créé avec succès !");
+				console.log(
+					pokeflonId
+						? "Pokéflon mis à jour avec succès !"
+						: "Pokéflon créé avec succès !"
+				);
 				resetForm();
 				setFile(null); // réinitialise l'image
-				// TODO: vérif ici la navigation vers la page, doit être celle du pokéflon qui vient d'être créé
-				navigate("/");
+				// TODO: vérif ici la navigation vers la page, doit être celle du pokéflon qui vient d'être créé ou modifié
+				navigate(pokeflonId ? `/pokeflon/${pokeflonId}` : "/");
 			} else {
 				console.error("Erreur lors de la création :", response.statusText);
 				//setErrorMessage(data.message);
@@ -104,6 +157,8 @@ const CreatePage = () => {
 		}
 	};
 
+
+	
 	return (
 		<>
 			<section>
@@ -121,9 +176,7 @@ const CreatePage = () => {
 										controlId="fileUpload"
 										className="mt-1 input-width"
 									>
-										<Form.Label>
-											Importer une photo :
-										</Form.Label>
+										<Form.Label>Importer une photo :</Form.Label>
 										<FileUpload
 											controlId="fileUpload"
 											onFileSelected={(selectedFile) => setFile(selectedFile)} // Enregistre l'image dans l'état

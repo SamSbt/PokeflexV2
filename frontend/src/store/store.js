@@ -76,9 +76,9 @@ export const usePokeflonStore = create((set) => {
 
 				const data = await response.json();
 
- console.log(data);
+//console.log("store.js data:", data);
 
-				//console.log("data PokeflonsByIdType", data.data);
+//console.log("store.js - data PokeflonsByIdType", data.data);
 				set({ pokeflons: data.data, loadingPokeflonsByIdType: false });
 			} catch (err) {
 				set({

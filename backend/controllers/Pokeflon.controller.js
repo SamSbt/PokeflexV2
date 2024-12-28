@@ -12,8 +12,9 @@ export const getPokeflons = async (req, res) => {
 				path: "created_by",
 				select: "username",
 			})
+			.sort({ updatedAt: -1 })
 			.exec();
-		console.log(pokeflons);
+		//console.log("pokeflons array :", pokeflons);
 
 		res.status(200).json({ success: true, data: pokeflons });
 	} catch (error) {
@@ -75,7 +76,8 @@ export const getPokeflonByIdType = async (req, res) => {
 			.populate({
 				path: "created_by", // Le champ 'created_by' qui est un ObjectId
 				select: "username", // On sélectionne uniquement le 'username' de l'utilisateur
-			});
+			})
+			.sort({ updatedAt: -1 });
 
 		// si aucun Pokéflon n'est trouvé, renvoyer un tableau vide avec un code 200
 		// to avoid erreur 404 en console

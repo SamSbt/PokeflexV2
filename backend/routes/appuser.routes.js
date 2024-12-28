@@ -6,6 +6,7 @@ import {
 	postAppUser,
 	putAppUser,
 } from "../controllers/AppUser.controller.js";
+import { authenticate, hasRole } from "../middlewares/authMiddleware.js";
 
 const router = express.Router();
 

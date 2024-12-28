@@ -5,7 +5,8 @@ export const authenticate = (req, res, next) => {
 	const token = req.header("Authorization")?.split(" ")[1]; // Extraire le token de l'en-tête Authorization
 	console.log("Token reçu:", token);
 
-	if (!token) {
+	if (!req.header("Authorization") || !token) {
+		console.error("Authorization header or token is missing");
 		return res.status(401).json({ message: "Non autorisé" });
 	}
 
@@ -29,12 +30,19 @@ export const authenticate = (req, res, next) => {
 // vérif du rôle :
 export const hasRole = (requiredRole) => (req, res, next) => {
 	const user = req.user;
-	console.log("user is :", user.role);
+	//console.log("Contenu de req.user :", user);
+	console.log("user is :", user.role_name);
 	console.log("requiredRole is :", requiredRole);
-	if (user && user.role && user.role.role_name === requiredRole) {
+	
+
+	if (
+		user &&
+		user.role_name &&
+		(user.role_name === requiredRole || user.role_name === "Admin")
+	) {
 		return next();
 	}
-	console.log("Rôle de l'utilisateur:", user?.role?.role_name);
+	console.log("Rôle de l'utilisateur:", user.role_name);
 	return res.status(403).json({
 		success: false,
 		message: "Accès refusé",
