@@ -1,19 +1,21 @@
 import { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import { Form, Row, Col, Image } from "react-bootstrap";
 import CustomButton from "../components/custom-button/CustomButton";
 import FileUpload from "../components/fileUpload/FileUpload";
 import useFormStore, { fetchTypes } from "../store/useFormStore";
 import { useAuthStore } from "../store/authStore";
-import { useNavigate } from "react-router-dom";
-import { useParams } from "react-router-dom";
+import { usePokeflonStore } from "../store/store";
 
 const CreatePage = () => {
 	const { id } = useParams();
 	const { formData, setFormData, resetForm, types } = useFormStore();
 	const [file, setFile] = useState(null); // ajout pour stocker l'image
 	const { isLoggedIn, fetchWithAccessToken } = useAuthStore();
+	const { fetchPokeflonById, loadingPokeflonsById, error } = usePokeflonStore();
 	//const [errorMessage, setErrorMessage] = useState("");
 	const navigate = useNavigate();
+	
 
 	if (!isLoggedIn) {
 		return (
@@ -44,55 +46,27 @@ const CreatePage = () => {
 		// Vérifier si un pokeflonId est présent pour pré-remplir les données
 		if (id) {
 			const fetchPokeflonData = async () => {
-				try {
-					const response = await fetchWithAccessToken(
-						`http://localhost:5000/api/pokeflon/${id}`
-					);
-					if (response.ok) {
-						const { data } = await response.json();
-						console.log("Pokéflon data:", data);
-						// mettre à jour l'ensemble du formData
-						// setFormData({
-						// 	name: data.name,
-						// 	sound: data.sound,
-						// 	height: data.height,
-						// 	weight: data.weight,
-						// 	type1: data.type1,
-						// 	type2: data.type2,
-						// 	summary: data.summary,
-						// });
-						setFormData((prevData) => ({
-							...prevData,
-							name: data.name,
-							sound: data.sound,
-							height: data.height,
-							weight: data.weight,
-							type1: data.type1,
-							type2: data.type2,
-							summary: data.summary,
-						}));
-						//console.log("Form Data after setFormData:", formData);
-					} else {
-						console.error(
-							"Erreur lors du chargement des données :",
-							response.statusText
-						);
-					}
-				} catch (error) {
-					console.error(
-						"Erreur réseau lors de la récupération des données :",
-						error
-					);
+				const data = await fetchPokeflonById(id); // Appeler la méthode du store pour récupérer les données
+				console.log("Pokéflon data:", data);
+				if (data) {
+					setFormData({
+						name: data.name,
+						sound: data.sound,
+						height: data.height,
+						weight: data.weight,
+						type1: data.type1,
+						type2: data.type2,
+						summary: data.summary,
+					});
 				}
 			};
-
 			fetchPokeflonData();
 		}
-	}, [id, setFormData]);
+	}, [id, setFormData, fetchPokeflonById]);
 
 
-	useEffect(() => {
-  console.log("Form Data has been updated:", formData);
+useEffect(() => {
+	console.log("FormData structure:", formData); // Vérifie bien la structure de formData
 }, [formData]);
 	
 	const handleChange = (e) => {
@@ -126,7 +100,7 @@ const CreatePage = () => {
 		// Utiliser FormData pour inclure l'image et les autres données
 		const formDataToSend = new FormData();
 		formDataToSend.append("file", file); // Ajoute l'image
-		//formDataToSend.append("pokeflons", JSON.stringify(formData));
+		formDataToSend.append("pokeflons", JSON.stringify(formData));
 		//console.log("file? :", file);
 
 		for (const key in formData) {
@@ -175,6 +149,10 @@ let response;
 			//setErrorMessage("Une erreur est survenue lors de la création.");
 		}
 	};
+
+	if (loadingPokeflonsById) {
+		return <div>Chargement...</div>; 
+	}
 	
 	return (
 		<>
@@ -210,8 +188,7 @@ let response;
 													type="text"
 													name="name"
 													id="name"
-													autoComplete="name"
-													value={formData.name || ""}
+													value={formData.name || "idk ?"}
 													onChange={handleChange}
 													placeholder="Nom du Pokéflon"
 													className="input-mid-width"
@@ -225,7 +202,7 @@ let response;
 													type="text"
 													name="sound"
 													id="sound"
-													value={formData.sound || ""}
+													value={formData.sound}
 													onChange={handleChange}
 													placeholder="Cri du Pokéflon"
 													className="input-mid-width"
