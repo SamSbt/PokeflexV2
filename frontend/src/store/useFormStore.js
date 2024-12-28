@@ -17,10 +17,16 @@ const useFormStore = create((set) => ({
 	error: null,
 	pokeflons: [],
 
-	setFormData: (key, value) =>
-		set((state) => ({
-			formData: { ...state.formData, [key]: value },
-		})),
+	setFormData: (keyOrObject, value) =>
+		set((state) => {
+			if (typeof keyOrObject === "object") {
+				// If an object is passed, update the entire formData
+				return { formData: { ...state.formData, ...keyOrObject } };
+			} else {
+				// If a key and value are passed, update just that key
+				return { formData: { ...state.formData, [keyOrObject]: value } };
+			}
+		}),
 	setTypes: (types) => set({ types }), // mise à jour des types
 	setPokeflons: (pokeflons) => set({ pokeflons }), //  mise à jour des Pokéflons
 

@@ -15,7 +15,6 @@ const CreatePage = () => {
 	const { fetchPokeflonById, loadingPokeflonsById, error } = usePokeflonStore();
 	//const [errorMessage, setErrorMessage] = useState("");
 	const navigate = useNavigate();
-	
 
 	if (!isLoggedIn) {
 		return (
@@ -42,21 +41,21 @@ const CreatePage = () => {
 		// Récupérer les types au montage du composant
 		fetchTypes();
 
-		console.log("Pokéflon ID:", id);
+		//console.log("Pokéflon ID:", id);
 		// Vérifier si un pokeflonId est présent pour pré-remplir les données
 		if (id) {
 			const fetchPokeflonData = async () => {
 				const data = await fetchPokeflonById(id); // Appeler la méthode du store pour récupérer les données
-				console.log("Pokéflon data:", data);
+				//console.log("Pokéflon data:", data);
 				if (data) {
 					setFormData({
-						name: data.name,
-						sound: data.sound,
-						height: data.height,
-						weight: data.weight,
-						type1: data.type1,
-						type2: data.type2,
-						summary: data.summary,
+						name: data.name || "",
+						sound: data.sound || "",
+						height: data.height?.toString() || "",
+						weight: data.weight?.toString() || "",
+						type1: data.types[0]?._id || "",
+						type2: data.types[1]?._id || "",
+						summary: data.summary || "",
 					});
 				}
 			};
@@ -64,11 +63,10 @@ const CreatePage = () => {
 		}
 	}, [id, setFormData, fetchPokeflonById]);
 
+	// useEffect(() => {
+	// 	console.log("Current formData:", formData);
+	// }, [formData]);
 
-useEffect(() => {
-	console.log("FormData structure:", formData); // Vérifie bien la structure de formData
-}, [formData]);
-	
 	const handleChange = (e) => {
 		const { name, value } = e.target;
 		setFormData(name, value);
@@ -99,50 +97,47 @@ useEffect(() => {
 
 		// Utiliser FormData pour inclure l'image et les autres données
 		const formDataToSend = new FormData();
-		formDataToSend.append("file", file); // Ajoute l'image
-		formDataToSend.append("pokeflons", JSON.stringify(formData));
-		//console.log("file? :", file);
-
-		for (const key in formData) {
-			formDataToSend.append(key, formData[key]); // Ajoute les autres champs
+		// Only append the file if it exists
+		if (file) {
+			formDataToSend.append("file", file);
 		}
+
+		// Append each form field individually instead of as a JSON string
+		Object.keys(formData).forEach((key) => {
+			formDataToSend.append(key, formData[key]);
+		});
+		console.log("Form data being sent:", Object.fromEntries(formDataToSend));
 
 		try {
-let response;
-		if (id) {
-			// Si un ID est présent, on met à jour un Pokéflon existant
-			response = await fetchWithAccessToken(
-				`http://localhost:5000/api/pokeflon/${id}`,
-				{
-					method: "PUT", // Utilisation de la méthode PUT pour les mises à jour
-					body: formDataToSend,
-				}
-			);
+			let response;
+			const url = id
+				? `http://localhost:5000/api/pokeflon/${id}`
+				: "http://localhost:5000/api/pokeflon";
+			const method = id ? "PUT" : "POST";
 
-			} else {
-			response = await fetchWithAccessToken(
-				"http://localhost:5000/api/pokeflon",
-				{
-					method: "POST",
-					// manque un truc
-					body: formDataToSend,
-				}
-			);
-		}
+			console.log(`Sending ${method} request to ${url}`);
+
+			response = await fetchWithAccessToken(url, {
+				method: method,
+				body: formDataToSend,
+			});
+
+			const responseData = await response.json();
+			console.log("Response from server:", responseData);
 
 			if (response.ok) {
 				console.log(
 					id
-						? "Pokéflon mis à jour avec succès !"
-						: "Pokéflon créé avec succès !"
+						? `Pokéflon mis à jour avec succès ! ID: ${id}`
+						: `Pokéflon créé avec succès ! ID: ${responseData.data._id}`
 				);
 				resetForm();
 				setFile(null); // réinitialise l'image
 				// TODO: vérif ici la navigation vers la page, doit être celle du pokéflon qui vient d'être créé ou modifié
-				navigate(id ? `/pokeflon/${id}` : "/");
+				navigate(id ? `/pokeflon/${id}` : `/pokeflon/${responseData.data._id}`);
 			} else {
-				console.error("Erreur lors de la création :", response.statusText);
-				//setErrorMessage(data.message);
+				console.error("Erreur lors de l'opération :", responseData.message);
+				alert(`Erreur réseau: ${error.message}`);
 			}
 		} catch (error) {
 			console.error("Erreur réseau :", error);
@@ -151,9 +146,9 @@ let response;
 	};
 
 	if (loadingPokeflonsById) {
-		return <div>Chargement...</div>; 
+		return <div>Chargement...</div>;
 	}
-	
+
 	return (
 		<>
 			<section>
@@ -188,7 +183,7 @@ let response;
 													type="text"
 													name="name"
 													id="name"
-													value={formData.name || "idk ?"}
+													value={formData.name}
 													onChange={handleChange}
 													placeholder="Nom du Pokéflon"
 													className="input-mid-width"

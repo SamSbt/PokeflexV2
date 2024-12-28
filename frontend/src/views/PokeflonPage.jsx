@@ -44,8 +44,8 @@ const canEditOrDelete =
 	// TODO: faire en sorte d'avoir un affichage différent ici quand user loggedin
 	// fonctions des boutons user connected
 	const handleEdit = () => {
-		if (pokeflon && pokeflon._id) {
-			navigate(`/create/${pokeflon._id}`);
+		if (pokeflon && pokeflon.id) {
+			navigate(`/create/${pokeflon.id}`);
 		}
 	};
 
@@ -87,12 +87,12 @@ const canEditOrDelete =
 					<div className="text-center mb-2">
 						<CustomButton
 							text="Modifier"
-							className="btn-black me-5"
+							className="btn-red me-5"
 							onClick={handleEdit}
 						/>
 						<CustomButton
 							text="Supprimer"
-							className="btn-red"
+							className="btn-black"
 							onClick={handleDelete}
 						/>
 					</div>
