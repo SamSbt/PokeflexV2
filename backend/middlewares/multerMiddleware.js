@@ -22,7 +22,6 @@ export const upload = multer({
 	fileFilter: (req, file, cb) => {
 		// Autoriser uniquement les fichiers image
 		if (!file.mimetype.match(/image\/(jpeg|png|gif)/)) {
-			console.log("coucou");
 			return cb(new Error("Only JPG, PNG, and GIF files are allowed"), false);
 		}
 		cb(null, true);

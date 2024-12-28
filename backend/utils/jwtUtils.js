@@ -5,7 +5,7 @@ dotenv.config();
 
 export const accessTokenConfig = {
 	secret: process.env.ACCESS_SECRET_TOKEN,
-	expiresIn: "10s",
+	expiresIn: "15m",
 };
 if (!process.env.ACCESS_SECRET_TOKEN) {
 	console.error("ACCESS_SECRET_TOKEN is not defined in .env");
@@ -19,7 +19,7 @@ export const refreshTokenConfig = {
 export const jwtCookieConfig = {
 	httpOnly: true,
 	secure: process.env.NODE_ENV === "production" ? false : true, // true en production, false en développement
-	sameSite: process.env.NODE_ENV === "production" ? "lax" : "none", // Correctement typé
+	sameSite: process.env.NODE_ENV === "production" ? "lax" : "none",
 	maxAge: 7 * 24 * 60 * 60 * 1000, // 7 jours en millisecondes
 	path: "/", // Chemin de validité du cookie
 };
@@ -48,8 +48,7 @@ export const verifyAccessToken = (token) => {
 		const payload = jwt.verify(token, accessTokenConfig.secret);
 		// verify : vérifie que le token est valide (signature correcte avec la clé secrète), si non : exception dans catch
 		// console.log("verifyAccessToken token Payload:", payload);
-		// Ici tu peux ajouter une logique de validation selon ton besoin
-		console.log(payload, "✨ payload de l;assces token"); // Renvoie le payload vérifié);
+		//console.log("✨ payload de l'access token :", payload); // Renvoie le payload vérifié);
 		return payload; // Renvoie le payload vérifié
 	} catch (error) {
 		if (error.name === "TokenExpiredError") {
@@ -59,7 +58,7 @@ export const verifyAccessToken = (token) => {
 			console.error("Invalid access token");
 			throw new Error("Invalid access token");
 		} else {
-			console.log("Error in verifyAccessToken:");
+			console.log("Unexpected error during token verification:", error);
 			throw error;
 		}
 	}
@@ -71,7 +70,6 @@ export const verifyRefreshToken = (refreshToken) => {
 		const payload = jwt.verify(refreshToken, refreshTokenConfig.secret);
 		// verify : vérifie que le token est valide (signature correcte avec la clé secrète), si non : exception dans catch
 		console.log("verifyRefreshToken refreshToken Payload:", payload);
-		// Ici tu peux ajouter une logique de validation selon ton besoin
 		return payload; // Renvoie le payload vérifié
 	} catch (error) {
 		if (error.name === "RefreshTokenExpiredError") {

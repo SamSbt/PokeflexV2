@@ -31,7 +31,7 @@ export const useAuthStore = create((set) => ({
 
 			const data = await response.json();
 			if (response.ok) {
-				console.log(response);
+				console.log("useauthstore response :", response);
 				set({
 					accessToken: data.data.accessToken,
 					isLoggedIn: true,
@@ -72,8 +72,9 @@ export const useAuthStore = create((set) => ({
 	},
 
 	fetchWithAccessToken: async (url, options = {}) => {
-		const { refreshAccessToken, accessToken } = useAuthStore.getState(); // Accéder au state actuel
+		const { accessToken, refreshAccessToken } = useAuthStore.getState(); // Accéder au state actuel
 		let retry = true; // Flag pour contrôler le rafraîchissement du token
+		//console.log("⭐ Current Access Token:", accessToken);
 
 		// Préparer les options de la requête avec le token actuel
 		const currentOptions = {
@@ -114,7 +115,7 @@ export const useAuthStore = create((set) => ({
 
 			return response; // Retourne la réponse (peut être la requête initiale ou réessayée)
 		} catch (error) {
-			console.error("Erreur lors de la requête avec access token :", error);
+			console.error("Erreur avec fetchWithAccessToken:", error);
 			throw error; // Propager l'erreur pour permettre un traitement global
 		}
 	},

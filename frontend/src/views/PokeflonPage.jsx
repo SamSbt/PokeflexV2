@@ -1,16 +1,19 @@
 import React, { useEffect, useState } from "react";
-import { Row, Col } from "react-bootstrap";
+import { Row, Col, Spinner } from "react-bootstrap";
 
 import CustomCard from "../components/custom-card/CustomCard";
 import CustomButton from "../components/custom-button/CustomButton";
 
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { usePokeflonStore } from "../store/store";
+import { useAuthStore } from "../store/authStore";
 
 const PokeflonPage = () => {
 	const { id } = useParams();
-	const { fetchPokeflonById, isLoading, error } = usePokeflonStore();
+	const { fetchPokeflonById, loadingPokeflonsById, error } = usePokeflonStore();
+		const { username, userRole, isLoggedIn } = useAuthStore();
 	const [pokeflon, setPokeflon] = useState(null);
+		const navigate = useNavigate();
 
 	useEffect(() => {
 		const loadPokeflon = async () => {
@@ -20,27 +23,35 @@ const PokeflonPage = () => {
 		loadPokeflon();
 	}, [id, fetchPokeflonById]);
 
-	if (isLoading) {
-		return <div>Loading...</div>;
-	}
-
 	if (error) {
 		return <div>Error loading Pokéflons: {error}</div>;
 	}
-
+  if (loadingPokeflonsById) {
+    return (
+      <div className="text-center">
+        <Spinner animation="grow" variant="dark" />
+      </div>
+    );
+  }
 	if (!pokeflon) {
     return <div>Aucun Pokéflon trouvé</div>;
   }
 
+const canEditOrDelete =
+	isLoggedIn &&
+	(userRole === "Admin" || userRole === "Dresseur" && username === pokeflon.created_by.username);
+
 	// TODO: faire en sorte d'avoir un affichage différent ici quand user loggedin
 	// fonctions des boutons user connected
-	// const handleEdit = () => {
-	// 	console.log("Vous voulez modifier la carte.");
-	// };
+	const handleEdit = () => {
+		if (pokeflon && pokeflon._id) {
+			navigate(`/create/${pokeflon._id}`);
+		}
+	};
 
-	// const handleDelete = () => {
-	// 	console.log("Vous voulez supprimer la carte.");
-	// };
+	const handleDelete = () => {
+		console.log("Vous voulez supprimer la carte.");
+	};
 
 	//TODO: gérer le switch visibility on ou off dans la createpage puis ici
 
@@ -72,18 +83,20 @@ const PokeflonPage = () => {
 						/>
 					</Col>
 				</Row>
-				{/* <div className="text-center mt-3 mb-2">
-					<CustomButton
-						text="Modifier"
-						className="btn-black me-5"
-						onClick={handleEdit}
-					/>
-					<CustomButton
-						text="Supprimer"
-						className="btn-red"
-						onClick={handleDelete}
-					/>
-				</div> */}
+				{canEditOrDelete && (
+					<div className="text-center mb-2">
+						<CustomButton
+							text="Modifier"
+							className="btn-black me-5"
+							onClick={handleEdit}
+						/>
+						<CustomButton
+							text="Supprimer"
+							className="btn-red"
+							onClick={handleDelete}
+						/>
+					</div>
+				)}
 			</section>
 		</>
 	);

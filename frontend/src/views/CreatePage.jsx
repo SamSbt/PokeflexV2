@@ -1,18 +1,21 @@
 import { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import { Form, Row, Col, Image } from "react-bootstrap";
 import CustomButton from "../components/custom-button/CustomButton";
 import FileUpload from "../components/fileUpload/FileUpload";
 import useFormStore, { fetchTypes } from "../store/useFormStore";
 import { useAuthStore } from "../store/authStore";
-import { useNavigate } from "react-router-dom";
+import { usePokeflonStore } from "../store/store";
 
 const CreatePage = () => {
+	const { id } = useParams();
 	const { formData, setFormData, resetForm, types } = useFormStore();
 	const [file, setFile] = useState(null); // ajout pour stocker l'image
 	const { isLoggedIn, fetchWithAccessToken } = useAuthStore();
-		const [errorMessage, setErrorMessage] = useState("");
-
-		const navigate = useNavigate();
+	const { fetchPokeflonById, loadingPokeflonsById, error } = usePokeflonStore();
+	//const [errorMessage, setErrorMessage] = useState("");
+	const navigate = useNavigate();
+	
 
 	if (!isLoggedIn) {
 		return (
@@ -38,8 +41,34 @@ const CreatePage = () => {
 	useEffect(() => {
 		// Récupérer les types au montage du composant
 		fetchTypes();
-	}, []);
 
+		console.log("Pokéflon ID:", id);
+		// Vérifier si un pokeflonId est présent pour pré-remplir les données
+		if (id) {
+			const fetchPokeflonData = async () => {
+				const data = await fetchPokeflonById(id); // Appeler la méthode du store pour récupérer les données
+				console.log("Pokéflon data:", data);
+				if (data) {
+					setFormData({
+						name: data.name,
+						sound: data.sound,
+						height: data.height,
+						weight: data.weight,
+						type1: data.type1,
+						type2: data.type2,
+						summary: data.summary,
+					});
+				}
+			};
+			fetchPokeflonData();
+		}
+	}, [id, setFormData, fetchPokeflonById]);
+
+
+useEffect(() => {
+	console.log("FormData structure:", formData); // Vérifie bien la structure de formData
+}, [formData]);
+	
 	const handleChange = (e) => {
 		const { name, value } = e.target;
 		setFormData(name, value);
@@ -79,21 +108,38 @@ const CreatePage = () => {
 		}
 
 		try {
-			const response = await fetchWithAccessToken(
-				"http://localhost:5000/api/pokeflon", 
+let response;
+		if (id) {
+			// Si un ID est présent, on met à jour un Pokéflon existant
+			response = await fetchWithAccessToken(
+				`http://localhost:5000/api/pokeflon/${id}`,
+				{
+					method: "PUT", // Utilisation de la méthode PUT pour les mises à jour
+					body: formDataToSend,
+				}
+			);
+
+			} else {
+			response = await fetchWithAccessToken(
+				"http://localhost:5000/api/pokeflon",
 				{
 					method: "POST",
 					// manque un truc
-					body: formDataToSend
-				},
+					body: formDataToSend,
+				}
 			);
+		}
 
 			if (response.ok) {
-				console.log("Pokéflon créé avec succès !");
+				console.log(
+					id
+						? "Pokéflon mis à jour avec succès !"
+						: "Pokéflon créé avec succès !"
+				);
 				resetForm();
 				setFile(null); // réinitialise l'image
-				// TODO: vérif ici la navigation vers la page, doit être celle du pokéflon qui vient d'être créé
-				navigate("/");
+				// TODO: vérif ici la navigation vers la page, doit être celle du pokéflon qui vient d'être créé ou modifié
+				navigate(id ? `/pokeflon/${id}` : "/");
 			} else {
 				console.error("Erreur lors de la création :", response.statusText);
 				//setErrorMessage(data.message);
@@ -104,6 +150,10 @@ const CreatePage = () => {
 		}
 	};
 
+	if (loadingPokeflonsById) {
+		return <div>Chargement...</div>; 
+	}
+	
 	return (
 		<>
 			<section>
@@ -121,9 +171,7 @@ const CreatePage = () => {
 										controlId="fileUpload"
 										className="mt-1 input-width"
 									>
-										<Form.Label>
-											Importer une photo :
-										</Form.Label>
+										<Form.Label>Importer une photo :</Form.Label>
 										<FileUpload
 											controlId="fileUpload"
 											onFileSelected={(selectedFile) => setFile(selectedFile)} // Enregistre l'image dans l'état
@@ -140,8 +188,7 @@ const CreatePage = () => {
 													type="text"
 													name="name"
 													id="name"
-													autoComplete="name"
-													value={formData.name}
+													value={formData.name || "idk ?"}
 													onChange={handleChange}
 													placeholder="Nom du Pokéflon"
 													className="input-mid-width"

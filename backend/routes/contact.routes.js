@@ -8,8 +8,8 @@ import { authenticate, hasRole } from "../middlewares/authMiddleware.js";
 
 const router = express.Router();
 
-router.get("/", authenticate, hasRole("admin"), getContacts);
+router.get("/", authenticate, hasRole("Admin"), getContacts);
 router.post("/", postContact);
-router.delete("/:id", authenticate, hasRole("admin"), deleteContact);
+router.delete("/:id", authenticate, hasRole("Admin"), deleteContact);
 
 export default router;

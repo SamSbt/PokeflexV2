@@ -45,7 +45,7 @@ function Contact({ show, handleClose }) {
 	const handleInputChange = (event) => {
 		const { name, value } = event.target;
 		setFormState((oldState) => {
-			// console.log(name, value);
+			// console.log("handleinputchange modalcontact :", name, value);
 			return { ...oldState, [name]: value };
 		});
 	};
@@ -62,8 +62,7 @@ function Contact({ show, handleClose }) {
 
 	const handleFormSubmit = async (event) => {
 		event.preventDefault();
-		console.log("Form submitted ??");
-		console.log(formState);
+		console.log("Form submitted ??", formState);
 
 		try {
 			const url = "http://localhost:5000/api/contact";
@@ -76,7 +75,7 @@ function Contact({ show, handleClose }) {
 			};
 
 			const response = await fetch(url, options);
-			console.log(response);
+			console.log("modal contact response :", response);
 
 			if (!response.ok) {
 				const result = await response.json();
