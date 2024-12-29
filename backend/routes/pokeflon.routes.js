@@ -17,7 +17,13 @@ router.get("/", getPokeflons);
 router.get("/:id", getOnePokeflon);
 router.get("/by-type/:id", getPokeflonByIdType);
 router.post("/", authenticate, hasRole("Dresseur"), upload.single("file"), postPokeflon);
-router.put("/:id", authenticate, hasRole("Dresseur"), putPokeflon);
+router.put(
+	"/:id",
+	authenticate,
+	hasRole("Dresseur"),
+	upload.single("file"),
+	putPokeflon
+);
 router.delete("/:id", authenticate, hasRole("Dresseur"), deletePokeflon);
 
 export default router;

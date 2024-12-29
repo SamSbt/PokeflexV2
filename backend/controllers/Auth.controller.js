@@ -68,6 +68,7 @@ export const register = async (req, res) => {
 };
 
 export const login = async (req, res) => {
+res.clearCookie("jwt", jwtCookieConfig);
 	const { email, password } = req.body;
 
 	console.log("Requête reçue pour /login");
@@ -185,6 +186,7 @@ export const refreshAccessToken = async (req, res) => {
 
 // Méthode de déconnexion
 export const logout = async (req, res) => {
+	res.clearCookie("jwt", jwtCookieConfig);
 	const { refreshToken } = req.body; // Récupère le refresh token depuis le corps de la requête
 
 	if (!refreshToken) {
@@ -196,7 +198,7 @@ export const logout = async (req, res) => {
 
 	try {
 		// Supprimer le refresh token de la base de données
-		await RefreshToken.findOneAndDelete({ token: refreshToken });
+		await refreshToken.findOneAndDelete({ token: refreshToken });
 
 		// Réponse de succès
 		res.status(200).json({

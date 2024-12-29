@@ -114,7 +114,7 @@ export const postPokeflon = async (req, res) => {
 			});
 		}
 
-		if (!req.body || !req.body.pokeflons) {
+		if (!req.body || !pokeflons) {
 			return res.status(400).json({
 				success: false,
 				message: "Missing Pokeflon data in request body.",
@@ -214,7 +214,7 @@ export const putPokeflon = async (req, res) => {
 	const { id } = req.params;
 	const pokeflons = req.body;
 	console.log("🗨️ we are in putPokeflon");
-console.log("putPokeflon, pokeflons is:", pokeflons);
+console.log("putPokeflon, pokeflons is:", req.body);
 
 	// vérif validité ID
 	if (!mongoose.Types.ObjectId.isValid(id)) {
