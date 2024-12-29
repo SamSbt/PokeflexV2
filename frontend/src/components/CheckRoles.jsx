@@ -1,11 +1,30 @@
 import { useAuthStore } from "../store/authStore";
-import { Outlet } from "react-router-dom";
+import { Image } from "react-bootstrap";
+import { Outlet, useLocation } from "react-router-dom";
 import NotFoundPage from "./NotFoundPage";
 
 export default function CheckRoles({ allowedRoles }) {
-	const { userRole } = useAuthStore();
-	console.log(userRole);
+	const { userRole, isLoggedIn } = useAuthStore();
+	const location = useLocation();
+	//console.log(userRole);
 	// console.log("checkroles username :", username);
+
+	// si utilisateur non connecté et qu'il veut accéder à la page de création
+	if (!isLoggedIn && location.pathname == "/create") {
+		return (
+			<div className="mt-5 text-center">
+				<h6 className="mx-4">
+					Pour créer vos propres Pokéflons, connectez-vous !
+				</h6>
+				<Image
+					alt="Logo de DevFreak blanc et noir"
+					src="/images/dev-freak_logo-void.png"
+					width="100"
+					className="mt-3"
+				/>
+			</div>
+		);
+	}
 
 	if (!userRole) {
 		// gestion du cas où l'utilisateur n'est pas connecté
@@ -31,7 +50,6 @@ export default function CheckRoles({ allowedRoles }) {
 
 	return <Outlet />;
 }
-
 
 // outlet protection des routes en front
 // que avec react router

@@ -1,3 +1,4 @@
+import DOMPurify from "dompurify";
 import { Dropdown, Form, Image, Nav, Navbar } from "react-bootstrap";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
@@ -53,6 +54,12 @@ const AppNavbar = () => {
 
 	//console.log("isLoggedIn:", isLoggedIn);
 	//console.log("userRole:", userRole);
+
+const sanitizedPokeflons = filteredPokeflons.map((pokeflon) => ({
+	...pokeflon,
+	sanitizedName: DOMPurify.sanitize(pokeflon.name),
+}));
+
 
 	return (
 		<Navbar
@@ -165,16 +172,16 @@ const AppNavbar = () => {
 						autoComplete="off"
 					/>
 					{/* Affichage dynamique des résultats de recherche */}
-					{searchTerm && filteredPokeflons.length > 0 && (
+					{searchTerm && sanitizedPokeflons.length > 0 && (
 						<Dropdown.Menu show className="position-absolute w-100 border-0">
-							{filteredPokeflons.map((pokeflon) => (
+							{sanitizedPokeflons.map((pokeflon) => (
 								<Dropdown.Item
 									key={pokeflon.id}
 									as={Link}
 									to={`/pokeflon/${pokeflon.id}`}
 									onClick={resetSearch}
 								>
-									{pokeflon.name}
+									{pokeflon.sanitizedName}
 								</Dropdown.Item>
 							))}
 						</Dropdown.Menu>

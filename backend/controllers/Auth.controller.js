@@ -9,10 +9,15 @@ import {
 	verifyRefreshToken,
 } from "../utils/jwtUtils.js";
 
-export const register = async (req, res) => {
-	const { username, email, password } = req.body;
+const MAX_FAILED_ATTEMPTS = 5;
+const LOCK_TIME = 5 * 60 * 1000; // en millisecondes (5min)
+const RECAPTCHA_SECRET_KEY = process.env.RECAPTCHA_SECRET_KEY;
 
-	console.log("req.body ds auth controller :", req.body);
+export const register = async (req, res) => {
+	const { username, email, password, recaptchaResponse } = req.body;
+
+	//console.log("req.body ds auth controller :", req.body);
+
 	if (!username || !email || !password) {
 		return res.status(400).json({
 			success: false,
@@ -20,63 +25,86 @@ export const register = async (req, res) => {
 		});
 	}
 
-	try {
-		// Vérifie si l'utilisateur existe déjà (email ou username)
-		const existingUser = await AppUser.findOne({
-			$or: [{ email }, { username }],
-		});
-		if (existingUser) {
-			if (existingUser.email === email) {
-				return res.status(409).json({
-					success: false,
-					message: "Un utilisateur avec cet email existe déjà.",
-				});
-			}
-			if (existingUser.username === username) {
-				return res.status(409).json({
-					success: false,
-					message: "Ce nom d'utilisateur est déjà pris.",
-				});
-			}
-		}
-		// Hache le mot de passe
-		const hashedPassword = await bcrypt.hash(password, 10);
 
-		const defaultRole = await Role.findOne({ role_name: "Dresseur" });
-		if (!defaultRole) {
-			return res.status(500).json({
+try {
+	// Vérifie si l'utilisateur existe déjà (email ou username)
+	const existingUser = await AppUser.findOne({
+		$or: [{ email }, { username }],
+	});
+	if (existingUser) {
+		if (existingUser.email === email) {
+			return res.status(409).json({
 				success: false,
-				message:
-					"Default role not found. Please configure roles in the database.",
+				message: "Un utilisateur avec cet email existe déjà.",
 			});
 		}
+		if (existingUser.username === username) {
+			return res.status(409).json({
+				success: false,
+				message: "Ce nom d'utilisateur est déjà pris.",
+			});
+		}
+	}
 
-		// Crée un nouvel utilisateur
-		const newUser = await AppUser.create({
-			username,
-			email,
-			password: hashedPassword,
-			role: defaultRole.id,
+	// Vérifie que la réponse du reCAPTCHA est présente
+	if (!recaptchaResponse) {
+		return res.status(400).json({
+			success: false,
+			message: "Le reCAPTCHA est requis.",
 		});
+	}
 
-		res.status(201).json({
-			success: true,
-			message: "Utilisateur créé avec succès",
-			data: {
-				id: newUser.id,
-				username: newUser.username,
-				email: newUser.email,
-				role: newUser.role,
-			},
+	// Valider la réponse du reCAPTCHA auprès de Google
+	const verifyUrl = `https://www.google.com/recaptcha/api/siteverify?secret=${RECAPTCHA_SECRET_KEY}&response=${recaptchaResponse}`;
+	const googleResponse = await fetch(verifyUrl, { method: "POST" });
+	const googleResult = await googleResponse.json();
+
+	// Si la validation du reCAPTCHA échoue, retourner une erreur
+	if (!googleResult.success) {
+		return res.status(400).json({
+			success: false,
+			message: "reCAPTCHA invalide.",
 		});
-	} catch (error) {
+	}
+
+	// Hache le mot de passe
+	const hashedPassword = await bcrypt.hash(password, 10);
+
+	const defaultRole = await Role.findOne({ role_name: "Dresseur" });
+	if (!defaultRole) {
+		return res.status(500).json({
+			success: false,
+			message:
+				"Default role not found. Please configure roles in the database.",
+		});
+	}
+
+	// Crée un nouvel utilisateur
+	const newUser = await AppUser.create({
+		username,
+		email,
+		password: hashedPassword,
+		role: defaultRole.id,
+	});
+
+	res.status(201).json({
+		success: true,
+		message: "Utilisateur créé avec succès",
+		data: {
+			id: newUser.id,
+			username: newUser.username,
+			email: newUser.email,
+			role: newUser.role,
+		},
+	});
+} catch (error) {
 		console.error("Erreur lors de l'enregistrement :", error.message);
 		res.status(500).json({ success: false, message: "Erreur serveur" });
 	}
 };
 
 export const login = async (req, res) => {
-res.clearCookie("jwt", jwtCookieConfig);
+	res.clearCookie("jwt", jwtCookieConfig);
 	const { email, password } = req.body;
 
 	console.log("Requête reçue pour /login");
@@ -100,13 +128,41 @@ res.clearCookie("jwt", jwtCookieConfig);
 				.json({ success: false, message: "Utilisateur non trouvé." });
 		}
 
+		// Vérification si le compte est verrouillé
+		if (user.isLocked()) {
+			return res.status(403).json({
+				success: false,
+				message: `Compte verrouillé. Réessayez dans ${Math.ceil(
+					(user.lockUntil - Date.now()) / 1000
+				)} secondes.`,
+			});
+		}
+
 		// vérif du password
 		const isMatch = await bcrypt.compare(password, user.password);
 		if (!isMatch) {
-			return res
-				.status(401)
-				.json({ success: false, message: "Mot de passe incorrect." });
+			// Incrémenter le nombre de tentatives échouées
+			user.failedAttempts += 1;
+
+			// Si le nombre de tentatives échouées dépasse la limite, verrouiller le compte
+			if (user.failedAttempts >= MAX_FAILED_ATTEMPTS) {
+				user.lockUntil = Date.now() + LOCK_TIME; // Verrouillage du compte pour 5min
+			}
+
+			// Sauvegarder les changements
+			await user.save();
+
+			return res.status(401).json({
+				success: false,
+				message: "Mot de passe incorrect.",
+			});
 		}
+
+		// Réinitialiser les tentatives échouées et le verrouillage si la connexion est réussie
+		user.failedAttempts = 0;
+		user.lockUntil = null;
+		await user.save();
+
 		console.log("Génération de l'acces token...");
 		const accessToken = createAccessToken(user);
 		console.log("👍 acces Token généré :", accessToken);
@@ -143,7 +199,6 @@ res.clearCookie("jwt", jwtCookieConfig);
 
 // Rafraîchissement du access token avec un refresh token
 export const refreshAccessToken = async (req, res) => {
-
 	console.log("🤔🤔 Requête reçue pour /refresh");
 	const cookies = req.cookies;
 	const refreshToken = cookies.jwt;
@@ -183,7 +238,6 @@ export const refreshAccessToken = async (req, res) => {
 		});
 
 		console.log("💵 Nouvel acces token généré :", newAccessToken);
-
 	} catch (error) {
 		console.error("Erreur lors du rafraîchissement :", error.message);
 		res

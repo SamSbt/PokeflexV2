@@ -33,7 +33,7 @@ const appUserSchema = new mongoose.Schema(
 					return /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).+$/.test(v);
 				},
 				message:
-					"Password must contain at least one uppercase letter, one lowercase letter, one digit, and one special character",
+					"Password must contain 8 characters, and at least one uppercase letter, one lowercase letter, one digit, and one special character",
 			},
 		},
 		role: {
@@ -57,6 +57,8 @@ const appUserSchema = new mongoose.Schema(
 			type: Date,
 			default: null, // Si non supprimé, pas de date associée
 		},
+		failedAttempts: { type: Number, default: 0 }, // Nombre d'échecs de connexion
+		lockUntil: { type: Date, default: null }, // Date jusqu'à laquelle le compte est verrouillé
 	},
 	{
 		timestamps: true, // ajoute automatiquement createdAt et updatedAt
@@ -65,6 +67,11 @@ const appUserSchema = new mongoose.Schema(
 	}
 );
 appUserSchema.plugin(uniqueValidator);
+
+// Méthode pour vérifier si l'utilisateur est verrouillé
+appUserSchema.methods.isLocked = function () {
+	return this.lockUntil && this.lockUntil > Date.now(); // Vérifie si le compte est verrouillé
+};
 
 //add un champ virtuel pour "id" basé sur "_id"
 appUserSchema.virtual("id").get(function () {

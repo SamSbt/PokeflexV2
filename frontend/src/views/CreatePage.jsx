@@ -1,6 +1,7 @@
+import DOMPurify from "dompurify";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { Form, Row, Col, Image } from "react-bootstrap";
+import { Form, Row, Col } from "react-bootstrap";
 import CustomButton from "../components/custom-button/CustomButton";
 import FileUpload from "../components/fileUpload/FileUpload";
 import useFormStore, { fetchTypes } from "../store/useFormStore";
@@ -11,26 +12,10 @@ const CreatePage = () => {
 	const { id } = useParams();
 	const { formData, setFormData, resetForm, types } = useFormStore();
 	const [file, setFile] = useState(null); // ajout pour stocker l'image
-	const { isLoggedIn, fetchWithAccessToken } = useAuthStore();
+	const { fetchWithAccessToken } = useAuthStore();
 	const { fetchPokeflonById, loadingPokeflonsById, error } = usePokeflonStore();
-	//const [errorMessage, setErrorMessage] = useState("");
 	const navigate = useNavigate();
 
-	if (!isLoggedIn) {
-		return (
-			<div className="mt-5 text-center">
-				<h6 className="mx-4">
-					Pour créer vos propres Pokéflons, connectez-vous !
-				</h6>
-				<Image
-					alt="Logo de DevFreak blanc et noir"
-					src="/images/dev-freak_logo-void.png"
-					width="100"
-					className="mt-3"
-				/>
-			</div>
-		);
-	}
 
 	//TODO: gérer la preview ici ou dans fileupload pour que ça s'enlève après submit
 	// ou alors envoyer sur la page du pokeflon nouvellement créé...
@@ -82,8 +67,10 @@ const CreatePage = () => {
 
 	const handleSubmit = async (e) => {
 		e.preventDefault();
-
 		//console.log("Données envoyées : ", formData);
+
+const sanitizedSummary = DOMPurify.sanitize(formData.summary);
+
 
 		// Récupérer le token d'authentification depuis le cookie
 		// const token = getCookie("accessToken");
@@ -104,7 +91,11 @@ const CreatePage = () => {
 
 		// Append each form field individually instead of as a JSON string
 		Object.keys(formData).forEach((key) => {
-			formDataToSend.append(key, formData[key]);
+			if (key === "summary") {
+				formDataToSend.append(key, sanitizedSummary); // Assainir la description
+			} else {
+				formDataToSend.append(key, formData[key]);
+			}
 		});
 		console.log("Form data being sent:", Object.fromEntries(formDataToSend));
 
