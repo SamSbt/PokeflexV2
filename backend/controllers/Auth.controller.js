@@ -1,4 +1,3 @@
-import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import AppUser from "../models/AppUser.model.js";
 import Role from "../models/Role.model.js";
@@ -22,15 +21,24 @@ export const register = async (req, res) => {
 	}
 
 	try {
-		// Vérifie si l'utilisateur existe déjà
-		const existingUser = await AppUser.findOne({ email });
+		// Vérifie si l'utilisateur existe déjà (email ou username)
+		const existingUser = await AppUser.findOne({
+			$or: [{ email }, { username }],
+		});
 		if (existingUser) {
-			return res.status(409).json({
-				success: false,
-				message: "Un utilisateur avec cet email existe déjà.",
-			});
+			if (existingUser.email === email) {
+				return res.status(409).json({
+					success: false,
+					message: "Un utilisateur avec cet email existe déjà.",
+				});
+			}
+			if (existingUser.username === username) {
+				return res.status(409).json({
+					success: false,
+					message: "Ce nom d'utilisateur est déjà pris.",
+				});
+			}
 		}
-
 		// Hache le mot de passe
 		const hashedPassword = await bcrypt.hash(password, 10);
 

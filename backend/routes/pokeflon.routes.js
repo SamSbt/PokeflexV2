@@ -16,14 +16,12 @@ const router = express.Router();
 router.get("/", getPokeflons);
 router.get("/:id", getOnePokeflon);
 router.get("/by-type/:id", getPokeflonByIdType);
-router.post("/", authenticate, hasRole("Dresseur"), upload.single("file"), postPokeflon);
-router.put(
-	"/:id",
-	authenticate,
-	hasRole("Dresseur"),
-	upload.single("file"),
-	putPokeflon
-);
-router.delete("/:id", authenticate, hasRole("Dresseur"), deletePokeflon);
+
+router.use(authenticate);
+router.use(hasRole("Dresseur"));
+
+router.post("/", upload.single("file"), postPokeflon);
+router.put("/:id", upload.single("file"), putPokeflon);
+router.delete("/:id", deletePokeflon);
 
 export default router;
