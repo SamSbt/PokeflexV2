@@ -17,19 +17,24 @@ const RegisterPage = () => {
 	const [success, setSuccess] = useState(null); // Pour afficher le succès
 	const [showPassword, setShowPassword] = useState(false);
 	const [showPasswordConfirm, setShowPasswordConfirm] = useState(false);
+	const { login, setLoading } = useAuthStore();
 	const navigate = useNavigate();
-	const { login } = useAuthStore();
 
 	const handleInputChange = (event) => {
 		const { name, value } = event.target;
-		setFormState((oldState) => {
-			return { ...oldState, [name]: value };
-		});
+		setFormState((oldState) => ({
+			...oldState,
+			[name]: value,
+		}));
 	};
 
 	const handleFormSubmit = async (e) => {
 		e.preventDefault();
-		console.log("formstate registerPage handleFormSubmit :", formState);
+		setLoading(true);
+		setError(null);
+		setSuccess(null);
+
+		//console.log("formstate registerPage handleFormSubmit :", formState);
 		// Vérification des mots de passe
 		if (formState.password !== formState.passwordConfirm) {
 			setError("Les mots de passe ne correspondent pas.");
@@ -58,13 +63,24 @@ const RegisterPage = () => {
 			// Vérifier la réponse du backend
 			if (response.ok) {
 				setSuccess("Inscription réussie !");
-				setError(null); // Réinitialiser l'erreur si l'inscription a réussi
+				setError(null); // réinitialiser l'erreur si l'inscription a réussi
 
 				// Automatically log in the user
-        await login({ email: formState.email, password: formState.password });
+				const loginResult = await login({
+					email: formState.email,
+					password: formState.password,
+				});
 
-        // Redirect to the user's profile page
-        navigate(`/login/${result.data.id}`);
+				// Redirect to the user's profile page
+				// navigate(`/login/${result.data.id}`);
+
+				if (loginResult.success) {
+					navigate(`/login/${result.data.id}`);
+				} else {
+					setError(
+						"Inscription réussie, mais échec de la connexion automatique. Veuillez vous connecter manuellement."
+					);
+				}
 
 				// Réinitialiser le formulaire après succès
 				setFormState({
@@ -77,8 +93,10 @@ const RegisterPage = () => {
 				setError(result.message || "Erreur lors de l'inscription.");
 			}
 		} catch (error) {
+			console.error("Erreur lors de l'inscription:", error);
 			setError("Une erreur s'est produite. Veuillez réessayer.");
-			console.error(error);
+		} finally {
+			setLoading(false);
 		}
 	};
 

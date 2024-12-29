@@ -13,6 +13,10 @@ const router = express.Router();
 router.get("/", getAppUsers);
 router.get("/:id", getOneAppUser);
 router.post("/", postAppUser);
+
+router.use(authenticate);
+router.use(hasRole("Dresseur"));
+
 router.put("/:id", putAppUser);
 router.delete("/:id", deleteAppUser);
 
