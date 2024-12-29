@@ -63,6 +63,9 @@ textarea:focus {
 	max-width: 350px;
 	width: 100%;
 }
+.d-block {
+	display: block;
+}
 
 .smallerMargin {
 	@media (max-width: 576px) {

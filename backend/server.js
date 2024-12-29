@@ -22,8 +22,8 @@ import contactRoutes from "./routes/contact.routes.js";
 import { getPokeflonByIdType } from "./controllers/Pokeflon.controller.js";
 
 dotenv.config();
-console.log("Access Token Secret:", process.env.ACCESS_SECRET_TOKEN);
-console.log("Refresh Token Secret:", process.env.REFRESH_SECRET_TOKEN);
+//console.log("Access Token Secret:", process.env.ACCESS_SECRET_TOKEN);
+//console.log("Refresh Token Secret:", process.env.REFRESH_SECRET_TOKEN);
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -34,6 +34,17 @@ app.use(express.json());
 // Middleware pour parser les cookies
 app.use(cookieParser());
 
+// CSP - Content Security Policy
+app.use((req, res, next) => {
+	res.setHeader(
+		"Content-Security-Policy",
+		"default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self';; frame-ancestors 'none';"
+	);
+	// Protection contre le clickjacking
+	res.setHeader("X-Frame-Options", "DENY");
+
+	next();
+});
 
 // CORS - permet les requêtes depuis front-end (localhost:5173)
 app.use(

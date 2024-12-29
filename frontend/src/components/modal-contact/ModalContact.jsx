@@ -1,5 +1,6 @@
 import PropTypes from "prop-types";
-import { useEffect, useRef, useState } from "react";
+import DOMPurify from "dompurify";
+import { useEffect, useState } from "react";
 import { Modal, Form } from "react-bootstrap";
 
 import "./modal-contact.scss";
@@ -15,7 +16,7 @@ function Contact({ show, handleClose }) {
 	const [formErrors, setFormErrors] = useState({});
 	const [isFormValid, setIsFormValid] = useState(false);
 	const [status, setStatus] = useState(null);
-	const timeoutRef = useRef(null);
+
 
 	// erreurs de typo maj en tps réel
 	useEffect(() => {
@@ -63,6 +64,13 @@ function Contact({ show, handleClose }) {
 	const handleFormSubmit = async (event) => {
 		event.preventDefault();
 		console.log("Form submitted ??", formState);
+
+const sanitizedFormState = {
+	...formState,
+	message: DOMPurify.sanitize(formState.message), // Purifier le message
+	subject: DOMPurify.sanitize(formState.subject), // Purifier l'objet (si nécessaire)
+};
+
 
 		try {
 			const url = "http://localhost:5000/api/contact";

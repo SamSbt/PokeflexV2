@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Form, Row, Col } from "react-bootstrap";
 import CustomButton from "../components/custom-button/CustomButton";
@@ -12,52 +12,75 @@ const LoginPage = () => {
 	});
 	const [formErrors, setFormErrors] = useState({});
 	const [isFormValid, setIsFormValid] = useState(false);
-	const [loading, setLoading] = useState(false);
+	const [touchedFields, setTouchedFields] = useState({
+		email: false,
+		password: false,
+	});
 	const [errorMessage, setErrorMessage] = useState("");
 	const [showPassword, setShowPassword] = useState(false);
-
 	const navigate = useNavigate();
 
 	// Store Zustand pour gérer l'état de connexion et le rôle utilisateur
-	const { login } = useAuthStore();
+	const { login, loading, setLoading } = useAuthStore();
 
 	const handleInputChange = (e) => {
 		const { name, value } = e.target;
-		setFormState((oldState) => {
-			return { ...oldState, [name]: value };
-		});
+		setFormState((oldState) => ({
+			...oldState,
+			[name]: value,
+		}));
+		setTouchedFields((prevTouched) => ({
+			...prevTouched,
+			[name]: true,
+		}));
 	};
+
+	const validateForm = () => {
+		const errors = {};
+		const emailRegex = /^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/;
+
+		// Validation de l'email
+		if (!emailRegex.test(formState.email)) {
+			errors.email = "Email incorrect (format d'email invalide).";
+		}
+
+		// Validation du mot de passe
+		if (formState.password.length < 8) {
+			errors.password = "Le mot de passe doit contenir au moins 8 caractères.";
+		}
+
+		setFormErrors(errors);
+		setIsFormValid(Object.keys(errors).length === 0);
+	};
+
+	useEffect(() => {
+		validateForm();
+	}, [formState, touchedFields]);
 
 	const handleFormSubmit = async (e) => {
 		e.preventDefault();
-		setLoading(true);
 		setErrorMessage("");
-
-		const { email, password } = formState;
+		setLoading(true);
 
 		try {
-			// Use the login method from authStore
+			const { email, password } = formState;
 			const data = await login({ email, password });
 
-			console.log("Réponse de l'API:", data);
-
 			if (data.success) {
+				setFormState({
+					email: "",
+					password: "",
+				});
 				navigate("/");
 			} else {
-				setErrorMessage(data.message);
+				setErrorMessage(data.message || "Échec de la connexion.");
 			}
 		} catch (error) {
-			console.error("Erreur lors de la connexion:", error);
+			console.error("Login failed:", error);
 			setErrorMessage("Une erreur est survenue lors de la connexion.");
 		} finally {
 			setLoading(false);
 		}
-
-		// Réinitialiser l'état après la soumission
-		setFormState({
-			email: "",
-			password: "",
-		});
 	};
 
 	const togglePasswordVisibility = () => {
@@ -77,6 +100,9 @@ const LoginPage = () => {
 							noValidate
 							onSubmit={handleFormSubmit}
 						>
+							{/* Affichage des erreurs générales */}
+							{errorMessage && <p className="text-danger">{errorMessage}</p>}
+
 							<Form.Group className="mb-3" controlId="inputEmail">
 								<Form.Label>Adresse Email :</Form.Label>
 								<Form.Control
@@ -85,13 +111,15 @@ const LoginPage = () => {
 									name="email"
 									value={formState.email}
 									onChange={handleInputChange}
-									isInvalid={!!formErrors.email}
+									isInvalid={!!formErrors.email && touchedFields.email}
 									autoComplete="email"
 									required
 								/>
-								<Form.Control.Feedback type="invalid">
-									{formErrors.email}
-								</Form.Control.Feedback>
+								{formErrors.email && touchedFields.email && (
+									<Form.Control.Feedback type="invalid">
+										{formErrors.email}
+									</Form.Control.Feedback>
+								)}
 							</Form.Group>
 							<Form.Group className="mb-1" controlId="inputPassword">
 								<Form.Label>Mot de passe :</Form.Label>
@@ -102,11 +130,12 @@ const LoginPage = () => {
 										name="password"
 										value={formState.password}
 										onChange={handleInputChange}
+										isInvalid={!!formErrors.password && touchedFields.password}
 										autoComplete="current-password"
 										required
 									/>
 									<span
-										className="position-absolute top-50 end-0 translate-middle-y me-3 text-black"
+										className="position-absolute top-50 end-0 translate-middle-y me-4 text-black"
 										style={{ cursor: "pointer" }}
 										onClick={togglePasswordVisibility}
 									>
@@ -115,9 +144,12 @@ const LoginPage = () => {
 								</div>
 							</Form.Group>
 							{/* Affichage du message d'erreur */}
-							{errorMessage && (
-								<p className="text-danger">{errorMessage}</p>
-							)}{" "}
+							{formErrors.password && touchedFields.password && (
+								<Form.Control.Feedback type="invalid">
+									{formErrors.password}
+								</Form.Control.Feedback>
+							)}
+
 							<div className="text-end mb-3">
 								<Link to="" className="text-decoration-none">
 									<small className="text-white-50">Mot de passe oublié ?</small>
@@ -128,7 +160,7 @@ const LoginPage = () => {
 									type="submit"
 									text={loading ? "Chargement..." : "Se connecter"}
 									className="btn-red"
-									disabled={loading || !formState.email || !formState.password}
+									disabled={loading || !isFormValid}
 								/>
 							</div>
 							<h6 className="mt-4 mb-2 text-center">

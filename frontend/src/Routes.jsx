@@ -17,13 +17,16 @@ const Routing = () => {
 			<Routes>
 				<Route path="/" element={<HomePage />} />
 				<Route path="/types" element={<TypesPage />} />
-				<Route path="/create" element={<CreatePage />} />
-				<Route path="/create/:id" element={<CreatePage />} />
 				<Route path="/pokeflon/:id" element={<PokeflonPage />} />
 				<Route path="/register" element={<RegisterPage />} />
 				<Route path="/login" element={<LoginPage />} />
-				<Route path="/login/:id" element={<ProfilUserPage />} />
 				{/*<Route path="/login/:id/favorites" element /> */}
+
+				<Route element={<CheckRoles allowedRoles={["Dresseur"]} />}>
+					<Route path="/create" element={<CreatePage />} />
+					<Route path="/create/:id" element={<CreatePage />} />
+					<Route path="/login/:id" element={<ProfilUserPage />} />
+				</Route>
 
 				<Route element={<CheckRoles allowedRoles={["Admin"]} />}>
 					<Route path="/dashboard" element={<DashboardPage />} />
