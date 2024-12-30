@@ -8,13 +8,10 @@
 		&.small {
 			width: 240px;
 		}
-&.large {
-		width: 500px !important;
+		&.large {
+			width: 500px !important;
+		}
 	}
-
-	}
-
-	
 
 	.pokeflon-img {
 		width: 180px;
@@ -25,8 +22,6 @@
 		object-fit: cover;
 	}
 
-
-
 	// réorganisation sous 576px
 	@media (max-width: 576px) {
 		&.small {
@@ -35,8 +30,6 @@
 			flex-direction: row !important;
 			align-items: center;
 			width: 90%;
-
-	
 
 			.card-body {
 				display: flex;
@@ -59,7 +52,7 @@
 		}
 
 		&.large {
-		width: 90%;
-	}
+			width: 90%;
+		}
 	}
 }
