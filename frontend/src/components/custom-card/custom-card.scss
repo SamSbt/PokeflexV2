@@ -22,7 +22,6 @@
 		object-fit: cover;
 	}
 
-	// réorganisation sous 576px
 	@media (max-width: 576px) {
 		&.small {
 			min-height: 0 !important;
@@ -56,3 +55,8 @@
 		}
 	}
 }
+
+
+
+
+

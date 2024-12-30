@@ -2,7 +2,6 @@ import PropTypes from "prop-types";
 import { Button, Col, Row } from "react-bootstrap";
 import { useEffect, useState } from "react";
 import useFormStore, { fetchTypes } from "../../store/useFormStore";
-
 import "./custom-type-button.scss";
 
 function CustomTypeButton({ setActiveTypeId }) {
