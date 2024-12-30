@@ -2,21 +2,64 @@
 	white-space: normal !important;
 	letter-spacing: normal !important;
 	min-height: 190px;
+	flex-direction: column;
 
-	&.small {
-		width: 240px;
-	}
-
-	&.large {
+	@media (min-width: 576px) {
+		&.small {
+			width: 240px;
+		}
+&.large {
 		width: 500px !important;
 	}
 
-	img {
+	}
+
+	
+
+	.pokeflon-img {
 		width: 180px;
 		height: 150px;
-		align-items: center;
+		align-self: center;
 		border: none !important;
 		overflow: hidden;
 		object-fit: cover;
+	}
+
+
+
+	// réorganisation sous 576px
+	@media (max-width: 576px) {
+		&.small {
+			min-height: 0 !important;
+			height: auto !important;
+			flex-direction: row !important;
+			align-items: center;
+			width: 90%;
+
+	
+
+			.card-body {
+				display: flex;
+				flex-direction: column;
+				justify-content: center;
+				width: calc(100% - 110px);
+				text-align: left;
+				padding-right: 10px;
+
+				.card-subtitle {
+					margin: 5px 0 !important;
+				}
+			}
+
+			.pokeflon-img {
+				width: 90px;
+				height: 100px;
+				margin: 0 0 0 12px !important;
+			}
+		}
+
+		&.large {
+		width: 90%;
+	}
 	}
 }

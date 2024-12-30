@@ -100,7 +100,7 @@ if (!recaptchaResponse) {
 	return;
 }
 
-		// Créer l'objet à envoyer au backend
+		// créer l'objet à envoyer au backend
 		const userData = {
 			username: formState.username,
 			email: formState.email,
@@ -128,12 +128,10 @@ if (!recaptchaResponse) {
 					password: formState.password,
 				});
 
-				// Redirect to the user's profile page
-				// navigate(`/login/${result.data.id}`);
-
+				// redirige vers user profile page		
 				if (loginResult.success) {
 					navigate(`/login/${result.data.id}`);
-					// Réinitialiser le formulaire après succès
+					// réinitialiser le formulaire après succès
 					setFormState({
 						username: "",
 						email: "",

@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { Row, Col, Spinner } from "react-bootstrap";
-
 import CustomCard from "../components/custom-card/CustomCard";
 import CustomButton from "../components/custom-button/CustomButton";
-
-import { useNavigate, useParams } from "react-router-dom";
+import { FaArrowAltCircleLeft } from "react-icons/fa";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { usePokeflonStore } from "../store/store";
 import { useAuthStore } from "../store/authStore";
 
@@ -41,7 +40,6 @@ const canEditOrDelete =
 	isLoggedIn &&
 	(userRole === "Admin" || userRole === "Dresseur" && username === pokeflon.created_by.username);
 
-	// TODO: faire en sorte d'avoir un affichage différent ici quand user loggedin
 	// fonctions des boutons user connected
 	const handleEdit = () => {
 		if (pokeflon && pokeflon.id) {
@@ -58,7 +56,14 @@ const canEditOrDelete =
 	return (
 		<>
 			<section>
-				<Row className="mt-3 text-center">
+				<Link
+					to="/"
+					className="ms-3 text-light text-decoration-none"
+					aria-label="Retour à la page d'accueil"
+				>
+					<FaArrowAltCircleLeft /> Page d'accueil
+				</Link>
+				<Row className="mt-1 text-center">
 					<Col
 						xs={12}
 						key={pokeflon.id}

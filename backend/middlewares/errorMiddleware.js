@@ -1,4 +1,4 @@
-export const errormiddleware = (err, req, res, next) => {
+export const errorMiddleware = (err, req, res, next) => {
   // console.error(err.stack);
 
   if (err.name = "tokenExpiredError") {

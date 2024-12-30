@@ -1,8 +1,7 @@
-import PropTypes from "prop-types";
 import DOMPurify from "dompurify";
+import PropTypes from "prop-types";
 import { useEffect, useState } from "react";
 import { Modal, Form } from "react-bootstrap";
-
 import "./modal-contact.scss";
 import CustomButton from "../custom-button/CustomButton";
 
@@ -16,7 +15,6 @@ function Contact({ show, handleClose }) {
 	const [formErrors, setFormErrors] = useState({});
 	const [isFormValid, setIsFormValid] = useState(false);
 	const [status, setStatus] = useState(null);
-
 
 	// erreurs de typo maj en tps réel
 	useEffect(() => {
@@ -65,18 +63,17 @@ function Contact({ show, handleClose }) {
 		event.preventDefault();
 		console.log("Form submitted ??", formState);
 
-const sanitizedFormState = {
-	...formState,
-	message: DOMPurify.sanitize(formState.message), // Purifier le message
-	subject: DOMPurify.sanitize(formState.subject), // Purifier l'objet (si nécessaire)
-};
-
+		const sanitizedFormState = {
+			...formState,
+			message: DOMPurify.sanitize(formState.message), // purifier le message
+			subject: DOMPurify.sanitize(formState.subject), // purifier l'objet du message
+		};
 
 		try {
 			const url = "http://localhost:5000/api/contact";
 			const options = {
 				method: "POST",
-				body: JSON.stringify(formState),
+				body: JSON.stringify(sanitizedFormState),
 				headers: {
 					"Content-Type": "application/json",
 				},

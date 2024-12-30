@@ -11,7 +11,7 @@ import path from "path";
 import cookieParser from "cookie-parser";
 import { connectDB } from "./config/db.js";
 import { reqLogger } from "./middlewares/Logger.js";
-import { errormiddleware } from "./middlewares/errorMiddleware.js";
+import { errorMiddleware } from "./middlewares/errorMiddleware.js";
 import authRoutes from "./routes/auth.routes.js";
 
 import pokeflonRoutes from "./routes/pokeflon.routes.js";
@@ -40,7 +40,7 @@ app.use((req, res, next) => {
 		"Content-Security-Policy",
 		"default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self';; frame-ancestors 'none';"
 	);
-	// Protection contre le clickjacking
+	// protection contre le clickjacking
 	res.setHeader("X-Frame-Options", "DENY");
 
 	next();
@@ -69,7 +69,7 @@ app.use("/api/contact", contactRoutes);
 app.use("/api/role", roleRoutes);
 app.use("/api/auth", authRoutes);
 
-app.use(errormiddleware);
+app.use(errorMiddleware);
 
 app.listen(PORT, () => {
 	connectDB();

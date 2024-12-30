@@ -34,7 +34,6 @@ export const hasRole = (requiredRole) => (req, res, next) => {
 	console.log("user is :", user.role_name);
 	console.log("requiredRole is :", requiredRole);
 	
-
 	if (
 		user &&
 		user.role_name &&
