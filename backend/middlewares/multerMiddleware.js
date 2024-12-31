@@ -18,15 +18,15 @@ export const upload = multer({
 	storage,
 	fileFilter: (req, file, cb) => {
 		try {
-			// autoriser only fichiers image
+			// autoriser only fichiers img
 			if (!file.mimetype.match(/image\/(jpeg|png|gif)/)) {
 				return cb(
 					new Error("Seuls les fichiers JPG, PNG, et GIF sont autorisés."),
 					false
 				);
 			}
-			// vérif supplémentaire de l'image avec image-size
-			const dimensions = sizeOf(file.buffer); // Vérifier les dimensions de l'image
+			// vérif supplémentaire image avec image-size
+			const dimensions = sizeOf(file.buffer); // vérif dimensions img
 			if (!dimensions || dimensions.width === 0 || dimensions.height === 0) {
 				return cb(new Error("Contenu de l'image invalide."), false);
 			}
