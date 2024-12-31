@@ -40,7 +40,7 @@ export const usePokeflonStore = create((set) => {
 				const data = await response.json();
 				if (data.success) {
 					set({ loadingPokeflonsById: false });
-					return data.data; // Renvoie le Pokéflon spécifique
+					return data.data; // renvoie le Pokéflon spécifique
 				} else {
 					set({
 						error: "Failed to fetch Pokeflon",

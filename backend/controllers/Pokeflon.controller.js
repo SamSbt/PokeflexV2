@@ -5,7 +5,7 @@ export const getPokeflons = async (req, res) => {
 	try {
 		const pokeflons = await Pokeflon.find({}) // empty {} here : fetch ALL pokeflons
 			.populate({
-				path: "types", // Charge les types associés à ce Pokéflon
+				path: "types", // charge les types associés à ce Pokéflon
 				select: "type_name", // On sélectionne uniquement le nom des types pour l'affichage
 			})
 			.populate({
@@ -97,44 +97,37 @@ export const getPokeflonByIdType = async (req, res) => {
 };
 
 export const postPokeflon = async (req, res) => {
-	console.log("🗨️ we are in the POST /api/pokeflons route");
+		console.log("🗨️ we are in the POST /api/pokeflons route");
 	try {
-		const pokeflons = req.body; // pokeflons est l'objet contenant les données du formulaire
-		const file = req.file; // Le fichier téléchargé est dans req.file
+		const pokeflons = req.body; // pokeflons : objet contenant form data
+		const file = req.file; // fichier téléchargé dans req.file
 		const userId = req.user?.id;
 		console.log("req.body:", req.body);
 		console.log("req.file:", req.file);
 		console.log("req.user id:", req.user?.id);
 
-		//Vérifie que l'utilisateur est connecté
+		// vérif que l'utilisateur est connecté
 		if (!userId) {
 			return res.status(404).json({
 				success: false,
 				message: "Unauthorized: User not authenticated.",
 			});
 		}
-
 		if (!req.body || !pokeflons) {
 			return res.status(400).json({
 				success: false,
 				message: "Missing Pokeflon data in request body.",
 			});
 		}
-
 		if (!req.file) {
 			return res
 				.status(400)
 				.json({ success: false, message: "No file uploaded." });
 		}
 
-		// Vérification des champs requis
-		if (
-			!pokeflons.name ||
-			!pokeflons.sound ||
-			!pokeflons.height ||
-			!pokeflons.weight ||
-			!pokeflons.summary ||
-			!pokeflons.type1
+		// vérif des champs requis
+		if (!pokeflons.name || !pokeflons.sound || !pokeflons.height ||
+			!pokeflons.weight || !pokeflons.summary || !pokeflons.type1
 		) {
 			return res.status(400).json({
 				success: false,
@@ -142,7 +135,6 @@ export const postPokeflon = async (req, res) => {
 			});
 		}
 
-		// TODO : validations à garder ici ET en front ?
 		// empêcher d'aller en dessous de 0 ou lettres interdites
 		if (
 			!/^\d+(\.\d+)?$/.test(pokeflons.height) ||
@@ -165,20 +157,19 @@ export const postPokeflon = async (req, res) => {
 		}
 
 		// récupération des types
-		//const types = [pokeflons.type1, pokeflons.type2];
 		const types = [pokeflons.type1];
 
 		if (pokeflons.type2) {
-			types.push(pokeflons.type2); // Ajoute type2 seulement s'il est fourni
+			types.push(pokeflons.type2); // add type2 only s'il est fourni
 		}
 
-		pokeflons.types = types; // Assigne le tableau de types à l'objet Pokéflon
+		pokeflons.types = types; // assigne tableau types à objet Pokéflon
 
 		// création du Pokéflon avec les types directement
 		const newPokeflon = new Pokeflon({
 			name: pokeflons.name,
 			sound: pokeflons.sound,
-			height: parseFloat(pokeflons.height).toFixed(2), //nbs avec 2 décimales
+			height: parseFloat(pokeflons.height).toFixed(2), //nb avec 2 décimales
 			weight: parseFloat(pokeflons.weight).toFixed(2),
 			summary: pokeflons.summary,
 			img_src: file ? `uploads/${file.filename}` : null,
@@ -186,7 +177,7 @@ export const postPokeflon = async (req, res) => {
 			created_by: userId,
 		});
 
-		// Sauvegarde du Pokéflon avec les types associés
+		// sauvegarde du Pokéflon avec les types associés
 		console.log("Saving new Pokeflon to database...");
 		const savedPokeflon = await newPokeflon.save();
 
@@ -211,7 +202,7 @@ console.log("putPokeflon, pokeflons is:", req.body);
 	if (!mongoose.Types.ObjectId.isValid(id)) {
 		return res
 			.status(404)
-			.json({ success: false, message: "Invalid Pokeflon Id" });
+			.json({ success: false, message: " L'Id du Pokéflon n'est pas valide." });
 	}
 
 	try {
@@ -232,7 +223,7 @@ console.log("putPokeflon, pokeflons is:", req.body);
 		if (!updatedPokeflon) {
 			return res
 				.status(404)
-				.json({ success: false, message: "Pokeflon not found" });
+				.json({ success: false, message: "Pokéflon non trouvé." });
 		}
 
 		res.status(200).json({
