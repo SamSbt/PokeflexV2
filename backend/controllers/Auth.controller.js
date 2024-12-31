@@ -163,7 +163,11 @@ export const login = async (req, res) => {
 		const refreshToken = createRefreshToken(user);
 		console.log("👍 refreshToken généré :", refreshToken);
 
-		res.cookie("jwt", refreshToken, jwtCookieConfig); //
+		res.cookie("jwt", refreshToken, jwtCookieConfig); 
+		console.log("Setting refresh token cookie:", {
+			name: "jwt",
+			options: jwtCookieConfig,
+		});
 		res.status(200).json({
 			success: true,
 			message: "Login successful",
