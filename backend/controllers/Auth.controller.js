@@ -10,12 +10,11 @@ import {
 } from "../utils/jwtUtils.js";
 
 const MAX_FAILED_ATTEMPTS = 5;
-const LOCK_TIME = 5 * 60 * 1000; // en millisecondes (5min)
+const LOCK_TIME = 5 * 60 * 1000; // 5min
 const RECAPTCHA_SECRET_KEY = process.env.RECAPTCHA_SECRET_KEY;
 
 export const register = async (req, res) => {
 	const { username, email, password, recaptchaResponse } = req.body;
-
 	//console.log("req.body ds auth controller :", req.body);
 
 	if (!username || !email || !password) {
@@ -24,7 +23,6 @@ export const register = async (req, res) => {
 			message: "Email et mot de passe sont requis.",
 		});
 	}
-
 
 try {
 	// Vérifie si l'utilisateur existe déjà (email ou username)
@@ -59,7 +57,7 @@ try {
 	const googleResponse = await fetch(verifyUrl, { method: "POST" });
 	const googleResult = await googleResponse.json();
 
-	// Si la validation du reCAPTCHA échoue, retourner une erreur
+	// si validation reCAPTCHA échoue = erreur
 	if (!googleResult.success) {
 		return res.status(400).json({
 			success: false,
@@ -128,7 +126,7 @@ export const login = async (req, res) => {
 				.json({ success: false, message: "Utilisateur non trouvé." });
 		}
 
-		// Vérification si le compte est verrouillé
+		// vérif si compte verrouillé
 		if (user.isLocked()) {
 			return res.status(403).json({
 				success: false,
@@ -144,12 +142,12 @@ export const login = async (req, res) => {
 			// Incrémenter le nombre de tentatives échouées
 			user.failedAttempts += 1;
 
-			// Si le nombre de tentatives échouées dépasse la limite, verrouiller le compte
+			// si échecs > limite, verrouillage du compte
 			if (user.failedAttempts >= MAX_FAILED_ATTEMPTS) {
 				user.lockUntil = Date.now() + LOCK_TIME; // Verrouillage du compte pour 5min
 			}
 
-			// Sauvegarder les changements
+			// save any changes
 			await user.save();
 
 			return res.status(401).json({
@@ -158,7 +156,7 @@ export const login = async (req, res) => {
 			});
 		}
 
-		// Réinitialiser les tentatives échouées et le verrouillage si la connexion est réussie
+		// réinitialiser échecs & verrouillage si connexion successful
 		user.failedAttempts = 0;
 		user.lockUntil = null;
 		await user.save();

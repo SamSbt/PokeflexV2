@@ -2,22 +2,20 @@ import PropTypes from "prop-types";
 import { Button, Col, Row } from "react-bootstrap";
 import { useEffect, useState } from "react";
 import useFormStore, { fetchTypes } from "../../store/useFormStore";
-
 import "./custom-type-button.scss";
-
 
 function CustomTypeButton({ setActiveTypeId }) {
 	const [activeBorderType, setActiveBorderType] = useState(null);
 	const [error, setError] = useState(null);
-	const types = useFormStore((state) => state.types); // Utilisation des types depuis le store Zustand
+	const types = useFormStore((state) => state.types);
 
 	useEffect(() => {
 		const loadTypes = async () => {
 			try {
-				await fetchTypes(); // Appel de la fonction pour charger les types
+				await fetchTypes(); 
 			} catch (err) {
 				setError("Erreur lors du chargement des types.");
-				console.error(err); // Optionnel, à des fins de debug
+				console.error(err); // optionnel, pr debug
 			}
 		};
 		loadTypes();
@@ -28,12 +26,6 @@ function CustomTypeButton({ setActiveTypeId }) {
 			{error && <div className="alert alert-danger">{error}</div>}{" "}
 			{/* Afficher l'erreur */}
 			<Row className="justify-content-center text-center btnStyle g-0">
-				{/* Map à travers la liste des couleurs de types
-				{btnTypesColor.map((type) => {
-					const activeClass =
-						activeBorderType === type.Id_types ? "btn-active" : "";
-					const colorClass = `type-${type.Id_types}`; */}
-				{/* Map à travers la liste des types sans bordure active */}
 				{types.map((type) => {
 					const activeClass = activeBorderType === type.id ? "btn-active" : "";
 

@@ -11,8 +11,8 @@ import { authenticate, hasRole } from "../middlewares/authMiddleware.js";
 const router = express.Router();
 
 const loginLimiter = rateLimit({
-	windowMs: 5 * 60 * 1000, // Période de 5 minutes
-	max: 5, // Limiter à 5 tentatives par IP
+	windowMs: 5 * 60 * 1000, // 5min
+	max: 5, // 5 tentatives max par IP
 	message: {
 		success: false,
 		message:
@@ -21,7 +21,6 @@ const loginLimiter = rateLimit({
 	standardHeaders: true,
 	legacyHeaders: false,
 });
-
 
 router.post("/register", register);
 router.post("/login", loginLimiter, login);

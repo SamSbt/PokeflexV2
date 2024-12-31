@@ -2,8 +2,6 @@ import { Col, Row } from "react-bootstrap";
 import { useState } from "react";
 import CustomButton from "../custom-button/CustomButton";
 import ModalContact from "../modal-contact/ModalContact";
-
-
 import { FaFacebook } from "react-icons/fa";
 import { FaInstagram } from "react-icons/fa";
 import { FaXTwitter } from "react-icons/fa6";

@@ -1,19 +1,18 @@
 import React, { useEffect, useState } from "react";
 import { Row, Col, Spinner } from "react-bootstrap";
-
 import CustomCard from "../components/custom-card/CustomCard";
 import CustomButton from "../components/custom-button/CustomButton";
-
-import { useNavigate, useParams } from "react-router-dom";
+import { FaArrowAltCircleLeft } from "react-icons/fa";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { usePokeflonStore } from "../store/store";
 import { useAuthStore } from "../store/authStore";
 
 const PokeflonPage = () => {
 	const { id } = useParams();
 	const { fetchPokeflonById, loadingPokeflonsById, error } = usePokeflonStore();
-		const { username, userRole, isLoggedIn } = useAuthStore();
+	const { username, userRole, isLoggedIn } = useAuthStore();
 	const [pokeflon, setPokeflon] = useState(null);
-		const navigate = useNavigate();
+	const navigate = useNavigate();
 
 	useEffect(() => {
 		const loadPokeflon = async () => {
@@ -26,22 +25,22 @@ const PokeflonPage = () => {
 	if (error) {
 		return <div>Error loading Pokéflons: {error}</div>;
 	}
-  if (loadingPokeflonsById) {
-    return (
-      <div className="text-center">
-        <Spinner animation="grow" variant="dark" />
-      </div>
-    );
-  }
+	if (loadingPokeflonsById) {
+		return (
+			<div className="text-center">
+				<Spinner animation="grow" variant="dark" />
+			</div>
+		);
+	}
 	if (!pokeflon) {
-    return <div>Aucun Pokéflon trouvé</div>;
-  }
+		return <div>Aucun Pokéflon trouvé</div>;
+	}
 
-const canEditOrDelete =
-	isLoggedIn &&
-	(userRole === "Admin" || userRole === "Dresseur" && username === pokeflon.created_by.username);
+	const canEditOrDelete =
+		isLoggedIn &&
+		(userRole === "Admin" ||
+			(userRole === "Dresseur" && username === pokeflon.created_by.username));
 
-	// TODO: faire en sorte d'avoir un affichage différent ici quand user loggedin
 	// fonctions des boutons user connected
 	const handleEdit = () => {
 		if (pokeflon && pokeflon.id) {
@@ -58,7 +57,14 @@ const canEditOrDelete =
 	return (
 		<>
 			<section>
-				<Row className="mt-3 text-center">
+				<Link
+					to="/"
+					className="ms-3 text-light text-decoration-none"
+					aria-label="Retour à la page d'accueil"
+				>
+					<FaArrowAltCircleLeft /> Page d'accueil
+				</Link>
+				<Row className="mt-1 text-center">
 					<Col
 						xs={12}
 						key={pokeflon.id}
@@ -77,7 +83,6 @@ const canEditOrDelete =
 							weight={pokeflon.weight}
 							img_src={pokeflon.img_src}
 							summary={pokeflon.summary}
-							//visibility={pokeflon.visibility}
 							types={pokeflon.types}
 							size="large"
 						/>

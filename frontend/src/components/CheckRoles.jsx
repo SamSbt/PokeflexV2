@@ -25,7 +25,6 @@ export default function CheckRoles({ allowedRoles }) {
 			</div>
 		);
 	}
-
 	if (!userRole) {
 		// gestion du cas où l'utilisateur n'est pas connecté
 		return (
@@ -47,7 +46,6 @@ export default function CheckRoles({ allowedRoles }) {
 			</div>
 		);
 	}
-
 	return <Outlet />;
 }
 

@@ -140,7 +140,7 @@ export const putAppUser = async (req, res) => {
 		// Exclure le champ `role` de la mise à jour
 		delete appusers.role;
 
-		// Mise à jour de l'AppUser
+		// MAJ de l'AppUser
 		const updatedAppUser = await AppUser.findByIdAndUpdate(
 			id,
 			{
