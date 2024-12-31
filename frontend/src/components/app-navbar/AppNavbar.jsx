@@ -46,20 +46,22 @@ const AppNavbar = () => {
 		setFilteredPokeflons([]);
 	};
 
-	const handleLogout = () => {
-		logout();
-		// Rediriger vers la page d'accueil après la déconnexion
-		navigate("/");
+	const handleLogout = async () => {
+		const result = await logout();
+		if (result.success) {
+			navigate("/");
+		} else {
+			console.error("Logout failed:", result.message);
+		}
 	};
 
 	//console.log("isLoggedIn:", isLoggedIn);
 	//console.log("userRole:", userRole);
 
-const sanitizedPokeflons = filteredPokeflons.map((pokeflon) => ({
-	...pokeflon,
-	sanitizedName: DOMPurify.sanitize(pokeflon.name),
-}));
-
+	const sanitizedPokeflons = filteredPokeflons.map((pokeflon) => ({
+		...pokeflon,
+		sanitizedName: DOMPurify.sanitize(pokeflon.name),
+	}));
 
 	return (
 		<Navbar

@@ -1,28 +1,44 @@
 import { verifyAccessToken } from "../utils/jwtUtils.js";
 
 // Middleware pour authentifier l'utilisateur avec JWT
-export const authenticate = (req, res, next) => {
+export const authenticate = async (req, res, next) => {
 	const token = req.header("Authorization")?.split(" ")[1]; // Extraire le token de l'en-tête Authorization
 	console.log("Token reçu:", token);
+	const refreshToken = req.cookies.jwt;
 
-	if (!req.header("Authorization") || !token) {
-		console.error("Authorization header or token is missing");
+	if (!accessToken && !refreshToken) {
 		return res.status(401).json({ message: "Non autorisé" });
 	}
 
 	try {
-		const decoded = verifyAccessToken(token);
-		console.log("👍Token décodé avec succès.", decoded);
-		// decode : permet de lire le contenu, "lecture seule" kinda
-		if (!decoded.id) {
-			return res.status(401).json({ message: "Token invalide ou expiré." });
+		if (accessToken) {
+			const decoded = verifyAccessToken(accessToken);
+			console.log("👍Token décodé avec succès.", decoded);
+			// decode : permet de lire le contenu, "lecture seule" kinda
+			// if (!decoded.id) {
+			// 	return res.status(401).json({ message: "Token invalide ou expiré." });
+			// }
+			req.user = decoded; // Ajouter l'utilisateur décodé à req.user
+			console.log("Utilisateur décodé:", decoded);
+			return next(); // Passer au middleware suivant
 		}
-		req.user = decoded; // Ajouter l'utilisateur décodé à req.user
-		console.log("Utilisateur décodé:", decoded);
-		//req.role = decoded.role;
-		next(); // Passer au middleware suivant
+
+		// si access token non valide, refresh
+		const response = await fetch(`${process.env.API_URL}/auth/refresh`, {
+			method: "POST",
+			credentials: "include",
+		});
+
+		if (!response.ok) {
+			throw new Error("Refresh token invalid");
+		}
+
+		const data = await response.json();
+		req.user = verifyAccessToken(data.accessToken);
+		req.headers.authorization = `Bearer ${data.accessToken}`;
+		next();
 	} catch (error) {
-		console.error("Erreur de vérification du token :", error);
+		console.error("Erreur d'authentification :", error);
 		res.status(401).json({ message: "Token invalide ou expiré." });
 	}
 };
@@ -31,9 +47,9 @@ export const authenticate = (req, res, next) => {
 export const hasRole = (requiredRole) => (req, res, next) => {
 	const user = req.user;
 	//console.log("Contenu de req.user :", user);
-	console.log("user is :", user.role_name);
-	console.log("requiredRole is :", requiredRole);
-	
+	//console.log("user is :", user.role_name);
+	//console.log("requiredRole is :", requiredRole);
+
 	if (
 		user &&
 		user.role_name &&

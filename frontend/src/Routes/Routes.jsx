@@ -22,7 +22,7 @@ const Routing = () => {
 				<Route path="/login" element={<LoginPage />} />
 				{/*<Route path="/login/:id/favorites" element /> */}
 
-				<Route element={<CheckRoles allowedRoles={["Dresseur"]} />}>
+				<Route element={<CheckRoles allowedRoles={["Dresseur", "Admin"]} />}>
 					<Route path="/create" element={<CreatePage />} />
 					<Route path="/create/:id" element={<CreatePage />} />
 					<Route path="/login/:id" element={<ProfilUserPage />} />

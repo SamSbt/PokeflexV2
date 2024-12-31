@@ -64,16 +64,16 @@ const LoginPage = () => {
 
 		try {
 			const { email, password } = formState;
-			const data = await login({ email, password });
+			const result = await login({ email, password });
 
-			if (data.success) {
+			if (result.success) {
 				setFormState({
 					email: "",
 					password: "",
 				});
 				navigate("/");
 			} else {
-				setErrorMessage(data.message || "Échec de la connexion.");
+				setErrorMessage(result.message || "Échec de la connexion.");
 			}
 		} catch (error) {
 			console.error("Login failed:", error);
