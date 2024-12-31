@@ -37,7 +37,7 @@ const pokeflonSchema = new mongoose.Schema(
 		},
 		deleted_at: {
 			type: Date,
-			default: null, // Si non supprimé, pas de date associée
+			default: null, // si non supprimé, pas de date associée
 		},
 		visibility: {
 			type: Boolean,
@@ -64,13 +64,13 @@ const pokeflonSchema = new mongoose.Schema(
 		// ],
 	},
 	{
-		timestamps: true, // ajoute automatiquement createdAt et updatedAt
+		timestamps: true, // add auto createdAt et updatedAt
 		toJSON: { virtuals: true },
 		toObject: { virtuals: true },
 	}
 );
 
-//add un champ virtuel pour "id" basé sur "_id"
+// add un champ virtuel pour "id" basé sur "_id"
 pokeflonSchema.virtual("id").get(function () {
 	return this._id.toHexString();
 });
