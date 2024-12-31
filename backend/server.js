@@ -22,37 +22,41 @@ import contactRoutes from "./routes/contact.routes.js";
 import { getPokeflonByIdType } from "./controllers/Pokeflon.controller.js";
 
 dotenv.config();
-//console.log("Access Token Secret:", process.env.ACCESS_SECRET_TOKEN);
-//console.log("Refresh Token Secret:", process.env.REFRESH_SECRET_TOKEN);
 
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// middleware - allow us to accept JSON data in the req.body
-app.use(express.json());
-
-// Middleware pour parser les cookies
+// middlewares
+app.use(express.json()); // allow us to accept JSON data in the req.body
 app.use(cookieParser());
-
+// CORS - permet les requêtes depuis front-end (localhost:5173)
+app.use(
+	cors({
+		origin: process.env.CLIENT_URL,
+		credentials: true, // permet l'envoi des cookies
+	})
+);
 // CSP - Content Security Policy
+// à adapter selon évolutions de l'application
 app.use((req, res, next) => {
 	res.setHeader(
 		"Content-Security-Policy",
 		"default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self';; frame-ancestors 'none';"
 	);
-	// protection contre le clickjacking
+	// protection contre clickjacking
 	res.setHeader("X-Frame-Options", "DENY");
 
+	// TODO : revoir les directives suivantes
+	// Prevents MIME type sniffing
+	res.setHeader("X-Content-Type-Options", "nosniff");
+
+	// Enables the browser's built-in XSS protection
+	res.setHeader("X-XSS-Protection", "1; mode=block");
+
+	// Controls how much referrer information should be included with requests
+	res.setHeader("Referrer-Policy", "strict-origin-when-cross-origin");
 	next();
 });
-
-// CORS - permet les requêtes depuis front-end (localhost:5173)
-app.use(
-	cors({
-		origin: "http://localhost:5173",
-		credentials: true, // permet l'envoi des cookies
-	})
-);
 
 app.use(reqLogger);
 

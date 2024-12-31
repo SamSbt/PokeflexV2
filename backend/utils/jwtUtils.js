@@ -19,7 +19,7 @@ export const refreshTokenConfig = {
 export const jwtCookieConfig = {
 	httpOnly: true,
 	secure: process.env.NODE_ENV === "production" ? false : true, // true en production, false en développement
-	sameSite: process.env.NODE_ENV === "production" ? "lax" : "none",
+	sameSite: process.env.NODE_ENV === "production" ? "strict" : "lax",
 	maxAge: 7 * 24 * 60 * 60 * 1000, // 7 jours en millisecondes
 	path: "/", // Chemin de validité du cookie
 };
@@ -43,12 +43,10 @@ export const createAccessToken = (user) => {
 
 // Fonction pour vérifier un access token
 export const verifyAccessToken = (token) => {
-	console.log("Start verifyAccessToken");
+	//console.log("Start verifyAccessToken");
 	try {
 		const payload = jwt.verify(token, accessTokenConfig.secret);
 		// verify : vérifie que le token est valide (signature correcte avec la clé secrète), si non : exception dans catch
-		// console.log("verifyAccessToken token Payload:", payload);
-		//console.log("✨ payload de l'access token :", payload); // Renvoie le payload vérifié);
 		return payload; // Renvoie le payload vérifié
 	} catch (error) {
 		if (error.name === "TokenExpiredError") {
@@ -70,10 +68,10 @@ export const verifyRefreshToken = (refreshToken) => {
 		const payload = jwt.verify(refreshToken, refreshTokenConfig.secret);
 		// verify : vérifie que le token est valide (signature correcte avec la clé secrète), si non : exception dans catch
 		console.log("verifyRefreshToken refreshToken Payload:", payload);
-		return payload; // Renvoie le payload vérifié
+		return payload;
 	} catch (error) {
 		if (error.name === "RefreshTokenExpiredError") {
-			console.error("Refresh token expired");
+			console.error("⚠️ Refresh token expired");
 			throw new Error("Refresh token expired");
 		} else if (error.name === "JsonWebTokenError") {
 			console.error("Invalid refresh token");
@@ -112,4 +110,13 @@ const generateAccessTokenPayload = (user) => {
 		throw new Error("Invalid user data for token payload");
 	}
 	return { id: user._id, role_name: user.role.role_name };
+};
+
+export const decodeRefreshToken = (token) => {
+	try {
+		return jwt.decode(token);
+	} catch (error) {
+		console.error("Error decoding refresh token:", error);
+		return null;
+	}
 };

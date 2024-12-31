@@ -15,7 +15,9 @@ export const usePokeflonStore = create((set) => {
 		fetchPokeflons: async () => {
 			set({ loadingPokeflons: true });
 			try {
-				const response = await fetch("http://localhost:5000/api/pokeflon");
+				const response = await fetch(
+					`${import.meta.env.VITE_API_URL}/pokeflon`
+				);
 				const data = await response.json();
 
 				if (data.success) {
@@ -34,7 +36,7 @@ export const usePokeflonStore = create((set) => {
 			set({ loadingPokeflonsById: true, error: null });
 			try {
 				const response = await fetch(
-					`http://localhost:5000/api/pokeflon/${id}`
+					`${import.meta.env.VITE_API_URL}/pokeflon/${id}`
 				);
 
 				const data = await response.json();
@@ -59,7 +61,7 @@ export const usePokeflonStore = create((set) => {
 			set({ loadingPokeflonsByIdType: true });
 			try {
 				const response = await fetch(
-					`http://localhost:5000/api/pokeflon/by-type/${id}` // Point d'API pour récupérer les Pokéflons par type
+					`${import.meta.env.VITE_API_URL}/pokeflon/by-type/${id}` // Point d'API pour récupérer les Pokéflons par type
 				);
 
 				// Si le backend retourne une erreur 404

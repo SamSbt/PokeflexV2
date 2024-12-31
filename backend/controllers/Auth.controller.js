@@ -1,7 +1,6 @@
 import bcrypt from "bcrypt";
 import AppUser from "../models/AppUser.model.js";
 import Role from "../models/Role.model.js";
-//import RefreshToken from "../models/RefreshToken.model.js";
 import {
 	createAccessToken,
 	createRefreshToken,
@@ -24,85 +23,84 @@ export const register = async (req, res) => {
 		});
 	}
 
-try {
-	// Vérifie si l'utilisateur existe déjà (email ou username)
-	const existingUser = await AppUser.findOne({
-		$or: [{ email }, { username }],
-	});
-	if (existingUser) {
-		if (existingUser.email === email) {
-			return res.status(409).json({
+	try {
+		// Vérifie si l'utilisateur existe déjà (email ou username)
+		const existingUser = await AppUser.findOne({
+			$or: [{ email }, { username }],
+		});
+		if (existingUser) {
+			if (existingUser.email === email) {
+				return res.status(409).json({
+					success: false,
+					message: "Un utilisateur avec cet email existe déjà.",
+				});
+			}
+			if (existingUser.username === username) {
+				return res.status(409).json({
+					success: false,
+					message: "Ce nom d'utilisateur est déjà pris.",
+				});
+			}
+		}
+
+		// Vérifie que la réponse du reCAPTCHA est présente
+		if (!recaptchaResponse) {
+			return res.status(400).json({
 				success: false,
-				message: "Un utilisateur avec cet email existe déjà.",
+				message: "Le reCAPTCHA est requis.",
 			});
 		}
-		if (existingUser.username === username) {
-			return res.status(409).json({
+
+		// Valider la réponse du reCAPTCHA auprès de Google
+		const verifyUrl = `https://www.google.com/recaptcha/api/siteverify?secret=${RECAPTCHA_SECRET_KEY}&response=${recaptchaResponse}`;
+		const googleResponse = await fetch(verifyUrl, { method: "POST" });
+		const googleResult = await googleResponse.json();
+
+		// si validation reCAPTCHA échoue = erreur
+		if (!googleResult.success) {
+			return res.status(400).json({
 				success: false,
-				message: "Ce nom d'utilisateur est déjà pris.",
+				message: "reCAPTCHA invalide.",
 			});
 		}
-	}
 
-	// Vérifie que la réponse du reCAPTCHA est présente
-	if (!recaptchaResponse) {
-		return res.status(400).json({
-			success: false,
-			message: "Le reCAPTCHA est requis.",
+		// Hache le mot de passe
+		const hashedPassword = await bcrypt.hash(password, 10);
+
+		const defaultRole = await Role.findOne({ role_name: "Dresseur" });
+		if (!defaultRole) {
+			return res.status(500).json({
+				success: false,
+				message:
+					"Default role not found. Please configure roles in the database.",
+			});
+		}
+
+		// Crée un nouvel utilisateur
+		const newUser = await AppUser.create({
+			username,
+			email,
+			password: hashedPassword,
+			role: defaultRole.id,
 		});
-	}
 
-	// Valider la réponse du reCAPTCHA auprès de Google
-	const verifyUrl = `https://www.google.com/recaptcha/api/siteverify?secret=${RECAPTCHA_SECRET_KEY}&response=${recaptchaResponse}`;
-	const googleResponse = await fetch(verifyUrl, { method: "POST" });
-	const googleResult = await googleResponse.json();
-
-	// si validation reCAPTCHA échoue = erreur
-	if (!googleResult.success) {
-		return res.status(400).json({
-			success: false,
-			message: "reCAPTCHA invalide.",
+		res.status(201).json({
+			success: true,
+			message: "Utilisateur créé avec succès",
+			data: {
+				id: newUser.id,
+				username: newUser.username,
+				email: newUser.email,
+				role: newUser.role,
+			},
 		});
-	}
-
-	// Hache le mot de passe
-	const hashedPassword = await bcrypt.hash(password, 10);
-
-	const defaultRole = await Role.findOne({ role_name: "Dresseur" });
-	if (!defaultRole) {
-		return res.status(500).json({
-			success: false,
-			message:
-				"Default role not found. Please configure roles in the database.",
-		});
-	}
-
-	// Crée un nouvel utilisateur
-	const newUser = await AppUser.create({
-		username,
-		email,
-		password: hashedPassword,
-		role: defaultRole.id,
-	});
-
-	res.status(201).json({
-		success: true,
-		message: "Utilisateur créé avec succès",
-		data: {
-			id: newUser.id,
-			username: newUser.username,
-			email: newUser.email,
-			role: newUser.role,
-		},
-	});
-} catch (error) {
+	} catch (error) {
 		console.error("Erreur lors de l'enregistrement :", error.message);
 		res.status(500).json({ success: false, message: "Erreur serveur" });
 	}
 };
 
 export const login = async (req, res) => {
-	res.clearCookie("jwt", jwtCookieConfig);
 	const { email, password } = req.body;
 
 	console.log("Requête reçue pour /login");
@@ -116,11 +114,8 @@ export const login = async (req, res) => {
 
 	try {
 		const user = await AppUser.findOne({ email }).populate("role");
-		// console.log("Utilisateur trouvé:", user);
-
 		// vérif du user
 		if (!user) {
-			console.log("Utilisateur non trouvé");
 			return res
 				.status(404)
 				.json({ success: false, message: "Utilisateur non trouvé." });
@@ -167,12 +162,6 @@ export const login = async (req, res) => {
 		console.log("Génération du refresh token...");
 		const refreshToken = createRefreshToken(user);
 		console.log("👍 refreshToken généré :", refreshToken);
-
-		// si désir de sauvegarder le refresh token dans la base de données si rotation de refresh token
-		// await RefreshToken.create({
-		// 	token: refreshToken,
-		// 	userId: user.id,
-		// });
 
 		res.cookie("jwt", refreshToken, jwtCookieConfig); //
 		res.status(200).json({
