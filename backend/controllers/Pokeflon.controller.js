@@ -164,15 +164,6 @@ export const postPokeflon = async (req, res) => {
 			});
 		}
 
-		// TODO : validation des références aux utilisateurs (created_by et appuser)
-		// const createdByExists = mongoose.Types.ObjectId.isValid(pokeflons.created_by);
-		// const appUserExists = mongoose.Types.ObjectId.isValid(pokeflons.appuser);
-		// 	if (!createdByExists || !appUserExists) {
-		// 		return res
-		// 			.status(400)
-		// 			.json({ success: false, message: "Invalid user references." });
-		// 	}
-
 		// récupération des types
 		//const types = [pokeflons.type1, pokeflons.type2];
 		const types = [pokeflons.type1];

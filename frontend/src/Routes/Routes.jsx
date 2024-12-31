@@ -1,15 +1,15 @@
 import React from "react";
 import { Route, Routes } from "react-router-dom";
-import CheckRoles from "./components/CheckRoles";
-import HomePage from "./views/HomePage";
-import TypesPage from "./views/TypesPage";
-import CreatePage from "./views/CreatePage";
-import PokeflonPage from "./views/PokeflonPage";
-import RegisterPage from "./views/RegisterPage";
-import LoginPage from "./views/LoginPage";
-import ProfilUserPage from "./views/ProfilUserPage";
-import DashboardPage from "./views/DashboardPage";
-import NotFoundPage from "./components/NotFoundPage";
+import CheckRoles from "./CheckRoles";
+import HomePage from "../views/HomePage";
+import TypesPage from "../views/TypesPage";
+import CreatePage from "../views/CreatePage";
+import PokeflonPage from "../views/PokeflonPage";
+import RegisterPage from "../views/RegisterPage";
+import LoginPage from "../views/LoginPage";
+import ProfilUserPage from "../views/ProfilUserPage";
+import DashboardPage from "../views/DashboardPage";
+import NotFoundPage from "../components/NotFoundPage";
 
 const Routing = () => {
 	return (
