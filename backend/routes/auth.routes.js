@@ -7,6 +7,7 @@ import {
 	logout,
 } from "../controllers/Auth.controller.js";
 import { authenticate, hasRole } from "../middlewares/authMiddleware.js";
+import { jwtCookieConfig } from "../utils/jwtUtils.js";
 
 const router = express.Router();
 
@@ -25,12 +26,12 @@ const loginLimiter = rateLimit({
 router.post("/register", register);
 router.post("/login", loginLimiter, login);
 router.post("/refresh", refreshAccessToken);
+
 router.post("/logout", (req, res) => {
 	// Clear the refresh token cookie
-	res.clearCookie("refreshToken", {
-		httpOnly: true,
-		secure: false, // mettre true si HTTPS
-		sameSite: "lax", // and strict
+	res.clearCookie("jwt", {
+		...jwtCookieConfig,
+		maxAge: 0,
 	});
 	res.json({ success: true, message: "Logged out successfully" });
 });
