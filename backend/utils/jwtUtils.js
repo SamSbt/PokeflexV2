@@ -5,7 +5,7 @@ dotenv.config();
 
 export const accessTokenConfig = {
 	secret: process.env.ACCESS_SECRET_TOKEN,
-	expiresIn: "15m",
+	expiresIn: "15s",
 };
 if (!process.env.ACCESS_SECRET_TOKEN) {
 	console.error("ACCESS_SECRET_TOKEN is not defined in .env");
