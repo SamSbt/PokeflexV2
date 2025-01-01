@@ -10,6 +10,8 @@ export const useAuthStore = create(
 			username: null,
 			loading: false,
 			accessToken: null,
+			roles: [],
+			contacts: [],
 			setLoginStatus: (status) => set({ isLoggedIn: status }),
 			setUserRole: (userRole) => {
 				console.log("Setting userRole to:", userRole);
@@ -19,8 +21,9 @@ export const useAuthStore = create(
 				set({ username }); // Update the state of username
 			},
 			setLoading: (loading) => set({ loading }),
+			getAccessToken: () => get().accessToken,
 
-			// Login method
+			// login method
 			login: async (credentials) => {
 				try {
 					set({ loading: true });
@@ -58,7 +61,7 @@ export const useAuthStore = create(
 				}
 			},
 
-			// Refresh access token method
+			// Refresh token method
 			refreshToken: async () => {
 				try {
 					const response = await fetch(
@@ -66,9 +69,9 @@ export const useAuthStore = create(
 						{
 							method: "POST",
 							credentials: "include",
-							headers: {
-								"Content-Type": "application/json",
-							},
+							// headers: {
+							// 	"Content-Type": "application/json",
+							// },
 						}
 					);
 
@@ -77,7 +80,6 @@ export const useAuthStore = create(
 					}
 
 					const data = await response.json();
-
 					set({
 						accessToken: data.accessToken,
 						isLoggedIn: true,
@@ -95,60 +97,104 @@ export const useAuthStore = create(
 				}
 			},
 
-			fetchWithAccessToken: async (url, options = {}) => {
-				// const { accessToken, refreshAccessToken } = useAuthStore.getState();
-				// simplification :
-				const state = get();
-				let retry = true;
-
-				// Préparer les options de la requête avec le token actuel
-				const currentOptions = {
-					...options,
-					headers: {
-						...options.headers,
-						Authorization: `Bearer ${accessToken}`,
-					},
-					credentials: "include",
-				};
-
-				if (!(options.body instanceof FormData)) {
-					currentOptions.headers["Content-Type"] = "application/json";
-				}
-
+			// fetch roles
+			fetchRoles: async () => {
+				const { getAccessToken, refreshToken } = get();
 				try {
-					let response = await fetch(url, currentOptions);
+					let token = getAccessToken();
+					console.log("Fetching roles with token:", token);
 
-					// si token expired (401), try refresh
-					if (response.status === 401 && retry) {
-						retry = false; // Empêche une boucle infinie
-						console.warn("⚠️ Token expiré. Tentative de rafraîchissement...");
+					let response = await fetch(`${import.meta.env.VITE_API_URL}/role`, {
+						headers: {
+							Authorization: `Bearer ${token}`,
+						},
+						credentials: "include",
+					});
 
-						// refreh token
-						const newAccessToken = await state.refreshAccessToken();
+					console.log("Fetch response status:", response.status);
 
-						if (newAccessToken) {
+					if (response.status === 401) {
+						console.log("Token expired, attempting to refresh...");
+						const refreshed = await refreshToken();
+						if (refreshed) {
+							token = getAccessToken();
+							console.log("Refreshed token:", token);
+							response = await fetch(`${import.meta.env.VITE_API_URL}/role`, {
+								headers: {
+									Authorization: `Bearer ${token}`,
+								},
+								credentials: "include",
+							});
 							console.log(
-								"✅ Token rafraîchi avec succès. Nouvelle tentative de requête..."
+								"Fetch response status after refresh:",
+								response.status
 							);
-							// maj headers avec nouveau token
-							currentOptions.headers.Authorization = `Bearer ${newAccessToken}`;
-
-							// réessayer requête avec nouveau token
-							response = await fetch(url, currentOptions);
 						} else {
-							console.error("❌ Échec du rafraîchissement du token.");
-							throw new Error("Unable to refresh access token");
+							throw new Error("Unable to refresh token");
 						}
 					}
 
-					return response;
+					if (!response.ok) {
+						throw new Error(`HTTP error! status: ${response.status}`);
+					}
+
+					const data = await response.json();
+					console.log("Fetched roles data:", data);
+					set({ roles: data });
+					return data;
 				} catch (error) {
-					console.error("Erreur avec fetchWithAccessToken:", error);
+					console.error("Error fetching roles:", error);
 					throw error;
 				}
 			},
 
-			// Logout method
+			// fetch contact messages
+			fetchContacts: async () => {
+				const { getAccessToken, refreshToken } = get();
+				try {
+					let token = getAccessToken();
+					let response = await fetch(
+						`${import.meta.env.VITE_API_URL}/contact`,
+						{
+							headers: {
+								Authorization: `Bearer ${token}`,
+							},
+							credentials: "include",
+						}
+					);
+
+					if (response.status === 401) {
+						const refreshed = await refreshToken();
+						if (refreshed) {
+							token = getAccessToken();
+							response = await fetch(
+								`${import.meta.env.VITE_API_URL}/contact`,
+								{
+									headers: {
+										Authorization: `Bearer ${token}`,
+									},
+									credentials: "include",
+								}
+							);
+						} else {
+							throw new Error("Unable to refresh token");
+						}
+					}
+
+					if (!response.ok) {
+						throw new Error(`HTTP error! status: ${response.status}`);
+					}
+
+					const data = await response.json();
+					set({ contacts: data.data || [] });
+					return data.data || [];
+				} catch (error) {
+					console.error("Error fetching contacts:", error);
+					throw error;
+				}
+			},
+
+			// logout method
 			logout: async () => {
 				try {
 					//console.log("Attempting to logout...");
@@ -171,7 +217,7 @@ export const useAuthStore = create(
 
 					const data = await response.json();
 					//console.log("Logout response:", data);
-					
+
 					// clear tt ce qui est en localStorage
 					localStorage.removeItem("auth-storage");
 

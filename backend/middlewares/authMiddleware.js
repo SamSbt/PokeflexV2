@@ -6,13 +6,13 @@ export const authenticate = async (req, res, next) => {
 	console.log("Token reçu:", token);
 	const refreshToken = req.cookies.jwt;
 
-	if (!accessToken && !refreshToken) {
+	if (!token && !refreshToken) {
 		return res.status(401).json({ message: "Non autorisé" });
 	}
 
 	try {
-		if (accessToken) {
-			const decoded = verifyAccessToken(accessToken);
+		if (token) {
+			const decoded = verifyAccessToken(token);
 			console.log("👍Token décodé avec succès.", decoded);
 			// decode : permet de lire le contenu, "lecture seule" kinda
 			// if (!decoded.id) {
@@ -34,8 +34,8 @@ export const authenticate = async (req, res, next) => {
 		}
 
 		const data = await response.json();
-		req.user = verifyAccessToken(data.accessToken);
-		req.headers.authorization = `Bearer ${data.accessToken}`;
+		req.user = verifyAccessToken(data.token);
+		req.headers.authorization = `Bearer ${data.token}`;
 		next();
 	} catch (error) {
 		console.error("Erreur d'authentification :", error);

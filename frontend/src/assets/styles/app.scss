@@ -101,10 +101,59 @@ textarea:focus {
 	text-decoration: underline;
 }
 
-//homepage link
+// homepage link
 .custom-homepage-link {
 	color: #dc0a2d;
 	&:hover {
 		color: #b60926;
 	}
+}
+
+// style du dashboard
+.dashboard {
+	.contact-messages-table {
+		tbody {
+			tr {
+				&.unread {
+					background-color: rgba(144, 238, 144, 0.2);
+				}
+			}
+		}
+	}
+
+	// switch style
+	.form-switch {
+		.form-check-input {
+			background-color: #ffffff;
+			background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='%23DC0A2D'/%3e%3c/svg%3e");
+			border: none;
+
+			&:before,
+			&:focus:before {
+				background-color: #dc0a2d;
+			}
+
+			&:checked {
+				background-color: #b60926;
+				background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='%23ffffff'/%3e%3c/svg%3e");
+
+				&:before,
+				&:focus:before {
+					background-color: #ffffff;
+				}
+			}
+
+			&:focus {
+				border: none;
+				box-shadow: none;
+			}
+		}
+	}
+}
+
+// Override any conflicting styles specifically for the switch
+.dashboard .form-switch .form-check-input:focus,
+.dashboard .form-switch .form-check-input:focus:before {
+	border-color: transparent !important;
+	box-shadow: none !important;
 }
