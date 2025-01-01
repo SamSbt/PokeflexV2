@@ -12,10 +12,9 @@ const CreatePage = () => {
 	const { id } = useParams();
 	const { formData, setFormData, resetForm, types } = useFormStore();
 	const [file, setFile] = useState(null); // ajout pour stocker l'image
-	const { fetchWithAccessToken } = useAuthStore();
+	const { getAccessToken } = useAuthStore();
 	const { fetchPokeflonById, loadingPokeflonsById, error } = usePokeflonStore();
 	const navigate = useNavigate();
-
 
 	//TODO: gérer la preview ici ou dans fileupload pour que ça s'enlève après submit
 	// ou alors envoyer sur la page du pokeflon nouvellement créé...
@@ -69,18 +68,7 @@ const CreatePage = () => {
 		e.preventDefault();
 		//console.log("Données envoyées : ", formData);
 
-const sanitizedSummary = DOMPurify.sanitize(formData.summary);
-
-
-		// Récupérer le token d'authentification depuis le cookie
-		// const token = getCookie("accessToken");
-
-		// // Si pas de token, on peut soit afficher un message d'erreur, soit rediriger vers la page de connexion
-		// if (!token) {
-		// 	console.error("Utilisateur non authentifié. Veuillez vous connecter.");
-		// 	setErrorMessage("Utilisateur non authentifié. Veuillez vous connecter.");
-		// 	return;
-		// }
+		const sanitizedSummary = DOMPurify.sanitize(formData.summary);
 
 		// Utiliser FormData pour inclure l'image et les autres données
 		const formDataToSend = new FormData();
@@ -102,15 +90,19 @@ const sanitizedSummary = DOMPurify.sanitize(formData.summary);
 		try {
 			let response;
 			const url = id
-				? `http://localhost:5000/api/pokeflon/${id}`
-				: "http://localhost:5000/api/pokeflon";
+				? `${import.meta.env.VITE_API_URL}/pokeflon/${id}`
+				: `${import.meta.env.VITE_API_URL}/pokeflon`;
 			const method = id ? "PUT" : "POST";
 
 			console.log(`Sending ${method} request to ${url}`);
 
-			response = await fetchWithAccessToken(url, {
+			response = await fetch(url, { 
 				method: method,
+				headers: {
+					Authorization: `Bearer ${getAccessToken()}`,
+				},
 				body: formDataToSend,
+				credentials: 'include',
 			});
 
 			const responseData = await response.json();

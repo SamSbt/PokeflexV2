@@ -201,28 +201,10 @@ export const refreshAccessToken = async (req, res) => {
 	}
 
 	try {
-		// Vérifier si le refresh token existe dans la base de données
-		// const storedToken = await RefreshToken.findOne({ token: refreshToken });
-		// if (!storedToken) {
-		// 	return res
-		// 		.status(403)
-		// 		.json({ success: false, message: "Refresh token invalide." });
-		// }
-
 		// Vérifier la validité du refresh token
 		const payload = verifyRefreshToken(refreshToken);
-		// Suppression du token expiré de la base
-		// await RefreshToken.findOneAndDelete({ token: refreshToken });
 		const user = await AppUser.findById(payload.userId).populate("role");
-
 		const newAccessToken = createAccessToken(user);
-
-		// Enregistrez le nouveau refresh token
-		// await RefreshToken.create({
-		// 	token: newRefreshToken,
-		// 	userId: decoded.userId,
-		// });
-
 		res.status(200).json({
 			success: true,
 			accessToken: newAccessToken,

@@ -4,12 +4,10 @@ export const usePokeflonStore = create((set) => {
 	return {
 		pokeflons: [],
 		types: [],
-		roles: [],
 		selectedType: null,
 		error: null,
 		loadingPokeflons: false,
 		loadingPokeflonsByType: false,
-
 		setLoadingPokeflons: (status) => set({ loadingPokeflons: status }),
 
 		fetchPokeflons: async () => {

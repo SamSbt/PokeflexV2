@@ -24,11 +24,11 @@ export const postContact = async (req, res) => {
 	const newContact = new Contact({ username, email, subject, message });
 
 	try {
-		console.log("Saving new email to database...");
+		console.log("Saving new message to database...");
 		await newContact.save();
 
 		// Envoi de l'email
-		console.log("Envoi de l'email...");
+		console.log("Envoi du message...");
 	// logique pour l'envoi ici
 
 		res.status(201).json({
