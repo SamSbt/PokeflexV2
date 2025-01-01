@@ -45,15 +45,11 @@ app.use((req, res, next) => {
 	);
 	// protection contre clickjacking
 	res.setHeader("X-Frame-Options", "DENY");
-
-	// TODO : revoir les directives suivantes
-	// Prevents MIME type sniffing
+	// empêche browser de deviner le type MIME des fichiers
 	res.setHeader("X-Content-Type-Options", "nosniff");
-
-	// Enables the browser's built-in XSS protection
+	// active protection intégrée contre XSS in some older browsers
 	res.setHeader("X-XSS-Protection", "1; mode=block");
-
-	// Controls how much referrer information should be included with requests
+	// contrôle qtté d'infors en-tête Referer transmises lors des requêtes
 	res.setHeader("Referrer-Policy", "strict-origin-when-cross-origin");
 	next();
 });
@@ -65,7 +61,6 @@ app.use("/api/uploads", express.static(path.join(process.cwd(), "uploads")));
 
 // Définir les routes pour l'API
 app.use("/api/pokeflon", pokeflonRoutes);
-app.get("/api/pokeflon/by-type/:id", getPokeflonByIdType);
 app.use("/api/admin/role", roleRoutes);
 app.use("/api/appuser", appuserRoutes);
 app.use("/api/type", typeRoutes);

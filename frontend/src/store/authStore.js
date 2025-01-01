@@ -24,7 +24,7 @@ export const useAuthStore = create(
 			login: async (credentials) => {
 				try {
 					set({ loading: true });
-					console.log("API URL:", import.meta.env.VITE_API_URL);
+					// console.log("API URL:", import.meta.env.VITE_API_URL);
 					const response = await fetch(
 						`${import.meta.env.VITE_API_URL}/auth/login`,
 						{
@@ -39,7 +39,7 @@ export const useAuthStore = create(
 
 					const data = await response.json();
 					if (response.ok) {
-						console.log("authstore response :", response);
+						// console.log("authstore response :", response);
 						set({
 							accessToken: data.data.accessToken,
 							isLoggedIn: true,
@@ -151,9 +151,9 @@ export const useAuthStore = create(
 			// Logout method
 			logout: async () => {
 				try {
-					console.log("Attempting to logout...");
+					//console.log("Attempting to logout...");
 					const logoutUrl = `${import.meta.env.VITE_API_URL}/auth/logout`;
-					console.log("Logout URL:", logoutUrl);
+					//console.log("Logout URL:", logoutUrl);
 
 					const response = await fetch(logoutUrl, {
 						method: "POST",
@@ -170,7 +170,7 @@ export const useAuthStore = create(
 					}
 
 					const data = await response.json();
-					console.log("Logout response:", data);
+					//console.log("Logout response:", data);
 					
 					// clear tt ce qui est en localStorage
 					localStorage.removeItem("auth-storage");
