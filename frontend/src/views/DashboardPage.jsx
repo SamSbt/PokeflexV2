@@ -78,6 +78,8 @@ const DashboardPage = () => {
 		);
 	};
 
+// TODO : qd toggle "à lire" actionné, envoyer requête PUT à l'API pour mettre à jour le statut de lecture
+
 	return (
 		<section className="dashboard">
 			<Container className="mt-5">
