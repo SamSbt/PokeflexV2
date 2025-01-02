@@ -53,7 +53,6 @@ export const verifyAccessToken = (token) => {
 			console.error("⚠️ Access token expired");
 			throw new Error("Access token expired");
 		} else if (error.name === "JsonWebTokenError") {
-			console.error("Invalid access token");
 			throw new Error("Invalid access token");
 		} else {
 			console.log("Unexpected error during token verification:", error);
