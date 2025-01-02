@@ -3,7 +3,7 @@ import { verifyAccessToken } from "../utils/jwtUtils.js";
 // Middleware pour authentifier l'utilisateur avec JWT
 export const authenticate = async (req, res, next) => {
 	const token = req.header("Authorization")?.split(" ")[1]; // Extraire le token de l'en-tête Authorization
-	console.log("Token reçu:", token);
+	//console.log("Token reçu:", token);
 	const refreshToken = req.cookies.jwt;
 
 	if (!token && !refreshToken) {
@@ -38,7 +38,6 @@ export const authenticate = async (req, res, next) => {
 		req.headers.authorization = `Bearer ${data.token}`;
 		next();
 	} catch (error) {
-		console.error("Erreur d'authentification :", error);
 		res.status(401).json({ message: "Token invalide ou expiré." });
 	}
 };
@@ -57,7 +56,7 @@ export const hasRole = (requiredRole) => (req, res, next) => {
 	) {
 		return next();
 	}
-	console.log("Rôle de l'utilisateur:", user.role_name);
+	//console.log("Rôle de l'utilisateur:", user.role_name);
 	return res.status(403).json({
 		success: false,
 		message: "Accès refusé",
