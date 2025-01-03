@@ -16,7 +16,6 @@ const AppNavbar = () => {
 	const [searchTerm, setSearchTerm] = useState("");
 	const [filteredPokeflons, setFilteredPokeflons] = useState([]);
 	//console.log("Valeur de userRole :", userRole);
-
 	const navigate = useNavigate();
 
 	// Récupérer les Pokéflons dès que le composant est monté

@@ -19,10 +19,9 @@ import roleRoutes from "./routes/role.routes.js";
 import appuserRoutes from "./routes/appuser.routes.js";
 import typeRoutes from "./routes/type.routes.js";
 import contactRoutes from "./routes/contact.routes.js";
-import { getPokeflonByIdType } from "./controllers/Pokeflon.controller.js";
+
 
 dotenv.config();
-console.log("NODE_ENV au démarrage du serveur:", process.env.NODE_ENV);
 
 const app = express();
 const PORT = process.env.PORT || 5000;

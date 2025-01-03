@@ -8,20 +8,12 @@ import {
 	verifyRefreshToken,
 } from "../utils/jwtUtils.js";
 
-// const isDevelopment = true;
-
 const MAX_FAILED_ATTEMPTS = 5;
 const LOCK_TIME = 5 * 60 * 1000; // 5min
 const RECAPTCHA_SECRET_KEY = process.env.RECAPTCHA_SECRET_KEY;
-console.log("NODE_ENV dans Auth.controller:", process.env.NODE_ENV);
-
-const isDevelopment =
-	true || process.env.NODE_ENV?.toLowerCase() === "development";
-console.log("isDevelopment dans Auth.controller:", isDevelopment);
 
 export const register = async (req, res) => {
 	console.log("Début de la fonction register");
-	console.log("isDevelopment dans register:", isDevelopment);
 	const { username, email, password, recaptchaResponse } = req.body;
 	//console.log("req.body ds auth controller :", req.body);
 
@@ -50,13 +42,7 @@ export const register = async (req, res) => {
 					message: "Ce nom d'utilisateur est déjà pris.",
 				});
 			}
-		}
 
-		if (isDevelopment) {
-			console.log(
-				"Mode développement : contournement de la vérification reCAPTCHA"
-			);
-		} else {
 			// Vérifie que la réponse du reCAPTCHA est présente
 			if (!recaptchaResponse) {
 				return res.status(400).json({
@@ -249,6 +235,8 @@ export const logout = async (req, res) => {
 	try {
 		// Supprimer le refresh token de la base de données
 		await refreshToken.findOneAndDelete({ token: refreshToken });
+
+		res.clearCookie("jwt", jwtCookieConfig);
 
 		// Réponse de succès
 		res.status(200).json({
