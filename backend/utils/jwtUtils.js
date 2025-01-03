@@ -18,10 +18,10 @@ export const refreshTokenConfig = {
 
 export const jwtCookieConfig = {
 	httpOnly: true,
-	secure: process.env.NODE_ENV === "production" ? false : true, // true en production, false en développement
+	secure: process.env.NODE_ENV === "production", // true en production, false en développement
 	sameSite: process.env.NODE_ENV === "production" ? "strict" : "lax",
-	maxAge: 7 * 24 * 60 * 60 * 1000, // 7 jours en millisecondes
-	path: "/", // Chemin de validité du cookie
+	maxAge: 7 * 24 * 60 * 60 * 1000, // 7 jours
+	path: "/",
 };
 
 // Fonction pour créer un access token
