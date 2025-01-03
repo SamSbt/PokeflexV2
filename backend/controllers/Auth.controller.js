@@ -14,10 +14,10 @@ const MAX_FAILED_ATTEMPTS = 5;
 const LOCK_TIME = 5 * 60 * 1000; // 5min
 const RECAPTCHA_SECRET_KEY = process.env.RECAPTCHA_SECRET_KEY;
 console.log("NODE_ENV dans Auth.controller:", process.env.NODE_ENV);
+
 const isDevelopment =
 	true || process.env.NODE_ENV?.toLowerCase() === "development";
 console.log("isDevelopment dans Auth.controller:", isDevelopment);
-
 
 export const register = async (req, res) => {
 	console.log("Début de la fonction register");
@@ -52,32 +52,32 @@ export const register = async (req, res) => {
 			}
 		}
 
-
-
 		if (isDevelopment) {
-            console.log("Mode développement : contournement de la vérification reCAPTCHA");
-        } else {
-					// Vérifie que la réponse du reCAPTCHA est présente
-					if (!recaptchaResponse) {
-						return res.status(400).json({
-							success: false,
-							message: "Le reCAPTCHA est requis.",
-						});
-					}
+			console.log(
+				"Mode développement : contournement de la vérification reCAPTCHA"
+			);
+		} else {
+			// Vérifie que la réponse du reCAPTCHA est présente
+			if (!recaptchaResponse) {
+				return res.status(400).json({
+					success: false,
+					message: "Le reCAPTCHA est requis.",
+				});
+			}
 
-					// Valider la réponse du reCAPTCHA auprès de Google
-					const verifyUrl = `https://www.google.com/recaptcha/api/siteverify?secret=${RECAPTCHA_SECRET_KEY}&response=${recaptchaResponse}`;
-					const googleResponse = await fetch(verifyUrl, { method: "POST" });
-					const googleResult = await googleResponse.json();
+			// Valider la réponse du reCAPTCHA auprès de Google
+			const verifyUrl = `https://www.google.com/recaptcha/api/siteverify?secret=${RECAPTCHA_SECRET_KEY}&response=${recaptchaResponse}`;
+			const googleResponse = await fetch(verifyUrl, { method: "POST" });
+			const googleResult = await googleResponse.json();
 
-					// si validation reCAPTCHA échoue = erreur
-					if (!googleResult.success) {
-						return res.status(400).json({
-							success: false,
-							message: "reCAPTCHA invalide.",
-						});
-					}
-				}
+			// si validation reCAPTCHA échoue = erreur
+			if (!googleResult.success) {
+				return res.status(400).json({
+					success: false,
+					message: "reCAPTCHA invalide.",
+				});
+			}
+		}
 
 		// Hache le mot de passe
 		const hashedPassword = await bcrypt.hash(password, 10);
@@ -175,14 +175,15 @@ export const login = async (req, res) => {
 		const accessToken = createAccessToken(user);
 		console.log("👍 acces Token généré :", accessToken);
 		console.log("Génération du refresh token...");
+
 		const refreshToken = createRefreshToken(user);
 		console.log("👍 refreshToken généré :", refreshToken);
-
-		res.cookie("jwt", refreshToken, jwtCookieConfig); 
+		res.cookie("jwt", refreshToken, jwtCookieConfig);
 		console.log("Setting refresh token cookie:", {
 			name: "jwt",
 			options: jwtCookieConfig,
 		});
+
 		res.status(200).json({
 			success: true,
 			message: "Login successful",
@@ -236,7 +237,6 @@ export const refreshAccessToken = async (req, res) => {
 
 // Méthode de déconnexion
 export const logout = async (req, res) => {
-	res.clearCookie("jwt", jwtCookieConfig);
 	const { refreshToken } = req.body; // Récupère le refresh token depuis le corps de la requête
 
 	if (!refreshToken) {

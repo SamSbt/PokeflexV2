@@ -54,4 +54,4 @@ CheckRoles.propTypes = {
 };
 
 // outlet protection des routes en front
-// que avec react router
+// qu'avec react router
