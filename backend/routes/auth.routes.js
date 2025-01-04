@@ -26,15 +26,7 @@ const loginLimiter = rateLimit({
 router.post("/register", register);
 router.post("/login", loginLimiter, login);
 router.post("/refresh", refreshAccessToken);
-
-router.post("/logout", (req, res) => {
-	// Clear the refresh token cookie
-	res.clearCookie("jwt", {
-		...jwtCookieConfig,
-		maxAge: 0,
-	});
-	res.json({ success: true, message: "Logged out successfully" });
-});
+router.post("/logout",logout);
 
 // route dashboard nécessitant authentification et rôle admin
 router.get("/dashboard", authenticate, hasRole("Admin"), (req, res) => {
