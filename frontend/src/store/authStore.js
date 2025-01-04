@@ -204,6 +204,9 @@ export const useAuthStore = create(
 					const response = await fetch(logoutUrl, {
 						method: "POST",
 						credentials: "include",
+						headers: {
+							"Content-Type": "application/json",
+						},
 					});
 
 					if (!response.ok) {

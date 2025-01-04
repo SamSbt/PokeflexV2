@@ -1,6 +1,7 @@
 import bcrypt from "bcrypt";
 import AppUser from "../models/AppUser.model.js";
 import Role from "../models/Role.model.js";
+
 import {
 	createAccessToken,
 	createRefreshToken,
@@ -223,7 +224,7 @@ export const refreshAccessToken = async (req, res) => {
 
 // Méthode de déconnexion
 export const logout = async (req, res) => {
-	console.log("Requête reçue pour /logout");
+	console.log("Requête reçue en back pour /logout");
 	const refreshToken = req.cookies?.jwt;
 	console.log("🍪 Cookie reçu pour /logout :", refreshToken);
 	if (!refreshToken) {
@@ -234,9 +235,6 @@ export const logout = async (req, res) => {
 	}
 
 	try {
-		// Supprimer le refresh token de la base de données
-		await refreshToken.findOneAndDelete({ token: refreshToken });
-
 		res.clearCookie("jwt", jwtCookieConfig);
 		console.log("🍪 Cookie supprimé et déconnexion réussie.");
 		// Réponse de succès

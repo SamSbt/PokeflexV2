@@ -43,8 +43,9 @@ export const createAccessToken = (user) => {
 
 // Fonction pour vérifier un access token
 export const verifyAccessToken = (token) => {
-	//console.log("Start verifyAccessToken");
+	console.log("Start verifyAccessToken in function 💀");
 	try {
+		console.log(token);
 		const payload = jwt.verify(token, accessTokenConfig.secret);
 		// verify : vérifie que le token est valide (signature correcte avec la clé secrète), si non : exception dans catch
 		return payload; // Renvoie le payload vérifié
