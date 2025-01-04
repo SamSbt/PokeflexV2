@@ -98,6 +98,7 @@ export const getPokeflonByIdType = async (req, res) => {
 
 export const postPokeflon = async (req, res) => {
 		console.log("🗨️ we are in the POST /api/pokeflons route");
+		console.log("User from request:", req.user);
 	try {
 		const pokeflons = req.body; // pokeflons : objet contenant form data
 		const file = req.file; // fichier téléchargé dans req.file

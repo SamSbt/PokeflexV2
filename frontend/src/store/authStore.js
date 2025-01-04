@@ -18,10 +18,14 @@ export const useAuthStore = create(
 				set({ userRole });
 			},
 			setUsername: (username) => {
-				set({ username }); 
+				set({ username });
 			},
 			setLoading: (loading) => set({ loading }),
-			getAccessToken: () => get().accessToken,
+			getAccessToken: () => {
+				const token = get().accessToken;
+				console.log("Access token retrieved:", token);
+				return token;
+			},
 
 			// login method
 			login: async (credentials) => {
@@ -62,6 +66,7 @@ export const useAuthStore = create(
 
 			// Refresh token method
 			refreshToken: async () => {
+				console.log("Attempting to refresh token");
 				try {
 					const response = await fetch(
 						`${import.meta.env.VITE_API_URL}/auth/refresh`,
@@ -70,6 +75,7 @@ export const useAuthStore = create(
 							credentials: "include",
 						}
 					);
+					console.log("Refresh token response:", response);
 
 					if (!response.ok) {
 						throw new Error("Failed to refresh access token");
@@ -80,7 +86,8 @@ export const useAuthStore = create(
 						accessToken: data.accessToken,
 						isLoggedIn: true,
 					});
-					return true;
+					console.log("Token refreshed successfully");
+					return data.accessToken; // return true ?
 				} catch (error) {
 					console.error("Error refreshing token:", error);
 					set({
@@ -89,7 +96,7 @@ export const useAuthStore = create(
 						username: null,
 						accessToken: null,
 					});
-					return false; // réinitialise l état en cas d'échec refresh token
+					return null; // return false; // réinitialise l état en cas d'échec refresh token
 				}
 			},
 
