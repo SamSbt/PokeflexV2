@@ -38,6 +38,7 @@ export default function CheckRoles({ allowedRoles }) {
 		userRole.includes(allowedRole)
 	);
 
+	// prévoir page 403 Forbidden
 	if (!hasAccess) {
 		// gestion du cas où l'utilisateur n'a pas les droits
 		return (

@@ -7,7 +7,6 @@ import {
 	logout,
 } from "../controllers/Auth.controller.js";
 import { authenticate, hasRole } from "../middlewares/authMiddleware.js";
-import { jwtCookieConfig } from "../utils/jwtUtils.js";
 
 const router = express.Router();
 

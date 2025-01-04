@@ -18,7 +18,7 @@ export const useAuthStore = create(
 				set({ userRole });
 			},
 			setUsername: (username) => {
-				set({ username }); // Update the state of username
+				set({ username }); 
 			},
 			setLoading: (loading) => set({ loading }),
 			getAccessToken: () => get().accessToken,
@@ -27,7 +27,6 @@ export const useAuthStore = create(
 			login: async (credentials) => {
 				try {
 					set({ loading: true });
-					// console.log("API URL:", import.meta.env.VITE_API_URL);
 					const response = await fetch(
 						`${import.meta.env.VITE_API_URL}/auth/login`,
 						{
@@ -51,7 +50,7 @@ export const useAuthStore = create(
 						});
 						return { success: true, data: data.data };
 					} else {
-						return { success: false, message: data.message };
+						throw new Error(data.message || "Login failed");
 					}
 				} catch (error) {
 					console.error("Login error:", error);
@@ -69,9 +68,6 @@ export const useAuthStore = create(
 						{
 							method: "POST",
 							credentials: "include",
-							// headers: {
-							// 	"Content-Type": "application/json",
-							// },
 						}
 					);
 
@@ -93,7 +89,7 @@ export const useAuthStore = create(
 						username: null,
 						accessToken: null,
 					});
-					return null;
+					return false; // réinitialise l état en cas d'échec refresh token
 				}
 			},
 
@@ -197,7 +193,7 @@ export const useAuthStore = create(
 			// logout method
 			logout: async () => {
 				try {
-					console.log("Attempting to logout...");
+					//console.log("Attempting to logout...");
 					const logoutUrl = `${import.meta.env.VITE_API_URL}/auth/logout`;
 					//console.log("Logout URL:", logoutUrl);
 
