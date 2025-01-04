@@ -197,7 +197,7 @@ export const useAuthStore = create(
 			// logout method
 			logout: async () => {
 				try {
-					//console.log("Attempting to logout...");
+					console.log("Attempting to logout...");
 					const logoutUrl = `${import.meta.env.VITE_API_URL}/auth/logout`;
 					//console.log("Logout URL:", logoutUrl);
 
