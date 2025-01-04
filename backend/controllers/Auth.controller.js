@@ -223,8 +223,9 @@ export const refreshAccessToken = async (req, res) => {
 
 // Méthode de déconnexion
 export const logout = async (req, res) => {
-	const { refreshToken } = req.body; // Récupère le refresh token depuis le corps de la requête
-
+	console.log("Requête reçue pour /logout");
+	const refreshToken = req.cookies?.jwt;
+	console.log("🍪 Cookie reçu pour /logout :", refreshToken);
 	if (!refreshToken) {
 		return res.status(400).json({
 			success: false,
@@ -237,7 +238,7 @@ export const logout = async (req, res) => {
 		await refreshToken.findOneAndDelete({ token: refreshToken });
 
 		res.clearCookie("jwt", jwtCookieConfig);
-
+		console.log("🍪 Cookie supprimé et déconnexion réussie.");
 		// Réponse de succès
 		res.status(200).json({
 			success: true,
