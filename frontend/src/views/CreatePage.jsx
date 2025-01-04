@@ -12,7 +12,7 @@ const CreatePage = () => {
 	const { id } = useParams();
 	const { formData, setFormData, resetForm, types } = useFormStore();
 	const [file, setFile] = useState(null); // ajout pour stocker l'image
-	const { getAccessToken } = useAuthStore();
+	const { getAccessToken, fetchWithAccessToken } = useAuthStore();
 	const { fetchPokeflonById, loadingPokeflonsById, error } = usePokeflonStore();
 	const navigate = useNavigate();
 
@@ -91,25 +91,23 @@ const CreatePage = () => {
 
 			console.log(`Sending ${method} request to ${url}`);
 
-			const sendRequest = async (token) => {
-				return await fetch(url, {
+			// const sendRequest = async (token) => {
+			let response =	 await fetchWithAccessToken(url, {
 					method: method,
-					headers: {
-						Authorization: `Bearer ${getAccessToken()}`,
-					},
+			
 					body: formDataToSend,
 					credentials: "include",
 				});
-			};
+			// };
 
 			// exec requête avec token initial
-			let response = await sendRequest(getAccessToken());
+			// let response = await sendRequest(getAccessToken());
 
-			if (response.status === 401) {
-				// token expired, try to refresh
-				const newToken = await useAuthStore.getState().refreshToken();
-				response = await sendRequest(newToken);
-			}
+			// if (response.status === 401) {
+			// 	// token expired, try to refresh
+			// 	const newToken = await useAuthStore.getState().refreshToken();
+			// 	response = await sendRequest(newToken);
+			// }
 
 			const responseData = await response.json();
 			console.log("Response from server:", responseData);

@@ -19,7 +19,7 @@ export const authenticate = async (req, res, next) => {
 		console.log("verify access token...😣");
 		//si le decoded ne passe pas, la fonction va renvoyer un 401 géré par le front
 		const decoded = verifyAccessToken(token);
-		console.log("👍Token décodé avec succès.", decoded);
+		console.log("👍Token décodé avec succès. going next middleware");
 
 		req.user = decoded; // add user décodé à req.user
 		return next(); // Passer au middleware suivant
@@ -48,6 +48,7 @@ export const hasRole = (requiredRole) => (req, res, next) => {
 
 	if (user.role_name === requiredRole || user.role_name === "Admin") {
 		console.log("Role check passed");
+		console.log("going next 👌");
 		return next();
 	}
 console.log("Role check failed");
