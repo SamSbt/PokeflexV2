@@ -3,7 +3,7 @@ import { verifyAccessToken } from "../utils/jwtUtils.js";
 // middleware pour authentifier l'utilisateur avec JWT
 export const authenticate = async (req, res, next) => {
 	const token = req.header("Authorization")?.split(" ")[1];
-	//console.log("Token reçu:", token);
+	console.log("Token reçu:", token);
 
 	console.log("middleware authenticate ❌");
 	if (!token) {
@@ -19,7 +19,7 @@ export const authenticate = async (req, res, next) => {
 		console.log("verify access token...😣");
 		//si le decoded ne passe pas, la fonction va renvoyer un 401 géré par le front
 		const decoded = verifyAccessToken(token);
-		console.log("👍Token décodé avec succès.");
+		console.log("👍Token décodé avec succès. going next middleware");
 
 		req.user = decoded; // add user décodé à req.user
 		return next(); // Passer au middleware suivant
@@ -32,7 +32,8 @@ export const authenticate = async (req, res, next) => {
 
 export const hasRole = (requiredRole) => (req, res, next) => {
 	const user = req.user;
-	console.log("Contenu de req.user :", user);
+	console.log("Checking role for user:", user);
+	console.log("Required role:", requiredRole);
 
 	if (!user) {
 		console.log("Utilisateur non authentifié");
@@ -46,9 +47,11 @@ export const hasRole = (requiredRole) => (req, res, next) => {
 	//console.log("requiredRole is :", requiredRole);
 
 	if (user.role_name === requiredRole || user.role_name === "Admin") {
+		console.log("Role check passed");
+		console.log("going next 👌");
 		return next();
 	}
-
+console.log("Role check failed");
 	return res.status(403).json({
 		success: false,
 		message: "Accès refusé : permissions insuffisantes.",

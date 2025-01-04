@@ -246,31 +246,26 @@ export const login = async (req, res) => {
 // Rafraîchissement du access token avec un refresh token
 export const refreshAccessToken = async (req, res) => {
 	console.log("🤔🤔 Requête reçue pour /refresh");
-	const cookies = req.cookies;
-	const refreshToken = cookies.jwt;
+	const refreshToken = req.cookies.jwt;
 
 	if (!refreshToken) {
 		return res
-			.status(403)
+			.status(401)
 			.json({ success: false, message: "Refresh token manquant." });
 	}
 
 	try {
-		// Vérifier la validité du refresh token
 		const payload = verifyRefreshToken(refreshToken);
 		const user = await AppUser.findById(payload.userId).populate("role");
-		const newAccessToken = createAccessToken(user);
-		res.status(200).json({
-			success: true,
-			accessToken: newAccessToken,
-		});
+		if (!user) {
+			return res.status(401).json({ message: "Utilisateur introuvable." });
+		}
 
-		console.log("💵 Nouvel acces token généré :", newAccessToken);
+		const newAccessToken = createAccessToken(user);
+		res.json({ accessToken: newAccessToken });
 	} catch (error) {
-		console.error("Erreur lors du rafraîchissement :", error.message);
-		res
-			.status(403)
-			.json({ success: false, message: "Refresh token invalide ou expiré." });
+		console.error("Error refreshing token:", error);
+		res.status(401).json({ message: "Refresh token invalide." });
 	}
 };
 

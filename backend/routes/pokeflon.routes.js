@@ -19,6 +19,7 @@ router.get("/by-type/:id", getPokeflonByIdType);
 
 router.use(authenticate);
 router.use(hasRole("Dresseur"));
+console.log("😣");
 
 router.post("/", upload.single("file"), postPokeflon);
 router.put("/:id", upload.single("file"), putPokeflon);
