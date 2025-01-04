@@ -22,14 +22,12 @@ const CreatePage = () => {
 	//TODO: gérer le switch visibility on ou off
 
 	useEffect(() => {
-		// Récupérer les types au montage du composant
 		fetchTypes();
 
 		//console.log("Pokéflon ID:", id);
-		// Vérifier si un pokeflonId est présent pour pré-remplir les données
 		if (id) {
 			const fetchPokeflonData = async () => {
-				const data = await fetchPokeflonById(id); // Appeler la méthode du store pour récupérer les données
+				const data = await fetchPokeflonById(id);
 				//console.log("Pokéflon data:", data);
 				if (data) {
 					setFormData({
@@ -58,7 +56,7 @@ const CreatePage = () => {
 
 	const handleNumberChange = (e) => {
 		const { name, value } = e.target;
-		// Vérifier si la valeur est un nombre valide
+		// vérif si valeur est un nombre valide
 		if (/^\d*\.?\d*$/.test(value)) {
 			setFormData(name, value);
 		}
@@ -70,17 +68,15 @@ const CreatePage = () => {
 
 		const sanitizedSummary = DOMPurify.sanitize(formData.summary);
 
-		// Utiliser FormData pour inclure l'image et les autres données
+		// use FormData pour inclure image et autres données
 		const formDataToSend = new FormData();
-		// Only append the file if it exists
 		if (file) {
 			formDataToSend.append("file", file);
 		}
 
-		// Append each form field individually instead of as a JSON string
 		Object.keys(formData).forEach((key) => {
 			if (key === "summary") {
-				formDataToSend.append(key, sanitizedSummary); // Assainir la description
+				formDataToSend.append(key, sanitizedSummary); // assainir la description
 			} else {
 				formDataToSend.append(key, formData[key]);
 			}
@@ -88,7 +84,6 @@ const CreatePage = () => {
 		console.log("Form data being sent:", Object.fromEntries(formDataToSend));
 
 		try {
-			let response;
 			const url = id
 				? `${import.meta.env.VITE_API_URL}/pokeflon/${id}`
 				: `${import.meta.env.VITE_API_URL}/pokeflon`;
@@ -96,14 +91,25 @@ const CreatePage = () => {
 
 			console.log(`Sending ${method} request to ${url}`);
 
-			response = await fetch(url, { 
-				method: method,
-				headers: {
-					Authorization: `Bearer ${getAccessToken()}`,
-				},
-				body: formDataToSend,
-				credentials: 'include',
-			});
+			const sendRequest = async (token) => {
+				return await fetch(url, {
+					method: method,
+					headers: {
+						Authorization: `Bearer ${getAccessToken()}`,
+					},
+					body: formDataToSend,
+					credentials: "include",
+				});
+			};
+
+			// exec requête avec token initial
+			let response = await sendRequest(getAccessToken());
+
+			if (response.status === 401) {
+				// token expired, try to refresh
+				const newToken = await useAuthStore.getState().refreshToken();
+				response = await sendRequest(newToken);
+			}
 
 			const responseData = await response.json();
 			console.log("Response from server:", responseData);

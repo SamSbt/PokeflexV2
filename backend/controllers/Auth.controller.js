@@ -25,6 +25,34 @@ export const register = async (req, res) => {
 		});
 	}
 
+	// Validation du nom d'utilisateur (2 à 25 caractères)
+	if (!username || username.trim().length < 2 || username.trim().length > 25) {
+		return res.status(400).json({
+			success: false,
+			message: "Le nom d'utilisateur doit contenir entre 2 et 25 caractères.",
+		});
+	}
+
+	// Validation de l'email
+	const emailRegex = /^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/;
+	if (!emailRegex.test(email)) {
+		return res.status(400).json({
+			success: false,
+			message: "Email incorrect (format d'email invalide).",
+		});
+	}
+
+	// Validation du mot de passe : au moins 8 caractères, une majuscule, une minuscule, un chiffre et un caractère spécial
+	const passwordRegex =
+		/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+	if (!passwordRegex.test(password)) {
+		return res.status(400).json({
+			success: false,
+			message:
+				"Le mot de passe doit contenir au moins 8 caractères, une majuscule, une minuscule, un chiffre et un caractère spécial.",
+		});
+	}
+
 	try {
 		// Vérifie si l'utilisateur existe déjà (email ou username)
 		const existingUser = await AppUser.findOne({
@@ -86,15 +114,22 @@ export const register = async (req, res) => {
 			role: defaultRole.id,
 		});
 
+		// Peupler le rôle de l'utilisateur
+		const populatedUser = await AppUser.findById(newUser.id).populate("role");
+
+		// Génération du token d'accès
+		const accessToken = createAccessToken(populatedUser);
+
 		res.status(201).json({
 			success: true,
 			message: "Utilisateur créé avec succès",
 			data: {
-				id: newUser.id,
-				username: newUser.username,
-				email: newUser.email,
-				role: newUser.role,
+				id: populatedUser.id,
+				username: populatedUser.username,
+				email: populatedUser.email,
+				role: populatedUser.role,
 			},
+			accessToken,
 		});
 	} catch (error) {
 		console.error("Erreur lors de l'enregistrement :", error.message);
@@ -110,7 +145,24 @@ export const login = async (req, res) => {
 	if (!email || !password) {
 		return res.status(400).json({
 			success: false,
-			message: "Please provide both email and password",
+			message: "L'email et le mot de passe sont requis.",
+		});
+	}
+
+	// Validation de l'email
+	const emailRegex = /^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/;
+	if (!emailRegex.test(email)) {
+		return res.status(400).json({
+			success: false,
+			message: "Format d'email invalide.",
+		});
+	}
+
+	// Validation du mot de passe (s'il est vide ou trop court)
+	if (password.length < 8) {
+		return res.status(400).json({
+			success: false,
+			message: "Le mot de passe doit contenir au moins 8 caractères.",
 		});
 	}
 

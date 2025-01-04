@@ -27,20 +27,22 @@ beforeEach(() => {
 	jest.clearAllMocks();
 });
 
-	it("renvoie 401 si aucun token ou refresh token n'est fourni", async () => {
+	it("renvoie 401 si aucun token n'est fourni", async () => {
 		req.header.mockReturnValue(undefined);
 
 		await authenticate(req, res, next);
 
 		expect(res.status).toHaveBeenCalledWith(401);
-		expect(res.json).toHaveBeenCalledWith({ message: "Non autorisé" });
+		expect(res.json).toHaveBeenCalledWith({
+			message: "Non autorisé : access token non obtenu.",
+		});
 		expect(next).not.toHaveBeenCalled();
 	});
 
 	it("autorise si le token est valide", async () => {
-		const mockUser = { id: "123", role: "User" };
+		const mockUser = { id: "123", role_name: "User" };
 
-		jwtUtils.verifyAccessToken.mockReturnValue(mockUser);
+		jwtUtils.verifyAccessToken.mockResolvedValue(mockUser);
 		req.header.mockReturnValue("Bearer valid_token");
 
 		await authenticate(req, res, next);
@@ -50,59 +52,16 @@ beforeEach(() => {
 		expect(next).toHaveBeenCalled();
 	});
 
-	it("rafraîchit le token si l'access token est invalide et le refresh token est valide", async () => {
-		req.header.mockReturnValue(undefined);
-		req.cookies.jwt = "valid_refresh_token";
-		const mockNewToken = "new_access_token";
-		const mockUser = { id: "123", role: "User" };
-
-		global.fetch.mockResolvedValueOnce({
-			ok: true,
-			json: async () => ({ token: mockNewToken }),
-		});
-		jwtUtils.verifyAccessToken.mockReturnValue(mockUser);
+	it("renvoie 401 si le token est invalide ou expiré", async () => {
+		jwtUtils.verifyAccessToken.mockRejectedValue(new Error("Invalid token"));
+		req.header.mockReturnValue("Bearer invalid_token");
 
 		await authenticate(req, res, next);
 
-		expect(global.fetch).toHaveBeenCalledWith(
-			`${process.env.API_URL}/auth/refresh`,
-			{
-				method: "POST",
-				credentials: "include",
-			}
-		);
-		expect(jwtUtils.verifyAccessToken).toHaveBeenCalledWith(mockNewToken);
-		expect(req.user).toEqual(mockUser);
-		expect(req.headers.authorization).toBe(`Bearer ${mockNewToken}`);
-		expect(next).toHaveBeenCalled();
-	});
-
-	it("renvoie 401 si le refresh token est invalide", async () => {
-		req.header.mockReturnValue(undefined);
-		req.cookies.jwt = "invalid_refresh_token";
-		fetch.mockResolvedValueOnce({ ok: false });
-
-		await authenticate(req, res, next);
-
-		expect(fetch).toHaveBeenCalledWith(`${process.env.API_URL}/auth/refresh`, {
-			method: "POST",
-			credentials: "include",
-		});
+		expect(jwtUtils.verifyAccessToken).toHaveBeenCalledWith("invalid_token");
 		expect(res.status).toHaveBeenCalledWith(401);
 		expect(res.json).toHaveBeenCalledWith({
-			message: "Token invalide ou expiré.",
-		});
-		expect(next).not.toHaveBeenCalled();
-	});
-
-	it("renvoie 401 si le header Authorization est mal formé", async () => {
-		req.header.mockReturnValue("Token invalid_token");
-
-		await authenticate(req, res, next);
-
-		expect(res.status).toHaveBeenCalledWith(401);
-		expect(res.json).toHaveBeenCalledWith({
-			message: "Token invalide ou expiré.",
+			message: "😣 Token invalide ou expiré.",
 		});
 		expect(next).not.toHaveBeenCalled();
 	});
@@ -150,7 +109,7 @@ describe("hasRole Middleware", () => {
 		expect(res.status).toHaveBeenCalledWith(403);
 		expect(res.json).toHaveBeenCalledWith({
 			success: false,
-			message: "Accès refusé",
+			message: "Accès refusé : permissions insuffisantes.",
 		});
 		expect(next).not.toHaveBeenCalled(); 
 	});
@@ -164,7 +123,7 @@ describe("hasRole Middleware", () => {
 		expect(res.status).toHaveBeenCalledWith(403);
 		expect(res.json).toHaveBeenCalledWith({
 			success: false,
-			message: "Accès refusé",
+			message: "Accès refusé : utilisateur non authentifié.",
 		});
 		expect(next).not.toHaveBeenCalled();
 	});
