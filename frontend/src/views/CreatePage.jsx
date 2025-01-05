@@ -96,7 +96,7 @@ const CreatePage = () => {
 					method: method,
 			
 					body: formDataToSend,
-					credentials: "include",
+					// credentials: "include", // déjà set dans fetchWithAccessToken
 				});
 			// };
 
