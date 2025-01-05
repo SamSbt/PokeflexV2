@@ -19,7 +19,8 @@ import roleRoutes from "./routes/role.routes.js";
 import appuserRoutes from "./routes/appuser.routes.js";
 import typeRoutes from "./routes/type.routes.js";
 import contactRoutes from "./routes/contact.routes.js";
-
+import { applyTimestampToLogs } from "./utils/timestampCl.js";
+applyTimestampToLogs();
 
 dotenv.config();
 

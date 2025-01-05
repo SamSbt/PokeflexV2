@@ -100,64 +100,100 @@ export const useAuthStore = create(
 				}
 			},
 
- apiRequest : async (endpoint, options = {}) => {
-    const { getAccessToken, refreshToken } = get();
-    
-    const fetchWithToken = async (token) => {
-        const response = await fetch(`${import.meta.env.VITE_API_URL}${endpoint}`, {
-            ...options,
-            headers: {
-                ...options.headers,
-                Authorization: `Bearer ${token}`,
-            },
-            credentials: "include",
-        });
-        return response;
-    };
-
-    try {
-        let token = getAccessToken();
-        console.log(`Fetching ${endpoint} with token:`, token);
-
-        let response = await fetchWithToken(token);
-
-        if (response.status === 401) {
-            console.log("Token expired, attempting to refresh...");
-            const refreshed = await refreshToken();
-            if (refreshed) {
-                token = getAccessToken();
-                console.log("Refreshed token:", token);
-                response = await fetchWithToken(token);
-            } else {
-                throw new Error("Unable to refresh token");
-            }
-        }
-
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        const data = await response.json();
-        console.log(`Fetched ${endpoint} data:`, data);
-        return data;
-    } catch (error) {
-        console.error(`Error fetching ${endpoint}:`, error);
-        throw error;
-    }
-},
-
 			// fetch roles
 			fetchRoles: async () => {
-				const data = await apiRequest("/role");
-				set({ roles: data });
-				return data;
+				const { getAccessToken, refreshToken } = get();
+
+				const fetchWithToken = async (token) => {
+					const response = await fetch(`${import.meta.env.VITE_API_URL}/role`, {
+						headers: {
+							Authorization: `Bearer ${token}`,
+						},
+						credentials: "include",
+					});
+					console.log("Fetch response status:", response.status);
+					return response;
+				};
+
+				try {
+					let token = getAccessToken();
+					console.log("Fetching roles with token:", token);
+
+					let response = await fetchWithToken(token);
+
+					if (response.status === 401) {
+						console.log("Token expired, attempting to refresh...");
+						const refreshed = await refreshToken();
+						if (refreshed) {
+							token = getAccessToken();
+							console.log("Refreshed token:", token);
+							response = await fetchWithToken(token);
+						} else {
+							throw new Error("Unable to refresh token");
+						}
+					}
+
+					if (!response.ok) {
+						throw new Error(`HTTP error! status: ${response.status}`);
+					}
+
+					const data = await response.json();
+					console.log("Fetched roles data:", data);
+					set({ roles: data });
+					return data;
+				} catch (error) {
+					console.error("Error fetching roles:", error);
+					throw error;
+				}
 			},
 
 			// fetch contact messages
 			fetchContacts: async () => {
-				const data = await apiRequest("/contact");
-				set({ contacts: data.data || [] });
-				return data.data || [];
+				const { getAccessToken, refreshToken } = get();
+
+				const fetchWithToken = async (token) => {
+					const response = await fetch(
+						`${import.meta.env.VITE_API_URL}/contact`,
+						{
+							headers: {
+								Authorization: `Bearer ${token}`,
+							},
+							credentials: "include",
+						}
+					);
+					return response;
+				};
+
+				try {
+					let token = getAccessToken();
+					console.log("Fetching contacts with token:", token);
+
+					let response = await fetchWithToken(token);
+
+					if (response.status === 401) {
+						console.log("Token expired, attempting to refresh...");
+						const refreshed = await refreshToken();
+						if (refreshed) {
+							token = getAccessToken();
+							console.log("Refreshed token:", token);
+							response = await fetchWithToken(token);
+						} else {
+							throw new Error("Unable to refresh token");
+						}
+					}
+
+					if (!response.ok) {
+						throw new Error(`HTTP error! status: ${response.status}`);
+					}
+
+					const data = await response.json();
+					console.log("Fetched contacts data:", data);
+					set({ contacts: data.data || [] });
+					return data.data || [];
+				} catch (error) {
+					console.error("Error fetching contacts:", error);
+					throw error;
+				}
 			},
 
 			// logout method
@@ -205,6 +241,7 @@ export const useAuthStore = create(
 				}
 			},
 
+			// méthode générique de fetch - garder pour optimisation future
 			fetchWithAccessToken: async (url, options = {}) => {
 				const { accessToken, refreshToken } = useAuthStore.getState(); // Accéder au state actuel
 				let retry = true; // Flag pour contrôler le rafraîchissement du token
