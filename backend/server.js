@@ -57,10 +57,10 @@ app.use((req, res, next) => {
 
 app.use(reqLogger);
 
-// Définir la route pour les fichiers statiques (uploads)
+// route pour les fichiers statiques (uploads)
 app.use("/api/uploads", express.static(path.join(process.cwd(), "uploads")));
 
-// Définir les routes pour l'API
+// routes pour l'API
 app.use("/api/pokeflon", pokeflonRoutes);
 app.use("/api/admin/role", roleRoutes);
 app.use("/api/appuser", appuserRoutes);
