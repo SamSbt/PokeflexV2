@@ -112,11 +112,11 @@ const generateAccessTokenPayload = (user) => {
 	return { id: user._id, role_name: user.role.role_name };
 };
 
-export const decodeRefreshToken = (token) => {
-	try {
-		return jwt.decode(token);
-	} catch (error) {
-		console.error("Error decoding refresh token:", error);
-		return null;
-	}
-};
+// export const decodeRefreshToken = (token) => {
+// 	try {
+// 		return jwt.decode(token);
+// 	} catch (error) {
+// 		console.error("Error decoding refresh token:", error);
+// 		return null;
+// 	}
+// };

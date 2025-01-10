@@ -1,4 +1,4 @@
-import Routing from "../src/Routes/Routes";
+import AppRoutes from "../src/Routes/Routes";
 import { Container } from "react-bootstrap";
 import { useLocation } from "react-router-dom";
 import AppNavbar from "./components/app-navbar/AppNavbar";
@@ -17,7 +17,7 @@ function App() {
 						<AppNavbar />
 						{location.pathname !== "/dashboard" && <AppHeader />}
 						<main>
-							<Routing />
+							<AppRoutes />
 						</main>
 						<AppFooter />
 					</div>
