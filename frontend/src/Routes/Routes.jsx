@@ -11,7 +11,7 @@ import ProfilUserPage from "../views/ProfilUserPage";
 import DashboardPage from "../views/DashboardPage";
 import NotFoundPage from "../components/NotFoundPage";
 
-const Routes = () => {
+const AppRoutes = () => {
 	return (
 		<>
 			<Routes>
@@ -39,4 +39,4 @@ const Routes = () => {
 	);
 };
 
-export default Routes;
+export default AppRoutes;
