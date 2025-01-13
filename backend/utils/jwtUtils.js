@@ -21,7 +21,7 @@ export const jwtCookieConfig = {
 	secure: process.env.NODE_ENV === "production", // true en production, false en développement
 	sameSite: process.env.NODE_ENV === "production" ? "strict" : "lax",
 	maxAge: 7 * 24 * 60 * 60 * 1000, // 7 jours
-	path: "/",
+	path: "/api/auth",
 };
 
 // Fonction pour créer un access token
@@ -112,11 +112,11 @@ const generateAccessTokenPayload = (user) => {
 	return { id: user._id, role_name: user.role.role_name };
 };
 
-// export const decodeRefreshToken = (token) => {
-// 	try {
-// 		return jwt.decode(token);
-// 	} catch (error) {
-// 		console.error("Error decoding refresh token:", error);
-// 		return null;
-// 	}
-// };
+export const decodeRefreshToken = (token) => {
+	try {
+		return jwt.decode(token);
+	} catch (error) {
+		console.error("Error decoding refresh token:", error);
+		return null;
+	}
+};

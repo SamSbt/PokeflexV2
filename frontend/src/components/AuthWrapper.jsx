@@ -1,8 +1,10 @@
 import React, { useEffect } from "react";
 import { useAuthStore } from "../store/authStore";
+import { useNavigate } from "react-router-dom";
 
 const AuthWrapper = ({ children }) => {
 	const { isLoggedIn, refreshToken, logout } = useAuthStore();
+	const navigate = useNavigate();
 
 	useEffect(() => {
 		const refreshTokenPeriodically = async () => {
@@ -10,6 +12,7 @@ const AuthWrapper = ({ children }) => {
 				const success = await refreshToken();
 				if (!success) {
 					logout();
+					navigate("/login");
 				}
 			}
 		};
@@ -18,7 +21,7 @@ const AuthWrapper = ({ children }) => {
 		const intervalId = setInterval(refreshTokenPeriodically, 14 * 60 * 1000);
 
 		return () => clearInterval(intervalId);
-	}, [isLoggedIn, refreshToken, logout]);
+	}, [isLoggedIn, refreshToken, logout, navigate]);
 
 	return <>{children}</>;
 };
