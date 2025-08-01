@@ -33,7 +33,10 @@ app.use(cookieParser());
 // CORS - permet les requêtes depuis front-end (localhost:5173)
 app.use(
 	cors({
-		origin: process.env.CLIENT_URL || "https://pokeflexv2-srcb.onrender.com",
+		origin:
+			process.env.CLIENT_URL ||
+			"https://pokeflexv2-srcb.onrender.com/" ||
+			"https://pokeflexv2-srcb.onrender.com",
 		credentials: true, // permet l'envoi des cookies
 	})
 );
