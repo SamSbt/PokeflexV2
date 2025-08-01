@@ -4,8 +4,8 @@
 	"main": "server.js",
 	"scripts": {
 		"dev": "nodemon backend/server.js",
-		"start": "node dist/server.js",
-		"build": "esbuild src/index.js --bundle --platform=node --target=node22 --outdir=dist"
+		"start": "node server.js",
+		"build": "echo 'No build step required'"
 	},
 	"type": "module",
 	"keywords": [],
