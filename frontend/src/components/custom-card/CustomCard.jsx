@@ -15,6 +15,10 @@ function CustomCard({
 	createdBy,
 	size = "small",
 }) {
+
+const apiURL = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
+
+
 	return (
 		<>
 			<Card
@@ -24,7 +28,7 @@ function CustomCard({
 			>
 				<Card.Img
 					variant="top"
-					src={`http://localhost:5000/api/${img_src}`}
+					src={`${apiURL}/${img_src}`}
 					alt={`Image du Pokéflon ${name}`}
 					className="pokeflon-img m-3"
 				/>
